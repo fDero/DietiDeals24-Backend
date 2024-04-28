@@ -1,0 +1,30 @@
+Manifest-Version: 1.0
+Main-Class: spring.ServerStartup
+Class-Path: txw2-4.0.3.jar jakarta.inject-api-2.0.1.jar spring-expressio
+ n-6.0.13.jar jandex-3.0.5.jar spring-data-jpa-3.1.5.jar jackson-datatyp
+ e-jsr310-2.15.3.jar jackson-databind-2.15.3.jar spring-boot-starter-dat
+ a-jpa-3.1.5.jar spring-boot-starter-json-3.1.5.jar spring-core-6.0.13.j
+ ar logback-core-1.4.11.jar jakarta.annotation-api-2.1.1.jar spring-aop-
+ 6.0.13.jar spring-beans-6.0.13.jar checker-qual-3.31.0.jar jakarta.acti
+ vation-api-2.1.2.jar spring-session-core-3.1.3.jar logback-classic-1.4.
+ 11.jar spring-boot-starter-aop-3.1.5.jar spring-boot-autoconfigure-3.1.
+ 5.jar istack-commons-runtime-4.1.2.jar log4j-api-2.20.0.jar spring-boot
+ -starter-tomcat-3.1.5.jar angus-activation-2.0.1.jar slf4j-api-2.0.9.ja
+ r jboss-logging-3.5.3.Final.jar HikariCP-5.0.1.jar spring-boot-starter-
+ logging-3.1.5.jar spring-tx-6.0.13.jar annotations-24.0.1.jar spring-bo
+ ot-devtools-3.1.5.jar jaxb-core-4.0.3.jar spring-session-jdbc-3.1.3.jar
+  jackson-datatype-jdk8-2.15.3.jar spring-boot-starter-jdbc-3.1.5.jar to
+ mcat-embed-el-10.1.15.jar jakarta.xml.bind-api-4.0.1.jar tomcat-embed-w
+ ebsocket-10.1.15.jar jackson-core-2.15.3.jar micrometer-commons-1.11.5.
+ jar jackson-annotations-2.15.3.jar spring-boot-3.1.5.jar spring-webmvc-
+ 6.0.13.jar jackson-module-parameter-names-2.15.3.jar jakarta.persistenc
+ e-api-3.1.0.jar byte-buddy-1.14.9.jar spring-data-commons-3.1.5.jar sna
+ keyaml-1.33.jar spring-boot-starter-3.1.5.jar spring-boot-starter-web-3
+ .1.5.jar spring-aspects-6.0.13.jar jakarta.transaction-api-2.0.1.jar po
+ stgresql-42.6.0.jar jul-to-slf4j-2.0.9.jar micrometer-observation-1.11.
+ 5.jar hibernate-core-6.2.13.Final.jar jaxb-runtime-4.0.3.jar tomcat-emb
+ ed-core-10.1.15.jar aspectjweaver-1.9.20.jar antlr4-runtime-4.10.1.jar 
+ spring-jdbc-6.0.13.jar log4j-to-slf4j-2.20.0.jar spring-context-6.0.13.
+ jar classmate-1.5.1.jar spring-jcl-6.0.13.jar hibernate-commons-annotat
+ ions-6.0.6.Final.jar spring-web-6.0.13.jar spring-orm-6.0.13.jar
+

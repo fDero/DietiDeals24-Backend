@@ -1,26 +1,27 @@
 package entity;
 
+import utils.PendingAccountRegistration;
+import java.sql.Date;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import utils.PendingAccountRegistration;
 
-import java.sql.Date;
 
 @Entity @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 public class Account {
 
-    public Account(PendingAccountRegistration pending_account, String passwordHash, String passwordSalt) {
-        this.name = pending_account.getName();
-        this.surname = pending_account.getSurname();
-        this.birthday = pending_account.getBirthday();
-        this.country = pending_account.getCountry();
-        this.city = pending_account.getCity();
-        this.email = pending_account.getEmail();
-        this.username = pending_account.getUsername();
+    public Account(PendingAccountRegistration pendingAccount, String passwordHash, String passwordSalt) {
+        this.name = pendingAccount.getName();
+        this.surname = pendingAccount.getSurname();
+        this.birthday = pendingAccount.getBirthday();
+        this.country = pendingAccount.getCountry();
+        this.city = pendingAccount.getCity();
+        this.email = pendingAccount.getEmail();
+        this.username = pendingAccount.getUsername();
         this.passwordHash = passwordHash;
         this.passwordSalt = passwordSalt;
         this.passwordLastChange = new Date(System.currentTimeMillis());

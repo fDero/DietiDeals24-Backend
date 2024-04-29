@@ -1,11 +1,11 @@
 package utils;
 
 import request.AccountRegistrationRequest;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.*;
-import org.jetbrains.annotations.NotNull;
 import java.sql.Date;
+
+import org.jetbrains.annotations.NotNull;
+
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,12 +21,12 @@ public class PendingAccountRegistration {
     private String username;
     private String password;
 
-    private String  confirmation_code;
-    private Integer errors_counter;
+    private String  confirmationCode;
+    private Integer errorsCounter;
 
     public PendingAccountRegistration(
             @NotNull AccountRegistrationRequest request,
-            @NotNull String confirmation_code
+            @NotNull String confirmationCode
     ) {
         this.name = request.getName();
         this.surname = request.getSurname();
@@ -36,22 +36,15 @@ public class PendingAccountRegistration {
         this.username = request.getUsername();
         this.email = request.getEmail();
         this.password = request.getPassword();
-        this.confirmation_code = confirmation_code;
-        this.errors_counter = 0;
+        this.confirmationCode = confirmationCode;
+        this.errorsCounter = 0;
     }
 
     public void incrementErrorsCounter(){
-        errors_counter = errors_counter + 1;
+        errorsCounter = errorsCounter + 1;
     }
 
-    public static PendingAccountRegistration jsonDecode(@NotNull String json_encoded_object) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(json_encoded_object, PendingAccountRegistration.class);
-
-    }
-
-    public static String jsonEncode(@NotNull PendingAccountRegistration plain_object) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.writeValueAsString(plain_object);
+    public boolean hasTooManyErrors(){
+        return this.errorsCounter >= 2;
     }
 }

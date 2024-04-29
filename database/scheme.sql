@@ -14,5 +14,6 @@ CREATE TABLE Account (
     profile_picture_url  VARCHAR(100),
     bio                  TEXT,
 
+    UNIQUE(email),
     id                   SERIAL PRIMARY KEY
 );

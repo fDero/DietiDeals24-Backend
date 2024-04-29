@@ -4,48 +4,66 @@ import entity.Account;
 import repository.AccountRepository;
 import request.LoginRequest;
 import service.AccountValidationService;
+import service.AuthorizationService;
 import service.EncryptionService;
+import service.JsonConversionService;
+import utils.AccountWithoutSensibleInformations;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpHeaders;
+import java.util.Optional;
+
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import java.util.Optional;
+
 
 @RestController
 public class LoginController {
 
-    private final AccountValidationService account_validation_service;
-    private final AccountRepository account_repository;
-    private final EncryptionService encryption_service;
+    private final AccountValidationService accountValidationService;
+    private final AccountRepository accountRepository;
+    private final EncryptionService encryptionService;
+    private final JsonConversionService jsonConverter;
+    private final AuthorizationService authorizationService;
 
     @Autowired
     public LoginController(
-        AccountValidationService account_validation_service,
-        AccountRepository account_repository,
-        EncryptionService encryption_service
+        AccountValidationService accountValidationService,
+        AccountRepository accountRepository,
+        EncryptionService encryptionService,
+        JsonConversionService jsonConverter,
+        AuthorizationService authorizationService
     ){
-        this.account_validation_service = account_validation_service;
-        this.account_repository = account_repository;
-        this.encryption_service = encryption_service;
+        this.jsonConverter = jsonConverter;
+        this.accountValidationService = accountValidationService;
+        this.accountRepository = accountRepository;
+        this.encryptionService = encryptionService;
+        this.authorizationService = authorizationService;
     }
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody @NotNull LoginRequest request) {
-        if (!account_validation_service.isValidPassword(request.getPassword())) {
+        if (!accountValidationService.isValidPassword(request.getPassword())) {
             return ResponseEntity.badRequest().body("access denied: ill-formed-password");
         }
-        Optional<Account> retrieved = account_repository.findAccountByEmail(request.getEmail());
+        Optional<Account> retrieved = accountRepository.findAccountByEmail(request.getEmail());
         if (retrieved.isEmpty()) {
             return ResponseEntity.badRequest().body("there is no account with such email");
         }
-        String realPasswordSalt = retrieved.get().getPasswordSalt();
-        String realPasswordHash = retrieved.get().getPasswordHash();
+        Account account = retrieved.get();
+        String realPasswordSalt = account.getPasswordSalt();
+        String realPasswordHash = account.getPasswordHash();
         String candidatePlainTextPassword = request.getPassword();
-        String candidatePasswordHash = encryption_service.encryptPassword(candidatePlainTextPassword, realPasswordSalt);
-        return (candidatePasswordHash.equals(realPasswordHash))
-            ? ResponseEntity.badRequest().body("access denied: bad credentials")
-            : ResponseEntity.ok().body("access granted, you're now authenticated");
+        String candidatePasswordHash = encryptionService.encryptPassword(candidatePlainTextPassword, realPasswordSalt);
+        if (!candidatePasswordHash.equals(realPasswordHash)){
+            return ResponseEntity.badRequest().body("access denied: bad credentials");
+        }
+        AccountWithoutSensibleInformations accountView = new AccountWithoutSensibleInformations(account);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("X-Auth-Token", authorizationService.emitAuthorizationToken(account));
+        ResponseEntity<String> response = ResponseEntity.ok().headers(headers).body(jsonConverter.encode(accountView));
+        return response;
     }
 }

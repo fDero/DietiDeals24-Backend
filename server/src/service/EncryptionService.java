@@ -1,13 +1,15 @@
 package service;
 
-import org.jetbrains.annotations.NotNull;
-import org.springframework.stereotype.Service;
-
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Random;
 
-@Service public class EncryptionService {
+import org.jetbrains.annotations.NotNull;
+import org.springframework.stereotype.Service;
+
+
+@Service 
+public class EncryptionService {
 
     public String generateRandomSalt() {
         int stringLength = 10;
@@ -34,9 +36,9 @@ import java.util.Random;
             }
             String passwordHash = hexString.toString();
             return passwordHash;
-        } catch (NoSuchAlgorithmException encryption_error) {
+        } catch (NoSuchAlgorithmException encryptionError) {
             System.out.println("error encrypting a password with SHA-256");
-            throw new RuntimeException(encryption_error);
+            throw new RuntimeException(encryptionError);
         }
     }
 }

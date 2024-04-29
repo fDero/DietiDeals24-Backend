@@ -1,10 +1,11 @@
 package request;
 
+import java.sql.Date;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.sql.Date;
 
 @Getter @AllArgsConstructor @NoArgsConstructor
 public class AccountRegistrationRequest {

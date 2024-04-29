@@ -13,7 +13,8 @@ public class AccountRegistrationRequest {
     private String surname;
     private Date   birthday;
     private String country;
-    private String password;
+    private String city;
     private String email;
-    private String phone;
+    private String username;
+    private String password;
 }

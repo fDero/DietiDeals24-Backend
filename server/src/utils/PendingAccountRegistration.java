@@ -1,4 +1,4 @@
-package temporary;
+package utils;
 
 import request.AccountRegistrationRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -12,13 +12,14 @@ import java.sql.Date;
 @Data @Getter
 public class PendingAccountRegistration {
 
-    private String  name;
-    private String  surname;
-    private Date    birthday;
-    private String  country;
-    private String  password;
-    private String  email;
-    private String  phone;
+    private String name;
+    private String surname;
+    private Date   birthday;
+    private String country;
+    private String city;
+    private String email;
+    private String username;
+    private String password;
 
     private String  confirmation_code;
     private Integer errors_counter;
@@ -30,10 +31,11 @@ public class PendingAccountRegistration {
         this.name = request.getName();
         this.surname = request.getSurname();
         this.birthday = request.getBirthday();
+        this.city = request.getCity();
         this.country = request.getCountry();
-        this.password = request.getPassword();
+        this.username = request.getUsername();
         this.email = request.getEmail();
-        this.phone = request.getPhone();
+        this.password = request.getPassword();
         this.confirmation_code = confirmation_code;
         this.errors_counter = 0;
     }

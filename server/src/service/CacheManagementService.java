@@ -1,7 +1,9 @@
 package service;
 
-import temporary.PendingAccountRegistration;
 import com.fasterxml.jackson.core.JsonProcessingException;
+
+import utils.PendingAccountRegistration;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;

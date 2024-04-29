@@ -1,4 +1,4 @@
-package provider;
+package controller;
 
 import entity.Account;
 import repository.AccountRepository;
@@ -33,13 +33,19 @@ public class LoginController {
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody @NotNull LoginRequest request) {
-        if (!account_validation_service.isValidPassword(request.getPassword())) return ResponseEntity.badRequest().body("access denied: ill-formed-password");
+        if (!account_validation_service.isValidPassword(request.getPassword())) {
+            return ResponseEntity.badRequest().body("access denied: ill-formed-password");
+        }
         Optional<Account> retrieved = account_repository.findAccountByEmail(request.getEmail());
-        if (retrieved.isEmpty()) return ResponseEntity.badRequest().body("there is no account with such email");
-        String candidate_plain_password = request.getPassword();
-        String candidate_encrypted_password = encryption_service.encryptPassword(candidate_plain_password);
-        String password = retrieved.get().getPassword();
-        if (!candidate_encrypted_password.equals(password)) return ResponseEntity.badRequest().body("access denied: bad credentials");
-        return ResponseEntity.ok().body("access granted, you're now authenticated");
+        if (retrieved.isEmpty()) {
+            return ResponseEntity.badRequest().body("there is no account with such email");
+        }
+        String realPasswordSalt = retrieved.get().getPasswordSalt();
+        String realPasswordHash = retrieved.get().getPasswordHash();
+        String candidatePlainTextPassword = request.getPassword();
+        String candidatePasswordHash = encryption_service.encryptPassword(candidatePlainTextPassword, realPasswordSalt);
+        return (candidatePasswordHash.equals(realPasswordHash))
+            ? ResponseEntity.badRequest().body("access denied: bad credentials")
+            : ResponseEntity.ok().body("access granted, you're now authenticated");
     }
 }

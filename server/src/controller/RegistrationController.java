@@ -1,4 +1,4 @@
-package provider;
+package controller;
 
 import entity.Account;
 import repository.AccountRepository;
@@ -8,7 +8,8 @@ import service.AccountValidationService;
 import service.CacheManagementService;
 import service.EmailService;
 import service.EncryptionService;
-import temporary.PendingAccountRegistration;
+import utils.PendingAccountRegistration;
+
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -65,7 +66,7 @@ public class RegistrationController {
         }
     }
 
-    @PostMapping("/register/confirmn")
+    @PostMapping("/register/confirm")
     public ResponseEntity<String> confirmRegistration(@RequestBody @NotNull RegistrationConfirmationRequest request) {
         PendingAccountRegistration pending_account = cache_management_service.retrieve(request.getEmail());
         if (pending_account == null) return ResponseEntity.badRequest().body("there is no account waiting for registration using this email right now");
@@ -73,9 +74,10 @@ public class RegistrationController {
             return this.handleBadConfirmationAttempt(pending_account, request);
         }
         else {
-            Account newly_created_account = new Account(pending_account);
-            encryption_service.encryptPassword(newly_created_account);
-            account_repository.save(newly_created_account);
+            String passwordSalt = encryption_service.generateRandomSalt();
+            String passwordHash = encryption_service.encryptPassword(pending_account.getPassword(), passwordSalt);
+            Account account = new Account(pending_account, passwordHash, passwordSalt);
+            account_repository.save(account);
             cache_management_service.delete(request.getEmail());
             return ResponseEntity.ok().body("your registration has been accepted, you're account is now activated");
         }

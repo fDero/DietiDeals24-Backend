@@ -1,3 +1,4 @@
+
 CREATE TABLE Account ( 
     name                 VARCHAR(30) NOT NULL,
 	surname              VARCHAR(40) NOT NULL,
@@ -14,5 +15,5 @@ CREATE TABLE Account (
     profile_picture_url  VARCHAR(100),
     bio                  TEXT,
 
-    id                   SERIAL PRIMARY KEY
+    account_id           SERIAL PRIMARY KEY
 );

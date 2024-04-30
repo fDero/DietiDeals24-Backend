@@ -21,6 +21,7 @@ public class AccountWithoutSensibleInformations {
         this.city = acount.getCity();
         this.email = acount.getEmail();
         this.username = acount.getUsername();
+        this.unreadNotifications = acount.getUnreadNotifications();
     }
 
     private String name;
@@ -31,5 +32,5 @@ public class AccountWithoutSensibleInformations {
     private String email; 
     private String username; 
     private String profilePictureUrl;
-    private String bio;
+    private Long   unreadNotifications;
 }

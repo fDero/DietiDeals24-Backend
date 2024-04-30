@@ -1,6 +1,9 @@
 package controller;
 
 import entity.Account;
+import exceptions.AccessDeniedBadCredentialsException;
+import exceptions.AccountValidationException;
+import exceptions.NoAccountWithSuchEmailException;
 import repository.AccountRepository;
 import request.LoginRequest;
 import service.AccountValidationService;
@@ -44,13 +47,16 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody @NotNull LoginRequest request) {
-        if (!accountValidationService.isValidPassword(request.getPassword())) {
-            return ResponseEntity.badRequest().body("access denied: ill-formed-password");
-        }
+    public ResponseEntity<AccountWithoutSensibleInformations> login(@RequestBody @NotNull LoginRequest request) 
+        throws 
+            AccountValidationException,
+            NoAccountWithSuchEmailException,
+            AccessDeniedBadCredentialsException
+    {
+        accountValidationService.validatePassword(request.getPassword());
         Optional<Account> retrieved = accountRepository.findAccountByEmail(request.getEmail());
         if (retrieved.isEmpty()) {
-            return ResponseEntity.badRequest().body("there is no account with such email");
+            throw new NoAccountWithSuchEmailException();
         }
         Account account = retrieved.get();
         String realPasswordSalt = account.getPasswordSalt();
@@ -58,12 +64,11 @@ public class LoginController {
         String candidatePlainTextPassword = request.getPassword();
         String candidatePasswordHash = encryptionService.encryptPassword(candidatePlainTextPassword, realPasswordSalt);
         if (!candidatePasswordHash.equals(realPasswordHash)){
-            return ResponseEntity.badRequest().body("access denied: bad credentials");
+            throw new AccessDeniedBadCredentialsException();
         }
         AccountWithoutSensibleInformations accountView = new AccountWithoutSensibleInformations(account);
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-Auth-Token", authorizationService.emitAuthorizationToken(account));
-        ResponseEntity<String> response = ResponseEntity.ok().headers(headers).body(jsonConverter.encode(accountView));
-        return response;
+        return ResponseEntity.ok().headers(headers).body(accountView);
     }
 }

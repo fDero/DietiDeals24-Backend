@@ -12,6 +12,9 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import exceptions.AccountAlreadyExistsException;
+import exceptions.AccountValidationException;
+
 
 @Service
 public class AccountValidationService {
@@ -28,7 +31,7 @@ public class AccountValidationService {
         this.accountRepository = accountRepository;
     }
 
-    public void validateEmail(@NotNull String email){
+    public void validateEmail(@NotNull String email, ArrayList<String> errors){
         String emailRegex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
         Pattern pattern = Pattern.compile(emailRegex);
         if (!pattern.matcher(email).matches()) {
@@ -36,48 +39,58 @@ public class AccountValidationService {
         }
     }
 
-    public void validatePassword(@NotNull String password){
-        if (password.length() < 8) throw new IllegalArgumentException("password too short (must be at least 8 characters)");
-        if (!password.matches(".*[A-Z].*")) throw new IllegalArgumentException("passwords must contain at least one uppercase letter");
-        if (!password.matches(".*[a-z].*")) throw new IllegalArgumentException("passwords must contain at least one lowercase letter");
-        if (!password.matches(".*\\W.*"))   throw new IllegalArgumentException("passwords must contain at least one special character");
-        if (password.contains(" ")) throw new IllegalArgumentException("passwords can't contain spaces");
+    public void validatePassword(@NotNull String password, ArrayList<String> errors){
+        if (password.length() < 8) errors.add("password too short (must be at least 8 characters)");
+        if (!password.matches(".*[A-Z].*")) errors.add("passwords must contain at least one uppercase letter");
+        if (!password.matches(".*[a-z].*")) errors.add("passwords must contain at least one lowercase letter");
+        if (!password.matches(".*\\W.*"))   errors.add("passwords must contain at least one special character");
+        if (password.contains(" ")) errors.add("passwords can't contain spaces");
     }
 
-    public void validateBirthday(@NotNull Date birthday){
+    public void validateBirthday(@NotNull Date birthday, ArrayList<String> errors){
         LocalDate today = LocalDate.now();
         LocalDate birthdayToLocaldate = birthday.toLocalDate();
         if (birthdayToLocaldate.plusYears(18).isAfter(today)) {
-            throw new IllegalArgumentException("you must be at least 18 years old");
+            errors.add("you must be at least 18 years old");
         }
     }
 
-    public void validateCountry(@NotNull String country){
+    public void validateCountry(@NotNull String country, ArrayList<String> errors){
         if (!avialableCountries.contains(country)) {
-            throw new IllegalArgumentException("unrecognized country! remember: only EU countries are supported");
+            errors.add("unrecognized country! remember: only EU countries are supported");
         }
     }
 
-    public void ensureEmailAvailable(@NotNull String email){
-        if (accountRepository.existsAccountByEmail(email)) {
-            throw new IllegalArgumentException("another account already exists with that email (email already in use)");
+    public void validateAccountRegistrationRequest(@NotNull AccountRegistrationRequest account) 
+        throws 
+            AccountValidationException, 
+            AccountAlreadyExistsException 
+    {
+        ArrayList<String> errors = new ArrayList<>();
+        this.validateBirthday(account.getBirthday(), errors);
+        this.validateEmail(account.getEmail(), errors);
+        this.validatePassword(account.getPassword(), errors);
+        this.validateCountry(account.getCountry(), errors);
+        if (!errors.isEmpty()) {
+            throw new AccountValidationException(String.join(", ", errors));
+        }
+        if (accountRepository.existsAccountByEmail(account.getEmail())) {
+            throw new AccountAlreadyExistsException("an account already exists with this email address");
         }
     }
 
-    public void validateAccountRegistrationRequest(@NotNull AccountRegistrationRequest account) {
-        this.validateBirthday(account.getBirthday());
-        this.validateEmail(account.getEmail());
-        this.validatePassword(account.getPassword());
-        this.ensureEmailAvailable(account.getEmail());
-        this.validateCountry(account.getCountry());
-    }
-
-    public boolean isValidPassword(String password) {
-        try {
-            this.validatePassword(password);
-            return true;
-        } catch (IllegalArgumentException invalidPasswordexception){
-            return false;
+    public void validatePassword(@NotNull String password)
+        throws 
+            AccountValidationException
+    {
+        ArrayList<String> errors = new ArrayList<>();
+        if (password.length() < 8) errors.add("password too short (must be at least 8 characters)");
+        if (!password.matches(".*[A-Z].*")) errors.add("passwords must contain at least one uppercase letter");
+        if (!password.matches(".*[a-z].*")) errors.add("passwords must contain at least one lowercase letter");
+        if (!password.matches(".*\\W.*"))   errors.add("passwords must contain at least one special character");
+        if (password.contains(" ")) errors.add("passwords can't contain spaces");
+        if (!errors.isEmpty()) {
+            throw new AccountValidationException(String.join(", ", errors));
         }
     }
 }

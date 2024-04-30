@@ -25,6 +25,7 @@ public class Account {
         this.passwordHash = passwordHash;
         this.passwordSalt = passwordSalt;
         this.passwordLastChange = new Date(System.currentTimeMillis());
+        this.unreadNotifications = 0L;
     }
 
     @Column(name = "name")
@@ -62,6 +63,9 @@ public class Account {
 
     @Column(name = "bio")
     private String bio;
+
+    @Column(name = "unread_notifications")
+    private Long unreadNotifications;
 
     @Id @Column(name = "account_id") 
     @GeneratedValue(strategy = GenerationType.IDENTITY)

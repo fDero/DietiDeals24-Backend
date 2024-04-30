@@ -30,7 +30,8 @@ services:
       POSTGRES_PASSWORD: "dietideals24passw"
       POSTGRES_DB: "dietideals24"
     volumes:
-      -  ./database/scheme.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./postgres_volume:/var/lib/postgresql/data
+      - ./database:/docker-entrypoint-initdb.d:ro
     command: ["postgres", "-p", "5433"]
 
   cache:

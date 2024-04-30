@@ -63,6 +63,7 @@ public class Account {
     @Column(name = "bio")
     private String bio;
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @Column(name = "account_id") 
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 }

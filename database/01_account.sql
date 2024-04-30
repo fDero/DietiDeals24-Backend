@@ -10,10 +10,11 @@ CREATE TABLE Account (
 	
     password_hash        VARCHAR(64) NOT NULL,
     password_salt        VARCHAR(10) NOT NULL,
-    password_last_change TIMESTAMP NOT NULL,
+    password_last_change TIMESTAMP   NOT NULL,
 
     profile_picture_url  VARCHAR(100),
     bio                  TEXT,
 
+    UNIQUE(email),
     account_id           SERIAL PRIMARY KEY
 );

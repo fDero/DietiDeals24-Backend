@@ -7,7 +7,7 @@ CREATE TABLE PersonalLink (
     PRIMARY KEY (account_id, link),
     
     FOREIGN KEY (account_id) 
-    REFERENCES Account(id)
+    REFERENCES Account(account_id)
 );
 
 CREATE TABLE ContactInformation (
@@ -18,5 +18,5 @@ CREATE TABLE ContactInformation (
     PRIMARY KEY (account_id, email, phone),
     
     FOREIGN KEY (account_id) 
-    REFERENCES Account(id)
+    REFERENCES Account(account_id)
 );

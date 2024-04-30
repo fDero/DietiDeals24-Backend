@@ -10,7 +10,7 @@ import service.AccountValidationService;
 import service.AuthorizationService;
 import service.EncryptionService;
 import service.JsonConversionService;
-import utils.AccountWithoutSensibleInformations;
+import utils.MinimalAccountInformations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpHeaders;
 import java.util.Optional;
@@ -28,7 +28,6 @@ public class LoginController {
     private final AccountValidationService accountValidationService;
     private final AccountRepository accountRepository;
     private final EncryptionService encryptionService;
-    private final JsonConversionService jsonConverter;
     private final AuthorizationService authorizationService;
 
     @Autowired
@@ -39,7 +38,6 @@ public class LoginController {
         JsonConversionService jsonConverter,
         AuthorizationService authorizationService
     ){
-        this.jsonConverter = jsonConverter;
         this.accountValidationService = accountValidationService;
         this.accountRepository = accountRepository;
         this.encryptionService = encryptionService;
@@ -47,7 +45,7 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AccountWithoutSensibleInformations> login(@RequestBody @NotNull LoginRequest request) 
+    public ResponseEntity<MinimalAccountInformations> login(@RequestBody @NotNull LoginRequest request) 
         throws 
             AccountValidationException,
             NoAccountWithSuchEmailException,
@@ -66,7 +64,7 @@ public class LoginController {
         if (!candidatePasswordHash.equals(realPasswordHash)){
             throw new AccessDeniedBadCredentialsException();
         }
-        AccountWithoutSensibleInformations accountView = new AccountWithoutSensibleInformations(account);
+        MinimalAccountInformations accountView = new MinimalAccountInformations(account);
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-Auth-Token", authorizationService.emitAuthorizationToken(account));
         return ResponseEntity.ok().headers(headers).body(accountView);

@@ -10,7 +10,7 @@ import service.PendingAccountRegistrationCacheService;
 import service.EmailService;
 import service.EncryptionService;
 import service.JsonConversionService;
-import utils.AccountWithoutSensibleInformations;
+import utils.MinimalAccountInformations;
 import utils.PendingAccountRegistration;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpHeaders;
@@ -80,7 +80,7 @@ public class RegistrationController {
     }
 
     @PostMapping("/register/confirm")
-    public ResponseEntity<AccountWithoutSensibleInformations> confirmRegistration(@RequestBody @NotNull RegistrationConfirmationRequest request) 
+    public ResponseEntity<MinimalAccountInformations> confirmRegistration(@RequestBody @NotNull RegistrationConfirmationRequest request) 
         throws 
             NoPendingAccountConfirmationException, 
             WrongConfirmationCodeException, 
@@ -93,7 +93,7 @@ public class RegistrationController {
         Account account = new Account(pendingAccount, passwordHash, passwordSalt);
         accountRepository.save(account);
         pendingAccountsCacheService.delete(request.getEmail());
-        AccountWithoutSensibleInformations accountView = new AccountWithoutSensibleInformations(account);
+        MinimalAccountInformations accountView = new MinimalAccountInformations(account);
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-Auth-Token", authorizationService.emitAuthorizationToken(account));
         return ResponseEntity.ok().headers(headers).body(accountView);    

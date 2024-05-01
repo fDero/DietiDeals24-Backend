@@ -13,6 +13,8 @@ import service.JsonConversionService;
 import utils.MinimalAccountInformations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpHeaders;
+
+import java.sql.Timestamp;
 import java.util.Optional;
 
 import org.jetbrains.annotations.NotNull;
@@ -64,6 +66,8 @@ public class LoginController {
         if (!candidatePasswordHash.equals(realPasswordHash)){
             throw new AccessDeniedBadCredentialsException();
         }
+        account.setLastLogin(new Timestamp(System.currentTimeMillis()));
+        accountRepository.save(account);
         MinimalAccountInformations accountView = new MinimalAccountInformations(account);
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-Auth-Token", authorizationService.emitAuthorizationToken(account));

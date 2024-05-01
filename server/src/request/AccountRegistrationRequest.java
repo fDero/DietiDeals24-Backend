@@ -12,7 +12,7 @@ public class AccountRegistrationRequest {
 
     private String name;
     private String surname;
-    private Date   birthday;
+    private String birthday;
     private String country;
     private String city;
     private String email;

@@ -2,6 +2,7 @@ package entity;
 
 import utils.PendingAccountRegistration;
 import java.sql.Date;
+import java.sql.Timestamp;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -12,6 +13,7 @@ import lombok.Setter;
 
 @Entity @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
+@Table(name = "Account")
 public class Account {
 
     public Account(PendingAccountRegistration pendingAccount, String passwordHash, String passwordSalt) {
@@ -24,8 +26,10 @@ public class Account {
         this.username = pendingAccount.getUsername();
         this.passwordHash = passwordHash;
         this.passwordSalt = passwordSalt;
-        this.passwordLastChange = new Date(System.currentTimeMillis());
         this.unreadNotifications = 0L;
+        this.accountCreation = new Timestamp(System.currentTimeMillis());
+        this.lastLogin = new Timestamp(System.currentTimeMillis());
+        this.passwordLastChange = new Timestamp(System.currentTimeMillis());
     }
 
     @Column(name = "name")
@@ -56,7 +60,13 @@ public class Account {
     private String passwordSalt;
 
     @Column(name = "password_last_change")
-    private Date passwordLastChange;
+    private Timestamp passwordLastChange;
+
+    @Column(name = "account_creation")
+    private Timestamp accountCreation;
+
+    @Column(name = "last_login")
+    private Timestamp lastLogin;
 
     @Column(name = "profile_picture_url")
     private String profilePictureUrl;

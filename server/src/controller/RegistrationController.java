@@ -9,7 +9,6 @@ import service.AuthorizationService;
 import service.PendingAccountRegistrationCacheService;
 import service.EmailService;
 import service.EncryptionService;
-import service.JsonConversionService;
 import utils.MinimalAccountInformations;
 import utils.PendingAccountRegistration;
 import org.springframework.http.ResponseEntity;

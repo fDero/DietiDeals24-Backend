@@ -4,6 +4,7 @@ import repository.AccountRepository;
 import request.AccountRegistrationRequest;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.regex.Pattern;
@@ -32,6 +33,10 @@ public class AccountValidationService {
     }
 
     public void validateEmail(@NotNull String email, ArrayList<String> errors){
+        if (email == null){
+            errors.add("email field is missing");
+            return;
+        }
         String emailRegex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
         Pattern pattern = Pattern.compile(emailRegex);
         if (!pattern.matcher(email).matches()) {
@@ -40,6 +45,10 @@ public class AccountValidationService {
     }
 
     public void validatePassword(@NotNull String password, ArrayList<String> errors){
+        if (password == null){
+            errors.add("missing password field (it must contains at least 8 characters, one special char, one lowercase and one uppercase letter)");
+            return;
+        }
         if (password.length() < 8) errors.add("password too short (must be at least 8 characters)");
         if (!password.matches(".*[A-Z].*")) errors.add("passwords must contain at least one uppercase letter");
         if (!password.matches(".*[a-z].*")) errors.add("passwords must contain at least one lowercase letter");
@@ -47,15 +56,30 @@ public class AccountValidationService {
         if (password.contains(" ")) errors.add("passwords can't contain spaces");
     }
 
-    public void validateBirthday(@NotNull Date birthday, ArrayList<String> errors){
+    public void validateBirthday(@NotNull String birthday, ArrayList<String> errors){
         LocalDate today = LocalDate.now();
-        LocalDate birthdayToLocaldate = birthday.toLocalDate();
+        LocalDate birthdayToLocaldate = null;
+        if (birthday == null){
+            errors.add("missing birthday field (it must follow the ISO 8601 standard: yyyy-mm-dd)");
+            return;
+        }
+        try {
+            birthdayToLocaldate = LocalDate.parse(birthday);
+        }
+        catch(DateTimeParseException | NullPointerException error){
+            errors.add("birthday not correctly formatted (it must follow the ISO 8601 standard: yyyy-mm-dd)");
+            return;
+        }
         if (birthdayToLocaldate.plusYears(18).isAfter(today)) {
             errors.add("you must be at least 18 years old");
         }
     }
 
     public void validateCountry(@NotNull String country, ArrayList<String> errors){
+        if (country == null){
+            errors.add("missing country field (only EU countries are supported)");
+            return;
+        }
         if (!avialableCountries.contains(country)) {
             errors.add("unrecognized country! remember: only EU countries are supported");
         }
@@ -83,6 +107,12 @@ public class AccountValidationService {
         throws 
             AccountValidationException
     {
+        if (password == null){
+            throw new AccountValidationException(String.join(
+                "missing password field (it must contains at least 8 characters, one special char, one lowercase and one uppercase letter)"
+            ));
+        }
+        
         ArrayList<String> errors = new ArrayList<>();
         if (password.length() < 8) errors.add("password too short (must be at least 8 characters)");
         if (!password.matches(".*[A-Z].*")) errors.add("passwords must contain at least one uppercase letter");

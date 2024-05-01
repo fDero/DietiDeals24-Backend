@@ -1,4 +1,4 @@
-package utils;
+package response;
 
 import entity.Account;
 
@@ -17,11 +17,11 @@ public class MinimalAccountInformations {
         this.profilePictureUrl = acount.getProfilePictureUrl();
         this.email = acount.getEmail();
         this.username = acount.getUsername();
-        this.unreadNotifications = acount.getUnreadNotifications();
+        this.unreadNotificationsCounter = acount.getUnreadNotificationsCounter();
     }
 
     private String email; 
     private String username; 
     private String profilePictureUrl;
-    private Long   unreadNotifications;
+    private Long   unreadNotificationsCounter;
 }

@@ -3,7 +3,8 @@ package utils;
 import request.AccountRegistrationRequest;
 import lombok.*;
 import java.sql.Date;
-import java.time.LocalDate;
+import java.sql.Timestamp;
+import java.time.Instant;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -15,7 +16,7 @@ public class PendingAccountRegistration {
 
     private String name;
     private String surname;
-    private Date   birthday;
+    private Timestamp birthday;
     private String country;
     private String city;
     private String email;
@@ -31,7 +32,7 @@ public class PendingAccountRegistration {
     ) {
         this.name = request.getName();
         this.surname = request.getSurname();
-        this.birthday = Date.valueOf(request.getBirthday());
+        this.birthday = Timestamp.from(Instant.parse(request.getBirthday()));
         this.city = request.getCity();
         this.country = request.getCountry();
         this.username = request.getUsername();

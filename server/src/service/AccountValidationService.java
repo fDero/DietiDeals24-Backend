@@ -2,7 +2,9 @@ package service;
 
 import repository.AccountRepository;
 import request.AccountRegistrationRequest;
-import java.sql.Date;
+
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -56,21 +58,22 @@ public class AccountValidationService {
         if (password.contains(" ")) errors.add("passwords can't contain spaces");
     }
 
-    public void validateBirthday(@NotNull String birthday, ArrayList<String> errors){
-        LocalDate today = LocalDate.now();
-        LocalDate birthdayToLocaldate = null;
-        if (birthday == null){
+    public void validateBirthday(@NotNull String birthdayString, ArrayList<String> errors){
+        Timestamp eighteenYearsAgo = Timestamp.valueOf(LocalDate.now().atStartOfDay().minusYears(18));
+        Timestamp birthday = null;
+        if (birthdayString == null){
             errors.add("missing birthday field (it must follow the ISO 8601 standard: yyyy-mm-dd)");
             return;
         }
         try {
-            birthdayToLocaldate = LocalDate.parse(birthday);
+            Instant instant = Instant.parse(birthdayString);
+            birthday = Timestamp.from(instant);
         }
         catch(DateTimeParseException | NullPointerException error){
             errors.add("birthday not correctly formatted (it must follow the ISO 8601 standard: yyyy-mm-dd)");
             return;
         }
-        if (birthdayToLocaldate.plusYears(18).isAfter(today)) {
+        if (birthday.after(eighteenYearsAgo)) {
             errors.add("you must be at least 18 years old");
         }
     }
@@ -108,9 +111,9 @@ public class AccountValidationService {
             AccountValidationException
     {
         if (password == null){
-            throw new AccountValidationException(String.join(
+            throw new AccountValidationException(
                 "missing password field (it must contains at least 8 characters, one special char, one lowercase and one uppercase letter)"
-            ));
+            );
         }
         
         ArrayList<String> errors = new ArrayList<>();

@@ -20,7 +20,6 @@ public class Notification {
     @Column(name = "notification_type")
     String notificationType;
 
-
     @Column(name = "account_id")
     Integer accountId;
 

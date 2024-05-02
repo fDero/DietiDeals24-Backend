@@ -8,20 +8,19 @@ import repository.AccountRepository;
 import request.LoginRequest;
 import response.MinimalAccountInformations;
 import service.AccountValidationService;
-import service.AuthorizationService;
 import service.EncryptionService;
-import service.JsonConversionService;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpHeaders;
-
 import java.sql.Timestamp;
+
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import authentication.JwtTokenProvider;
 
 
 @RestController
@@ -30,20 +29,19 @@ public class LoginController {
     private final AccountValidationService accountValidationService;
     private final AccountRepository accountRepository;
     private final EncryptionService encryptionService;
-    private final AuthorizationService authorizationService;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Autowired
     public LoginController(
         AccountValidationService accountValidationService,
         AccountRepository accountRepository,
         EncryptionService encryptionService,
-        JsonConversionService jsonConverter,
-        AuthorizationService authorizationService
+        JwtTokenProvider jwtTokenProvider
     ){
         this.accountValidationService = accountValidationService;
         this.accountRepository = accountRepository;
         this.encryptionService = encryptionService;
-        this.authorizationService = authorizationService;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @PostMapping("/login")
@@ -67,7 +65,7 @@ public class LoginController {
         accountRepository.save(account);
         MinimalAccountInformations accountView = new MinimalAccountInformations(account);
         HttpHeaders headers = new HttpHeaders();
-        headers.set("X-Auth-Token", authorizationService.emitAuthorizationToken(account));
+        headers.set("X-Auth-Token", jwtTokenProvider.generateToken(account.getEmail()));
         return ResponseEntity.ok().headers(headers).body(accountView);
     }
 }

@@ -4,16 +4,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import controller.DebugController.ExceptionExample;
 import exceptions.*;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
-
-    @ExceptionHandler(ExceptionExample.class)
-    public ResponseEntity<String> handleExceptionExample(ExceptionExample ex) {
-        return new ResponseEntity<String>(ex.getMessage(), null, 555);
-    }
 
     @ExceptionHandler(AccountValidationException.class)
     public ResponseEntity<String> handleAccountValidationException(AccountValidationException ex){

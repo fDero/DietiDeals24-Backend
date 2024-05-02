@@ -6,7 +6,6 @@ import request.AccountRegistrationRequest;
 import request.RegistrationConfirmationRequest;
 import response.MinimalAccountInformations;
 import service.AccountValidationService;
-import service.AuthorizationService;
 import service.PendingAccountRegistrationCacheService;
 import service.EmailService;
 import service.EncryptionService;
@@ -21,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import authentication.JwtTokenProvider;
 import exceptions.AccountAlreadyExistsException;
 import exceptions.AccountValidationException;
 import exceptions.NoPendingAccountConfirmationException;
@@ -36,7 +36,7 @@ public class RegistrationController {
     private final EmailService emailService;
     private final PendingAccountRegistrationCacheService pendingAccountsCacheService;
     private final EncryptionService encryptionService;
-    private final AuthorizationService authorizationService;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Autowired
     public RegistrationController(
@@ -45,14 +45,14 @@ public class RegistrationController {
             AccountRepository accountRepository,
             PendingAccountRegistrationCacheService pendingAccountsCacheService,
             EncryptionService encryptionService,
-            AuthorizationService authorizationService
+            JwtTokenProvider jwtTokenProvider
     ) {
         this.emailService = emailService;
         this.accountValidationService = accountValidationService;
         this.accountRepository = accountRepository;
         this.pendingAccountsCacheService = pendingAccountsCacheService;
         this.encryptionService = encryptionService;
-        this.authorizationService = authorizationService;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @NotNull
@@ -94,7 +94,7 @@ public class RegistrationController {
         pendingAccountsCacheService.delete(request.getEmail());
         MinimalAccountInformations accountView = new MinimalAccountInformations(account);
         HttpHeaders headers = new HttpHeaders();
-        headers.set("X-Auth-Token", authorizationService.emitAuthorizationToken(account));
+        headers.set("X-Auth-Token", jwtTokenProvider.generateToken(account.getEmail()));
         return ResponseEntity.ok().headers(headers).body(accountView);    
     }
 

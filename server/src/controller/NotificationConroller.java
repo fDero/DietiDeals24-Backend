@@ -3,6 +3,8 @@ package controller;
 import entity.Notification;
 import repository.NotificationRepository;
 import response.AccountProfileInformations;
+import response.NotificationsPack;
+
 import org.springframework.http.ResponseEntity;
 import java.util.List;
 
@@ -25,9 +27,8 @@ public class NotificationConroller {
     }
 
     @GetMapping("/notifications")
-    public ResponseEntity<AccountProfileInformations> sendProfileInformations(@RequestParam String email) 
-    {
-        List<Notification> notification = notificationRepository.findByEmail(email);
-        return null;
+    public ResponseEntity<NotificationsPack> sendProfileInformations(@RequestParam String email) {
+        List<Notification> notifications = notificationRepository.findByEmail(email);
+        return ResponseEntity.ok().body(new NotificationsPack(notifications));
     }
 }

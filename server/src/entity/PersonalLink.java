@@ -18,9 +18,9 @@ public class PersonalLink {
     String description;
 
     @Column(name = "account_id")
-    Long account_id;
+    Integer accountId;
 
     @Id @Column(name = "link_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 }

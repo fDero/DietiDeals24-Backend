@@ -25,9 +25,9 @@ public class Account {
         this.username = pendingAccount.getUsername();
         this.passwordHash = passwordHash;
         this.passwordSalt = passwordSalt;
-        this.unreadNotificationsCounter = 0L;
-        this.onlineAuctionsCounter = 0L;
-        this.pastDealsCounter = 0L;
+        this.unreadNotificationsCounter = 0;
+        this.onlineAuctionsCounter = 0;
+        this.pastDealsCounter = 0;
         this.accountCreation = new Timestamp(System.currentTimeMillis());
         this.lastLogin = new Timestamp(System.currentTimeMillis());
         this.passwordLastChange = new Timestamp(System.currentTimeMillis());
@@ -76,16 +76,16 @@ public class Account {
     private String bio;
 
     @Column(name = "unread_notifications_counter")
-    private Long unreadNotificationsCounter;
+    private Integer unreadNotificationsCounter;
 
     @Column(name = "online_auctions_counter")
-    private Long onlineAuctionsCounter;
+    private Integer onlineAuctionsCounter;
 
     @Column(name = "past_deals_counter")
-    private Long pastDealsCounter;
+    private Integer pastDealsCounter;
 
 
     @Id @Column(name = "account_id") 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 }

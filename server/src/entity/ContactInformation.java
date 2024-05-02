@@ -11,16 +11,16 @@ import lombok.Setter;
 @Table(name = "ContactInformation")
 public class ContactInformation {
     
-    @Column(name = "link")
+    @Column(name = "email")
     String email;
     
-    @Column(name = "description")
+    @Column(name = "phone")
     String phone;
 
     @Column(name = "account_id")
-    Long account_id;
+    Integer accountId;
 
     @Id @Column(name = "contact_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 }

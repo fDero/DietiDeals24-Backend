@@ -55,11 +55,8 @@ public class LoginController {
             AccessDeniedBadCredentialsException
     {
         accountValidationService.validatePassword(request.getPassword());
-        Optional<Account> retrieved = accountRepository.findAccountByEmail(request.getEmail());
-        if (retrieved.isEmpty()) {
-            throw new NoAccountWithSuchEmailException();
-        }
-        Account account = retrieved.get();
+        Account account = accountRepository.findAccountByEmail(request.getEmail())
+            .orElseThrow(() -> new NoAccountWithSuchEmailException());
         String realPasswordSalt = account.getPasswordSalt();
         String realPasswordHash = account.getPasswordHash();
         String candidatePlainTextPassword = request.getPassword();

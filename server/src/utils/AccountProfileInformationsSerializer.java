@@ -18,12 +18,15 @@ public class AccountProfileInformationsSerializer extends JsonSerializer<Account
     ) 
         throws IOException 
     {
+        String birthayString = value.getAccount().getBirthday()
+            .toLocalDateTime().toLocalDate().toString();
+
         gen.writeStartObject();
         serializeLinks(value, gen, serializers);
         serializeContactInformations(value, gen, serializers);
         gen.writeStringField("name", value.getAccount().getName());
         gen.writeStringField("surname", value.getAccount().getSurname());
-        gen.writeStringField("birthday", value.getAccount().getBirthday().toString());
+        gen.writeStringField("birthday", birthayString);
         gen.writeStringField("country", value.getAccount().getCountry());
         gen.writeStringField("city", value.getAccount().getCity());
         gen.writeStringField("email", value.getAccount().getEmail());

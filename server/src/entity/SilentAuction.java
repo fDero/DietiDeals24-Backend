@@ -58,5 +58,5 @@ public class SilentAuction {
 
     @Id @Column(name = "reverse_auction_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 }

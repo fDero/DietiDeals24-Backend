@@ -55,5 +55,5 @@ public class ReverseAuction {
 
     @Column(name = "reverse_auction_id", nullable = false)
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 }

@@ -2,6 +2,7 @@ package service;
 
 import repository.AccountRepository;
 import request.AccountRegistrationRequest;
+import utils.TimeConversions;
 
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -66,8 +67,7 @@ public class AccountValidationService {
             return;
         }
         try {
-            Instant instant = Instant.parse(birthdayString);
-            birthday = Timestamp.from(instant);
+            birthday = TimeConversions.TimestampfromDateString(birthdayString);
         }
         catch(DateTimeParseException | NullPointerException error){
             errors.add("birthday not correctly formatted (it must follow the ISO 8601 standard: yyyy-mm-dd)");

@@ -2,7 +2,6 @@ package controller;
 
 import entity.Notification;
 import repository.NotificationRepository;
-import response.AccountProfileInformations;
 import response.NotificationsPack;
 
 import org.springframework.http.ResponseEntity;

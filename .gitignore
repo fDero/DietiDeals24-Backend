@@ -3,11 +3,3 @@ server/target
 postgres_volume
 demo
 .vscode
-database/04_notifications.sql
-database/04_notifications.sql.discarded
-src/repository/NotificationRepository.java
-src/entity/Notification.java
-src/response/NotificationsPack.java
-src/repository/NotificationRepository.java
-src/entity/Notification.java
-src/utils/NotificationsPackSerializer.java

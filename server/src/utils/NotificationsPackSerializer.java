@@ -4,10 +4,7 @@ import java.io.IOException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import entity.ContactInformation;
 import entity.Notification;
-import entity.PersonalLink;
-import response.AccountProfileInformations;
 import response.NotificationsPack;
 
 public class NotificationsPackSerializer extends JsonSerializer<NotificationsPack> {

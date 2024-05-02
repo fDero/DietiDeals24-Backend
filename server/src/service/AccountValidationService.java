@@ -3,21 +3,18 @@ package service;
 import repository.AccountRepository;
 import request.AccountRegistrationRequest;
 import utils.TimeConversions;
-
 import java.sql.Timestamp;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.regex.Pattern;
+import exceptions.AccountAlreadyExistsException;
+import exceptions.AccountValidationException;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import exceptions.AccountAlreadyExistsException;
-import exceptions.AccountValidationException;
 
 
 @Service

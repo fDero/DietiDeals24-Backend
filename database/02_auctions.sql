@@ -12,9 +12,8 @@ CREATE TABLE Auction (
     item_name           TEXT NOT NULL,
     description         TEXT NOT NULL,
     pictures_urls       TEXT[],
-    creation_time       TIMESTAMP NOT NULL,
     auction_type        TEXT NOT NULL,
-    auction_id          INT PRIMARY KEY,
+    auction_id          SERIAL PRIMARY KEY,
     
     FOREIGN KEY (creator_id)
     REFERENCES Account(account_id)    
@@ -25,7 +24,7 @@ CREATE VIEW ReverseAuction AS (
     SELECT 
         price AS max_price, creator_id, country, city, item_condition 
         item_category, macro_category, start_time, end_time, item_name,
-        description, pictures_urls, creation_time, auction_id
+        description, pictures_urls, auction_id
     FROM 
         Auction WHERE auction_type = 'reverse'
 );
@@ -35,7 +34,7 @@ CREATE VIEW SilentAuction AS (
     SELECT 
         price AS minimum_bid, creator_id, country, city, item_condition 
         item_category, macro_category, start_time, end_time, item_name,
-        description, pictures_urls, creation_time, auction_id
+        description, pictures_urls, auction_id
     FROM 
         Auction WHERE auction_type = 'silent'
 );

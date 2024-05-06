@@ -27,15 +27,15 @@ public class AuctionsPackSerializer extends JsonSerializer<AuctionsPack> {
             gen.writeStringField("country", auction.getCountry());
             gen.writeStringField("city", auction.getCity());
             gen.writeStringField("conditions", auction.getItemCondition());
-            gen.writeStringField("type", auction.getMacroCategory());
-            if (auction.getMacroCategory().equals("REVERSE")) {
+            gen.writeStringField("type", auction.getAuctionType());
+            if (auction.getAuctionType().equals("REVERSE")) {
                 gen.writeObjectField("minimumBid", 
                     new Object() {
                         Number amount = auction.getPrice();
                         String currency = "EUR";
                     }
                 );
-            } else if (auction.getMacroCategory().equals("SILENT")) {
+            } else if (auction.getAuctionType().equals("SILENT")) {
                 gen.writeObjectField("minimumBid", 
                     new Object() {
                         Number amount = auction.getPrice();

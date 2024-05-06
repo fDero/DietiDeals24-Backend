@@ -53,9 +53,6 @@ public class SilentAuction {
     @Column(name = "pictures_urls")
     private String[] picturesUrls;
 
-    @Column(name = "creation_time")
-    private Timestamp creationTime;
-
     @Id @Column(name = "auction_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

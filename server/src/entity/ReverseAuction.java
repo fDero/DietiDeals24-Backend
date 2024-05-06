@@ -50,9 +50,6 @@ public class ReverseAuction {
     @Column(name = "pictures_urls")
     private String[] picturesUrls;
 
-    @Column(name = "creation_time")
-    private Timestamp creationTime;
-
     @Column(name = "auction_id")
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

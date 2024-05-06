@@ -50,8 +50,8 @@ public class Auction {
     @Column(name = "pictures_urls")
     private String[] picturesUrls;
 
-    @Column(name = "creation_time")
-    private Timestamp creationTime;
+    @Column(name = "auction_type")
+    private String auctionType;
 
     @Column(name = "aution_id")
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

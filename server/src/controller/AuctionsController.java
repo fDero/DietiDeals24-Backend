@@ -35,7 +35,7 @@ public class AuctionsController {
         this.reverseAuctionsRepository = reverseAuctionsRepository;
     }
 
-    @GetMapping("/auctions/homepage")
+    @GetMapping("/auctions")
     public ResponseEntity<AuctionsPack> sendProfileInformations(@RequestParam Integer page, @RequestParam Integer pageSize)  {
         Timestamp now = new Timestamp(System.currentTimeMillis());
         List<Auction> auctions = auctionsRepository.findAllByEndTimeAfterOrderByEndTimeAsc(now, PageRequest.of(page, pageSize));

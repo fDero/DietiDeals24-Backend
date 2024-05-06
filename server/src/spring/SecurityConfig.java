@@ -26,7 +26,8 @@ public class SecurityConfig {
             authorize -> authorize.requestMatchers(req -> 
                     req.getServletPath().equals("/login") || 
                     req.getServletPath().equals("/register/init") || 
-                    req.getServletPath().equals("/register/confirm")
+                    req.getServletPath().equals("/register/confirm") ||
+                    req.getServletPath().equals("/auctions")
                 )
                 .permitAll()
                 .anyRequest()

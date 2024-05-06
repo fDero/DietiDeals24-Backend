@@ -1,8 +1,7 @@
 
 CREATE TABLE NotificationData (
     
-    silent_auction_id   INT,
-    reverse_auction_id  INT,
+    auction_id          INT,
     notification_type   VARCHAR(20) NOT NULL,
     account_id          INT NOT NULL,
     notification_id     SERIAL PRIMARY KEY,
@@ -11,11 +10,8 @@ CREATE TABLE NotificationData (
     FOREIGN KEY (account_id) 
     REFERENCES Account(account_id),
 
-    FOREIGN KEY (silent_auction_id)
-    REFERENCES SilentAuction(silent_auction_id),
-
-    FOREIGN KEY (reverse_auction_id)
-    REFERENCES ReverseAuction(reverse_auction_id)
+    FOREIGN KEY (auction_id)
+    REFERENCES Auction(auction_id)
 );
 
 CREATE VIEW Notification AS (

@@ -14,46 +14,46 @@ import lombok.Setter;
 @Table(name = "ReverseAuction")
 public class ReverseAuction {
 
-    @Column(name = "max_price", nullable = false)
+    @Column(name = "max_price")
     private BigDecimal maxPrice;
 
-    @Column(name = "creator_id", nullable = false)
+    @Column(name = "creator_id")
     private Integer creatorId;
 
-    @Column(name = "country", nullable = false, length = 5)
+    @Column(name = "country")
     private String country;
 
-    @Column(name = "city", nullable = false, length = 50)
+    @Column(name = "city")
     private String city;
 
-    @Column(name = "item_condition", columnDefinition = "TEXT")
+    @Column(name = "item_condition")
     private String itemCondition;
 
-    @Column(name = "item_category", columnDefinition = "TEXT")
+    @Column(name = "item_category")
     private String itemCategory;
 
-    @Column(name = "macro_category", columnDefinition = "TEXT")
+    @Column(name = "macro_category")
     private String macroCategory;
 
-    @Column(name = "start_time", nullable = false)
-    private Timestamp startDate;
+    @Column(name = "start_time")
+    private Timestamp startTime;
 
-    @Column(name = "end_time", nullable = false)
-    private Timestamp endDate;
+    @Column(name = "end_time")
+    private Timestamp endTime;
 
-    @Column(name = "item_name", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "item_name")
     private String itemName;
 
-    @Column(name = "description", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "description")
     private String description;
 
-    @Column(name = "pictures_urls", columnDefinition = "TEXT[]")
+    @Column(name = "pictures_urls")
     private String[] picturesUrls;
 
     @Column(name = "creation_time")
     private Timestamp creationTime;
 
-    @Column(name = "reverse_auction_id", nullable = false)
+    @Column(name = "auction_id")
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 }

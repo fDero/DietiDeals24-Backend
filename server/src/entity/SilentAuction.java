@@ -27,10 +27,10 @@ public class SilentAuction {
     private String city;
 
     @Column(name = "start_time")
-    private Timestamp startDate;
+    private Timestamp startTime;
 
     @Column(name = "end_time")
-    private Timestamp endDate;
+    private Timestamp endTime;
 
     @Column(name = "item_name")
     private String itemName;
@@ -56,7 +56,7 @@ public class SilentAuction {
     @Column(name = "creation_time")
     private Timestamp creationTime;
 
-    @Id @Column(name = "reverse_auction_id")
+    @Id @Column(name = "auction_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 }

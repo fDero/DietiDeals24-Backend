@@ -17,31 +17,37 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import authentication.JwtTokenProvider;
+
 @RestController
 public class ProfileController {
     
     private final AccountRepository accountRepository;
     private final ContactInformationRepository contactInformationRepository;
     private final PersonalLinkRepository personalLinkRepository;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Autowired
     public ProfileController(
         AccountRepository accountRepository,
         ContactInformationRepository contactInformationRepository,
-        PersonalLinkRepository personalLinkRepository
+        PersonalLinkRepository personalLinkRepository,
+        JwtTokenProvider jwtTokenProvider
     ) {
         this.accountRepository = accountRepository;
         this.contactInformationRepository = contactInformationRepository;
         this.personalLinkRepository = personalLinkRepository;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<AccountProfileInformations> sendProfileInformations(@RequestParam String email) 
+    public ResponseEntity<AccountProfileInformations> sendProfileInformations(@RequestParam(name = "Authentication") String authorizationHeader) 
         throws 
             NoAccountWithSuchEmailException 
     {
-        Account account = accountRepository.findAccountByEmail(email)
-                .orElseThrow(() -> new NoAccountWithSuchEmailException());
+        String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
+        String email = jwtTokenProvider.getEmailFromJWT(jwtToken);
+        Account account = accountRepository.findAccountByEmail(email).orElseThrow(() -> new NoAccountWithSuchEmailException());
         List<PersonalLink> personalLinks = personalLinkRepository.findByAccountId(account.getId());
         List<ContactInformation> contactInformations = contactInformationRepository.findByAccountId(account.getId());
         AccountProfileInformations accountProfileInformations = new AccountProfileInformations(account, personalLinks, contactInformations);

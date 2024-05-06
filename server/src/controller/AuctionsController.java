@@ -36,9 +36,9 @@ public class AuctionsController {
     }
 
     @GetMapping("/auctions")
-    public ResponseEntity<AuctionsPack> sendAuctions(@RequestParam Integer page, @RequestParam Integer pageSize)  {
+    public ResponseEntity<AuctionsPack> sendAuctions(@RequestParam Integer page)  {
         Timestamp now = new Timestamp(System.currentTimeMillis());
-        List<Auction> auctions = auctionsRepository.findAllByEndTimeAfterOrderByEndTimeAsc(now, PageRequest.of(page, pageSize));
+        List<Auction> auctions = auctionsRepository.findAllByEndTimeAfterOrderByEndTimeAsc(now, PageRequest.of(page, 10));
         AuctionsPack auctionsPack = new AuctionsPack(auctions);
         return ResponseEntity.ok().body(auctionsPack);
     }

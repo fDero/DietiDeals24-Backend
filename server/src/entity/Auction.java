@@ -53,7 +53,7 @@ public class Auction {
     @Column(name = "auction_type")
     private String auctionType;
 
-    @Column(name = "aution_id")
+    @Column(name = "auction_id")
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 }

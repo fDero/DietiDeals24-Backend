@@ -6,7 +6,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 
@@ -16,7 +16,7 @@ public class ServerInfo implements ApplicationListener<WebServerInitializedEvent
     private Integer port;
     private String address;
 
-    @Override public void onApplicationEvent(@NotNull WebServerInitializedEvent event) {
+    @Override public void onApplicationEvent(@NonNull WebServerInitializedEvent event) {
         try {
             this.port = event.getWebServer().getPort();
             this.address = InetAddress.getLocalHost().getHostAddress();

@@ -14,8 +14,14 @@ import lombok.Setter;
 @Table(name = "Auction")
 public class Auction {
 
-    @Column(name = "price")
-    private BigDecimal price;
+    @Column(name = "maximum_bid")
+    private BigDecimal maximumBid;
+
+    @Column(name = "minimum_bid")
+    private BigDecimal minimumBid;
+
+    @Column(name = "lowest_bid_so_far")
+    private BigDecimal lowestBidSoFar;
 
     @Column(name = "creator_id")
     private Integer creatorId;
@@ -52,6 +58,9 @@ public class Auction {
 
     @Column(name = "auction_type")
     private String auctionType;
+
+    @Column(name = "currency")
+    private String currency;
 
     @Column(name = "auction_id")
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -14,8 +14,11 @@ import lombok.Setter;
 @Table(name = "ReverseAuction")
 public class ReverseAuction {
 
-    @Column(name = "max_price")
-    private BigDecimal maxPrice;
+    @Column(name = "maximum_bid")
+    private BigDecimal maximumBid;
+
+    @Column(name = "lowest_bid_so_far")
+    private BigDecimal lowestBidSoFar;
 
     @Column(name = "creator_id")
     private Integer creatorId;
@@ -49,6 +52,9 @@ public class ReverseAuction {
 
     @Column(name = "pictures_urls")
     private String[] picturesUrls;
+
+    @Column(name = "currency")
+    private String currency;
 
     @Column(name = "auction_id")
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

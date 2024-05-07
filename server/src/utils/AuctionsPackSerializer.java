@@ -27,16 +27,18 @@ public class AuctionsPackSerializer extends JsonSerializer<AuctionsPack> {
             gen.writeStringField("city", auction.getCity());
             gen.writeStringField("conditions", auction.getItemCondition());
             gen.writeStringField("type", auction.getAuctionType());
-            if (auction.getAuctionType().equals("reverse")) {
-                gen.writeNumberField("minimumBid", auction.getPrice());
-            } else if (auction.getAuctionType().equals("silent")) {
-                gen.writeNumberField("maximumPrice", auction.getPrice());
+            if (auction.getAuctionType().equals("silent")) {
+                gen.writeNumberField("minimumBid", auction.getMinimumBid());
+            } else if (auction.getAuctionType().equals("reverse")) {
+                gen.writeNumberField("maximumBid", auction.getMaximumBid());
+                gen.writeNumberField("lowestBidSoFar", auction.getLowestBidSoFar());
             }
             gen.writeStringField("endTime", auction.getEndTime().toString());
             String[] pictureUrls = auction.getPicturesUrls();
             String firstPictureUrl = pictureUrls.length > 0 ? pictureUrls[0] : null;
             gen.writeStringField("pictureUrl", firstPictureUrl);
             gen.writeStringField("status", "ACTIVE");
+            gen.writeStringField("currency", auction.getCurrency());
             gen.writeEndObject();
         }
         gen.writeEndArray();

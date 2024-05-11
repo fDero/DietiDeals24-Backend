@@ -24,6 +24,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http = http.csrf( csrf -> csrf.disable() );
+        http.exceptionHandling(customizer -> customizer.authenticationEntryPoint(
+            new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+        );
         return http.authorizeHttpRequests(
             authorize -> authorize.requestMatchers(req -> 
                     req.getServletPath().equals("/login") || 

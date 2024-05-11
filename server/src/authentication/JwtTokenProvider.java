@@ -17,9 +17,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtTokenProvider {
 
-    private final String secretHS512Key;
+    private static final String secretHS512Key = generateSecretKey();
 
-    public JwtTokenProvider() {
+    public static String generateSecretKey() {
         int keyLength = 10;
         String characterSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         Random random = new Random();
@@ -28,7 +28,7 @@ public class JwtTokenProvider {
             int randomIndex = random.nextInt(characterSet.length());
             randomString.append(characterSet.charAt(randomIndex));
         }
-        secretHS512Key = randomString.toString();
+        return randomString.toString();
     }
 
     public String generateToken(String email) {

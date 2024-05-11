@@ -127,8 +127,12 @@
             <artifactId>jjwt</artifactId>
             <version>0.9.1</version>
         </dependency>
-    </dependencies>
-
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.3.1</version>
+            </dependency>
+        </dependencies>
     <build>
 
         <sourceDirectory>src</sourceDirectory>

@@ -38,11 +38,13 @@ public class AuctionsController {
     @GetMapping("/auctions")
     public ResponseEntity<AuctionsPack> sendAuctions(
         @RequestParam(defaultValue = "1") Integer page, 
-        @RequestParam(defaultValue = "10") Integer size
+        @RequestParam(defaultValue = "10") Integer size,
+        @RequestParam(defaultValue = "") String macroCategory,
+        @RequestParam(defaultValue = "") String itemName,
+        @RequestParam(defaultValue = "") String itemCategory
     )  {
         int zeroIndexedPage = page - 1;
-        Timestamp now = new Timestamp(System.currentTimeMillis());
-        List<Auction> auctions = auctionsRepository.findAllByEndTimeAfterOrderByEndTimeAsc(now, PageRequest.of(zeroIndexedPage, size));
+        List<Auction> auctions = auctionsRepository.findActiveAuctionsFiltered(itemCategory, itemName, macroCategory, PageRequest.of(zeroIndexedPage, size));
         AuctionsPack auctionsPack = new AuctionsPack(auctions);
         return ResponseEntity.ok().body(auctionsPack);
     }

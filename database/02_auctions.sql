@@ -6,9 +6,9 @@ CREATE TABLE Auction (
     creator_id          INT NOT NULL,
     country             VARCHAR(5)  NOT NULL,
     city                VARCHAR(50) NOT NULL,
-    item_condition      TEXT,
-    item_category       TEXT,
-    macro_category      TEXT,
+    item_condition      TEXT NOT NULL,
+    item_category       TEXT NOT NULL,
+    macro_category      TEXT NOT NULL,
     start_time          TIMESTAMP NOT NULL,
     end_time            TIMESTAMP NOT NULL,
     item_name           TEXT NOT NULL,
@@ -19,7 +19,7 @@ CREATE TABLE Auction (
     auction_id          SERIAL PRIMARY KEY,
     
     FOREIGN KEY (creator_id)
-    REFERENCES Account(account_id)    
+    REFERENCES Account(account_id)
 );
 
 

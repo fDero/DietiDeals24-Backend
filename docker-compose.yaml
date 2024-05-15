@@ -2,6 +2,26 @@ version: '3.3'
 
 services:
 
+  server:
+    image: maven:3.9-amazoncorretto-21-debian
+    environment:
+      DIETIDEALS24_GOOGLE_SMTP_PASSWORD: ${DIETIDEALS24_GOOGLE_SMTP_PASSWORD}
+      DIETIDEALS24_GOOGLE_SMTP_USERNAME: "dietideals24@gmail.com"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "dietideals24passw"
+      POSTGRES_HOST: "database"
+      POSTGRES_PORT: 5433
+      REDIS_HOST: "cache"
+      REDIS_PORT: 6379
+    command: sh -c "mvn package && java -jar target/DietiDeals24-backend-0.0.1-SNAPSHOT.jar"
+    ports:
+      - "8080:8080"
+    volumes:
+      - './server:/server'
+    working_dir: "/server"
+    depends_on:
+      - database
+      - cache
 
   database:
     image: postgres:13

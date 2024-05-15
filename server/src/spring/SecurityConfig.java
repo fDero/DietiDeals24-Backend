@@ -33,7 +33,8 @@ public class SecurityConfig {
                     req.getServletPath().equals("/register/init") || 
                     req.getServletPath().equals("/register/confirm") ||
                     req.getServletPath().equals("/auctions") ||
-                    req.getServletPath().equals("/error")
+                    req.getServletPath().equals("/categories") ||
+                    req.getServletPath().equals("/error") 
                 )
                 .permitAll()
                 .anyRequest()

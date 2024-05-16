@@ -12,6 +12,7 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -40,16 +41,16 @@ public class AuctionsController {
         @RequestParam(defaultValue = "1") Integer page, 
         @RequestParam(defaultValue = "10") Integer size,
         @RequestParam(defaultValue = "") String macroCategory,
-        @RequestParam(defaultValue = "") String itemName,
-        @RequestParam(defaultValue = "") String itemCategory,
-        @RequestParam(defaultValue = "") String auctionType
+        @RequestParam(defaultValue = "") String keywords,
+        @RequestParam(defaultValue = "") String category,
+        @RequestParam(defaultValue = "") String type
     )  {
         int zeroIndexedPage = page - 1;
         List<Auction> auctions = auctionsRepository.findActiveAuctionsFiltered(
-            itemCategory, 
-            itemName, 
+            category, 
+            keywords, 
             macroCategory, 
-            auctionType,
+            type,
             PageRequest.of(zeroIndexedPage, size)
         );
         AuctionsPack auctionsPack = new AuctionsPack(auctions);

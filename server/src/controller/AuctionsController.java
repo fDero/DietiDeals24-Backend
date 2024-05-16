@@ -41,13 +41,15 @@ public class AuctionsController {
         @RequestParam(defaultValue = "10") Integer size,
         @RequestParam(defaultValue = "") String macroCategory,
         @RequestParam(defaultValue = "") String itemName,
-        @RequestParam(defaultValue = "") String itemCategory
+        @RequestParam(defaultValue = "") String itemCategory,
+        @RequestParam(defaultValue = "") String auctionType
     )  {
         int zeroIndexedPage = page - 1;
         List<Auction> auctions = auctionsRepository.findActiveAuctionsFiltered(
             itemCategory, 
             itemName, 
             macroCategory, 
+            auctionType,
             PageRequest.of(zeroIndexedPage, size)
         );
         AuctionsPack auctionsPack = new AuctionsPack(auctions);

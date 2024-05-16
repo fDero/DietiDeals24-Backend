@@ -21,14 +21,18 @@ public interface AuctionRepository extends JpaRepository<Auction, Integer> {
 
         List<Auction> findAllByEndTimeAfterOrderByEndTimeAsc(Timestamp currentTime, Pageable pageable);
 
-        List<Auction> findAllByEndTimeAfterAndItemCategoryContainingAndItemNameContainingAndMacroCategoryContainingOrderByEndTimeAsc(
+        List<Auction> findAllByEndTimeAfterAndItemCategoryContainingAndItemNameContainingAndMacroCategoryContainingAndAuctionTypeContainingOrderByEndTimeAsc(
                 Timestamp currentTime, String itemCategory, String itemName, 
-                String macroCategory, Pageable pageable
+                String auctionType, String macroCategory, Pageable pageable
         );
 
-        default List<Auction> findActiveAuctionsFiltered(String itemCategory, String searchString, String macroCategory, Pageable pageable) {
-                return findAllByEndTimeAfterAndItemCategoryContainingAndItemNameContainingAndMacroCategoryContainingOrderByEndTimeAsc(
-                        new Timestamp(System.currentTimeMillis()), itemCategory, searchString, macroCategory, pageable
+        default List<Auction> findActiveAuctionsFiltered(
+                String itemCategory, String searchString, 
+                String auctionType, String macroCategory, 
+                Pageable pageable
+        ) {
+                return findAllByEndTimeAfterAndItemCategoryContainingAndItemNameContainingAndMacroCategoryContainingAndAuctionTypeContainingOrderByEndTimeAsc(
+                        new Timestamp(System.currentTimeMillis()), itemCategory, searchString, auctionType, macroCategory, pageable
                 );
         };
 }

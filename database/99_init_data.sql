@@ -63,6 +63,6 @@ VALUES
 INSERT INTO Auction
     (maximum_bid, minimum_bid, lowest_bid_so_far, creator_id, country, city, item_condition, item_category, macro_category, start_time, end_time, item_name, description, pictures_urls, auction_type, currency)
 VALUES
-    (NULL, 100, NULL, 1, 'UK', 'London', 'New', 'Electronics', 'product', '2025-01-01 00:00:00', '2025-10-10 00:00:00', 'iPhone 13', 'Brand new iPhone 13', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR'),
-    (NULL, 100, NULL, 1, 'UK', 'London', 'New', 'Electronics', 'product', '2025-01-01 00:00:00', '2025-10-10 00:00:00', 'iPhone 13', 'Brand new iPhone 13', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR'),
-    (NULL, 100, NULL, 1, 'UK', 'London', 'New', 'Electronics', 'product', '2025-01-01 00:00:00', '2025-10-10 00:00:00', 'iPhone 13', 'Brand new iPhone 13', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR');
+    (NULL, 100, NULL, 1, 'UK', 'London', 'New', 'Electronics', 'products', '2025-01-01 00:00:00', '2025-10-10 00:00:00', 'iPhone 13', 'Brand new iPhone 13', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR'),
+    (NULL, 100, NULL, 1, 'UK', 'London', 'New', 'Electronics', 'products', '2025-01-01 00:00:00', '2025-10-10 00:00:00', 'iPhone 13', 'Brand new iPhone 13', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR'),
+    (NULL, 100, NULL, 1, 'UK', 'London', 'New', 'Electronics', 'products', '2025-01-01 00:00:00', '2025-10-10 00:00:00', 'iPhone 13', 'Brand new iPhone 13', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR');

@@ -48,8 +48,8 @@ public class AuctionsController {
     )  {
         int zeroIndexedPage = page - 1;
         List<Auction> auctions = null;
-        if (policy.equals("recent"))
-            auctions = auctionsRepository.findActiveAuctionsFilteredRecent(
+        if (policy.equals("expiration"))
+            auctions = auctionsRepository.findActiveAuctionsFilteredExpiration(
                 category, 
                 keywords, 
                 macroCategory, 

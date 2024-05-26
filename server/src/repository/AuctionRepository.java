@@ -32,7 +32,7 @@ public interface AuctionRepository extends JpaRepository<Auction, Integer> {
                 String auctionType, String macroCategory, Pageable pageable
         );
 
-        default List<Auction> findActiveAuctionsFilteredRecent(
+        default List<Auction> findActiveAuctionsFilteredExpiration(
                 String itemCategory, String searchString, 
                 String auctionType, String macroCategory, 
                 Pageable pageable

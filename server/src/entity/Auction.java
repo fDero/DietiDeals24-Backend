@@ -20,6 +20,10 @@ public class Auction {
     @Column(name = "minimum_bid")
     private BigDecimal minimumBid;
 
+    
+    @Column(name = "number_of_bids")
+    private Integer numberOfBids;
+
     @Column(name = "lowest_bid_so_far")
     private BigDecimal lowestBidSoFar;
 

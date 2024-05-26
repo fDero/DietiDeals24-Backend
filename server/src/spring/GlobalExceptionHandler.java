@@ -52,4 +52,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleNoHandlerFoundException(NoHandlerFoundException ex){
         return new ResponseEntity<String>(ex.getMessage(), null, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex){
+        return new ResponseEntity<String>(ex.getMessage(), null, HttpStatus.BAD_REQUEST);
+    }
 }

@@ -3,6 +3,7 @@ CREATE TABLE Auction (
     maximum_bid         NUMERIC,
     minimum_bid         NUMERIC,
     lowest_bid_so_far   NUMERIC,
+    number_of_bids      INT NOT NULL,
     creator_id          INT NOT NULL,
     country             VARCHAR(5)  NOT NULL,
     city                VARCHAR(50) NOT NULL,

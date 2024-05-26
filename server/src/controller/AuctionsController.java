@@ -38,21 +38,33 @@ public class AuctionsController {
 
     @GetMapping("/auctions")
     public ResponseEntity<AuctionsPack> sendAuctions(
-        @RequestParam(defaultValue = "1") Integer page, 
-        @RequestParam(defaultValue = "10") Integer size,
-        @RequestParam(defaultValue = "") String macroCategory,
-        @RequestParam(defaultValue = "") String keywords,
-        @RequestParam(defaultValue = "") String category,
-        @RequestParam(defaultValue = "") String type
+        @RequestParam(defaultValue = "1")      Integer page, 
+        @RequestParam(defaultValue = "10")     Integer size,
+        @RequestParam(defaultValue = "")       String macroCategory,
+        @RequestParam(defaultValue = "")       String keywords,
+        @RequestParam(defaultValue = "")       String category,
+        @RequestParam(defaultValue = "")       String type,
+        @RequestParam(defaultValue = "recent") String policy
     )  {
         int zeroIndexedPage = page - 1;
-        List<Auction> auctions = auctionsRepository.findActiveAuctionsFiltered(
-            category, 
-            keywords, 
-            macroCategory, 
-            type,
-            PageRequest.of(zeroIndexedPage, size)
-        );
+        List<Auction> auctions = null;
+        if (policy.equals("recent"))
+            auctions = auctionsRepository.findActiveAuctionsFilteredRecent(
+                category, 
+                keywords, 
+                macroCategory, 
+                type,
+                PageRequest.of(zeroIndexedPage, size)
+            );
+        else if (policy.equals("trending"))
+            auctions = auctionsRepository.findActiveAuctionsFilteredTrending(
+                category, 
+                keywords, 
+                macroCategory, 
+                type,
+                PageRequest.of(zeroIndexedPage, size)
+            );
+        else throw new IllegalArgumentException("Invalid policy");
         AuctionsPack auctionsPack = new AuctionsPack(auctions);
         return ResponseEntity.ok().body(auctionsPack);
     }

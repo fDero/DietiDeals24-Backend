@@ -1,8 +1,5 @@
 package entity;
 
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

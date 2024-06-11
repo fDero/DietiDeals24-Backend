@@ -1,7 +1,6 @@
 package utils;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.ArrayList;
@@ -10,7 +9,6 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
-import entity.Auction;
 import entity.Category;
 import response.CategoryPack;
 

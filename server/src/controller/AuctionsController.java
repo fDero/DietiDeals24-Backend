@@ -36,13 +36,13 @@ public class AuctionsController {
 
     @GetMapping("/auctions")
     public ResponseEntity<AuctionsPack> sendAuctions(
-        @RequestParam(defaultValue = "1")      Integer page, 
-        @RequestParam(defaultValue = "10")     Integer size,
-        @RequestParam(defaultValue = "")       String macroCategory,
-        @RequestParam(defaultValue = "")       String keywords,
-        @RequestParam(defaultValue = "")       String category,
-        @RequestParam(defaultValue = "")       String type,
-        @RequestParam(defaultValue = "recent") String policy
+        @RequestParam(defaultValue = "1")          Integer page, 
+        @RequestParam(defaultValue = "10")         Integer size,
+        @RequestParam(defaultValue = "")           String macroCategory,
+        @RequestParam(defaultValue = "")           String keywords,
+        @RequestParam(defaultValue = "")           String category,
+        @RequestParam(defaultValue = "")           String type,
+        @RequestParam(defaultValue = "expiration") String policy
     )  {
         int zeroIndexedPage = page - 1;
         List<Auction> auctions = null;

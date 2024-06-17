@@ -25,12 +25,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NoPendingAccountConfirmationException.class)
     public ResponseEntity<String> handleNoPendingAccountConfirmationException(NoPendingAccountConfirmationException ex){
-        return new ResponseEntity<String>(ex.getMessage(), null, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<String>(ex.getMessage(), null, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(TooManyConfirmationCodes.class)
     public ResponseEntity<String> handleTooManyConfirmationCodes(TooManyConfirmationCodes ex){
-        return new ResponseEntity<String>(ex.getMessage(), null, HttpStatus.TOO_MANY_REQUESTS);
+        return new ResponseEntity<String>(ex.getMessage(), null, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(WrongConfirmationCodeException.class)
@@ -40,7 +40,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NoAccountWithSuchEmailException.class)
     public ResponseEntity<String> handleNoAccountWithSuchEmailException(NoAccountWithSuchEmailException ex){
-        return new ResponseEntity<String>(ex.getMessage(), null, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<String>(ex.getMessage(), null, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(AccessDeniedBadCredentialsException.class)

@@ -8,13 +8,13 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import jakarta.servlet.http.HttpServletRequest;
 
 
-public class JWTAuthentication implements Authentication {
+public class JwtAuthentication implements Authentication {
 
     private final String token;
     private final String email;
     private final HttpServletRequest request;
     
-    JWTAuthentication(String token, String email, HttpServletRequest request){
+    JwtAuthentication(String token, String email, HttpServletRequest request){
         this.token = token;
         this.email = email;
         this.request = request;

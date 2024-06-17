@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import authentication.JwtTokenProvider;
+import authentication.RequireJWT;
 
 @RestController
 public class ProfileController {
@@ -40,6 +41,7 @@ public class ProfileController {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
+    @RequireJWT
     @GetMapping("/profile")
     public ResponseEntity<AccountProfileInformations> sendProfileInformations(@RequestHeader(name = "Authorization") String authorizationHeader) 
         throws 

@@ -12,19 +12,22 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import authentication.RequireJWT;
+
 
 @RestController
-public class NotificationConroller {
+public class NotificationController {
     
     private final NotificationRepository notificationRepository;
 
     @Autowired
-    public NotificationConroller(
+    public NotificationController(
         NotificationRepository notificationRepository
     ) {
         this.notificationRepository = notificationRepository;
     }
 
+    @RequireJWT
     @GetMapping("/notifications")
     public ResponseEntity<NotificationsPack> sendProfileInformations(@RequestParam String email) {
         List<Notification> notifications = notificationRepository.findByEmail(email);

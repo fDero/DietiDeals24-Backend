@@ -37,19 +37,16 @@ public class SecurityConfig {
     public SecurityConfig(
         JwtTokenProvider tokenProvider,
         RequestMappingHandlerMapping requestMappingHandlerMapping
-        
     ) {
         this.tokenProvider = tokenProvider;
         Map<RequestMappingInfo, HandlerMethod> endpointPaths = requestMappingHandlerMapping.getHandlerMethods();
         for (Map.Entry<RequestMappingInfo, HandlerMethod> entry : endpointPaths.entrySet()) {
-            if (entry.getValue().getBeanType().getPackageName() == "controller") {
-                if (entry.getValue().getMethod().getAnnotation(RequireJWT.class) != null){
-                    Pattern r = Pattern.compile("\\[(.*?)\\]");
-                    Matcher m = r.matcher(entry.getKey().toString());
-                    if (m.find()) {
-                        String group = m.group(1); 
-                        authorizationAwareEndpoints.add(group);
-                    }
+            if (entry.getValue().getMethod().getAnnotation(RequireJWT.class) != null){
+                Pattern r = Pattern.compile("\\[(.*?)\\]");
+                Matcher m = r.matcher(entry.getKey().toString());
+                if (m.find()) {
+                    String group = m.group(1); 
+                    authorizationAwareEndpoints.add(group);
                 }
             }
         }

@@ -1,7 +1,6 @@
 package controller;
 
 import entity.Notification;
-import exceptions.NoAccountWithSuchEmailException;
 import repository.NotificationRepository;
 import response.NotificationsPack;
 

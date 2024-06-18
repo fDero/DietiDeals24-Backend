@@ -1,7 +1,9 @@
 package controller;
 
 import entity.Account;
+import entity.Password;
 import repository.AccountRepository;
+import repository.PasswordRepository;
 import request.AccountRegistrationRequest;
 import request.RegistrationConfirmationRequest;
 import response.MinimalAccountInformations;
@@ -15,6 +17,7 @@ import org.springframework.http.HttpHeaders;
 import java.util.Random;
 
 import org.jetbrains.annotations.NotNull;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,7 +30,7 @@ import exceptions.NoPendingAccountConfirmationException;
 import exceptions.TooManyConfirmationCodes;
 import exceptions.WrongConfirmationCodeException;
 
-
+@Transactional
 @RestController
 public class RegistrationController {
 
@@ -37,6 +40,7 @@ public class RegistrationController {
     private final PendingAccountRegistrationCacheService pendingAccountsCacheService;
     private final EncryptionService encryptionService;
     private final JwtTokenProvider jwtTokenProvider;
+    private final PasswordRepository passwordRepository;
 
     @Autowired
     public RegistrationController(
@@ -45,7 +49,8 @@ public class RegistrationController {
             AccountRepository accountRepository,
             PendingAccountRegistrationCacheService pendingAccountsCacheService,
             EncryptionService encryptionService,
-            JwtTokenProvider jwtTokenProvider
+            JwtTokenProvider jwtTokenProvider,
+            PasswordRepository passwordRepository
     ) {
         this.emailService = emailService;
         this.accountValidationService = accountValidationService;
@@ -53,6 +58,7 @@ public class RegistrationController {
         this.pendingAccountsCacheService = pendingAccountsCacheService;
         this.encryptionService = encryptionService;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.passwordRepository = passwordRepository;
     }
 
     @NotNull
@@ -89,8 +95,9 @@ public class RegistrationController {
         ensureValidConfirmationCode(pendingAccount, request.getCode());
         String passwordSalt = encryptionService.generateRandomSalt();
         String passwordHash = encryptionService.encryptPassword(pendingAccount.getPassword(), passwordSalt);
-        Account account = new Account(pendingAccount, passwordHash, passwordSalt);
-        accountRepository.save(account);
+        Account account = accountRepository.save(new Account(pendingAccount));
+        Password password = new Password(passwordSalt, passwordHash, account.getId());
+        passwordRepository.save(password);
         pendingAccountsCacheService.delete(request.getEmail());
         MinimalAccountInformations accountView = new MinimalAccountInformations(account);
         HttpHeaders headers = new HttpHeaders();

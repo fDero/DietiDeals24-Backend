@@ -15,7 +15,7 @@ import lombok.Setter;
 @Table(name = "Account")
 public class Account {
 
-    public Account(PendingAccountRegistration pendingAccount, String passwordHash, String passwordSalt) {
+    public Account(PendingAccountRegistration pendingAccount) {
         this.name = pendingAccount.getName();
         this.surname = pendingAccount.getSurname();
         this.birthday = pendingAccount.getBirthday();
@@ -23,14 +23,11 @@ public class Account {
         this.city = pendingAccount.getCity();
         this.email = pendingAccount.getEmail();
         this.username = pendingAccount.getUsername();
-        this.passwordHash = passwordHash;
-        this.passwordSalt = passwordSalt;
         this.unreadNotificationsCounter = 0;
         this.onlineAuctionsCounter = 0;
         this.pastDealsCounter = 0;
         this.accountCreation = new Timestamp(System.currentTimeMillis());
         this.lastLogin = new Timestamp(System.currentTimeMillis());
-        this.passwordLastChange = new Timestamp(System.currentTimeMillis());
     }
 
     @Column(name = "name")
@@ -53,15 +50,6 @@ public class Account {
 
     @Column(name = "username") 
     private String username;
-
-    @Column(name = "password_hash") 
-    private String passwordHash;
-    
-    @Column(name = "password_salt") 
-    private String passwordSalt;
-
-    @Column(name = "password_last_change")
-    private Timestamp passwordLastChange;
 
     @Column(name = "account_creation")
     private Timestamp accountCreation;

@@ -72,7 +72,6 @@ public class Account {
     @Column(name = "past_deals_counter")
     private Integer pastDealsCounter;
 
-
     @Id @Column(name = "account_id") 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

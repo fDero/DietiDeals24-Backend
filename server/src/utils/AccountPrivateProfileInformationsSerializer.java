@@ -18,24 +18,23 @@ public class AccountPrivateProfileInformationsSerializer extends JsonSerializer<
     ) 
         throws IOException 
     {
-        String birthayString = value.getAccount().getBirthday()
+        String birthayString = value.getBirthday()
             .toLocalDateTime().toLocalDate().toString();
 
         gen.writeStartObject();
         serializeLinks(value, gen, serializers);
         serializeContactInformations(value, gen, serializers);
-        gen.writeStringField("name", value.getAccount().getName());
-        gen.writeStringField("surname", value.getAccount().getSurname());
+        gen.writeStringField("name", value.getName());
+        gen.writeStringField("surname", value.getSurname());
         gen.writeStringField("birthday", birthayString);
-        gen.writeStringField("country", value.getAccount().getCountry());
-        gen.writeStringField("city", value.getAccount().getCity());
-        gen.writeStringField("email", value.getAccount().getEmail());
-        gen.writeStringField("username", value.getAccount().getUsername());
-        gen.writeStringField("bio", value.getAccount().getBio());
-        gen.writeStringField("profilePictureUrl", value.getAccount().getProfilePictureUrl());
-        gen.writeNumberField("onlineAuctionsCounter", value.getAccount().getOnlineAuctionsCounter());
-        gen.writeNumberField("pastDealsCounter", value.getAccount().getPastDealsCounter());
-        
+        gen.writeStringField("country", value.getCountry());
+        gen.writeStringField("city", value.getCity());
+        gen.writeStringField("email", value.getEmail());
+        gen.writeStringField("username", value.getUsername());
+        gen.writeStringField("bio", value.getBio());
+        gen.writeStringField("profilePictureUrl", value.getProfilePictureUrl());
+        gen.writeNumberField("onlineAuctionsCounter", value.getOnlineAuctionsCounter());
+        gen.writeNumberField("pastDealsCounter", value.getPastDealsCounter());
         gen.writeEndObject();
     }
 

@@ -2,8 +2,8 @@ package service;
 
 import repository.AccountRepository;
 import request.AccountRegistrationRequest;
-import utils.TimeConversions;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -22,9 +22,9 @@ public class AccountValidationService {
 
     private final AccountRepository accountRepository;
     static private final ArrayList<String> avialableCountries = new ArrayList<>(Arrays.asList(
-            "AL", "AD", "AT", "BY", "BE", "BA", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE",
-            "GR", "HU", "IS", "IE", "IT", "VA", "LV", "LI", "LT", "LU", "MK", "MT", "MD", "MC", "GB",
-            "ME", "NL", "NO", "PL", "PT", "RO", "RU", "SM", "RS", "SK", "SI", "ES", "SE", "CH", "UA"
+        "AL", "AD", "AT", "BY", "BE", "BA", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE",
+        "GR", "HU", "IS", "IE", "IT", "VA", "LV", "LI", "LT", "LU", "MK", "MT", "MD", "MC", "GB",
+        "ME", "NL", "NO", "PL", "PT", "RO", "RU", "SM", "RS", "SK", "SI", "ES", "SE", "CH", "UA"
     ));
 
     @Autowired
@@ -64,7 +64,8 @@ public class AccountValidationService {
             return;
         }
         try {
-            birthday = TimeConversions.TimestampfromDateString(birthdayString);
+            Instant birthdayInstant = Instant.parse(birthdayString);
+            birthday = Timestamp.from(birthdayInstant);
         }
         catch(DateTimeParseException | NullPointerException error){
             errors.add("birthday not correctly formatted (it must follow the ISO 8601 standard: yyyy-mm-dd)");

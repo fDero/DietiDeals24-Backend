@@ -6,15 +6,15 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import entity.ContactInformation;
 import entity.PersonalLink;
-import response.AccountProfileInformations;
+import response.AccountPrivateProfileInformations;
 
-public class AccountProfileInformationsSerializer extends JsonSerializer<AccountProfileInformations> {
+public class AccountPrivateProfileInformationsSerializer extends JsonSerializer<AccountPrivateProfileInformations> {
     
     @Override
     public void serialize(
-            AccountProfileInformations value, 
-            JsonGenerator gen, 
-            SerializerProvider serializers
+        AccountPrivateProfileInformations value, 
+        JsonGenerator gen, 
+        SerializerProvider serializers
     ) 
         throws IOException 
     {
@@ -40,9 +40,9 @@ public class AccountProfileInformationsSerializer extends JsonSerializer<Account
     }
 
     private void serializeLinks(
-            AccountProfileInformations value, 
-            JsonGenerator gen, 
-            SerializerProvider serializers
+        AccountPrivateProfileInformations value, 
+        JsonGenerator gen, 
+        SerializerProvider serializers
     ) 
         throws IOException 
     {    
@@ -57,9 +57,9 @@ public class AccountProfileInformationsSerializer extends JsonSerializer<Account
     }
 
     private void serializeContactInformations(
-            AccountProfileInformations value, 
-            JsonGenerator gen, 
-            SerializerProvider serializers
+        AccountPrivateProfileInformations value, 
+        JsonGenerator gen, 
+        SerializerProvider serializers
     ) 
         throws IOException 
     {    

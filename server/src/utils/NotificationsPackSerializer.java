@@ -11,9 +11,9 @@ public class NotificationsPackSerializer extends JsonSerializer<NotificationsPac
     
     @Override
     public void serialize(
-            NotificationsPack value, 
-            JsonGenerator gen, 
-            SerializerProvider serializers
+        NotificationsPack value, 
+        JsonGenerator gen, 
+        SerializerProvider serializers
     ) 
         throws IOException  
     {

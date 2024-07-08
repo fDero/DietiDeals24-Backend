@@ -4,7 +4,7 @@ import java.util.List;
 import entity.Account;
 import entity.ContactInformation;
 import entity.PersonalLink;
-import utils.AccountProfileInformationsSerializer;
+import utils.AccountPrivateProfileInformationsSerializer;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,10 +13,10 @@ import lombok.Setter;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 
-@JsonSerialize(using = AccountProfileInformationsSerializer.class)
+@JsonSerialize(using = AccountPrivateProfileInformationsSerializer.class)
 @Setter @NoArgsConstructor
 @Getter @AllArgsConstructor
-public class AccountProfileInformations {
+public class AccountPrivateProfileInformations {
     Account account;
     List<PersonalLink> personalLinks;
     List<ContactInformation> contactInformation;

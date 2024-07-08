@@ -12,9 +12,9 @@ public class AuctionsPackSerializer extends JsonSerializer<AuctionsPack> {
     
     @Override
     public void serialize(
-            AuctionsPack value, 
-            JsonGenerator gen, 
-            SerializerProvider serializers
+        AuctionsPack value, 
+        JsonGenerator gen, 
+        SerializerProvider serializers
     ) 
         throws IOException  
     {

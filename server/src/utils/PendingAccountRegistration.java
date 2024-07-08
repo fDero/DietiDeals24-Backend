@@ -25,8 +25,8 @@ public class PendingAccountRegistration {
     private Integer errorsCounter;
 
     public PendingAccountRegistration(
-            @NotNull AccountRegistrationRequest request,
-            @NotNull String confirmationCode
+        @NotNull AccountRegistrationRequest request,
+        @NotNull String confirmationCode
     ) {
         this.name = request.getName();
         this.surname = request.getSurname();

@@ -7,7 +7,8 @@ import exceptions.NoAccountWithSuchEmailException;
 import repository.AccountRepository;
 import repository.ContactInformationRepository;
 import repository.PersonalLinkRepository;
-import response.AccountProfileInformations;
+import response.AccountPrivateProfileInformations;
+import response.AccountPublicProfileInformations;
 
 import org.springframework.http.ResponseEntity;
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import authentication.JwtTokenProvider;
@@ -42,8 +44,8 @@ public class ProfileController {
     }
 
     @RequireJWT
-    @GetMapping("/profile")
-    public ResponseEntity<AccountProfileInformations> sendProfileInformations(@RequestHeader(name = "Authorization") String authorizationHeader) 
+    @GetMapping("/profile/owner-view")
+    public ResponseEntity<AccountPrivateProfileInformations> sendPrivateProfileInformations(@RequestHeader(name = "Authorization") String authorizationHeader) 
         throws 
             NoAccountWithSuchEmailException 
     {
@@ -52,7 +54,18 @@ public class ProfileController {
         Account account = accountRepository.findAccountByEmail(email).orElseThrow(() -> new NoAccountWithSuchEmailException());
         List<PersonalLink> personalLinks = personalLinkRepository.findByAccountId(account.getId());
         List<ContactInformation> contactInformations = contactInformationRepository.findByAccountId(account.getId());
-        AccountProfileInformations accountProfileInformations = new AccountProfileInformations(account, personalLinks, contactInformations);
-        return ResponseEntity.ok().body(accountProfileInformations);
+        AccountPrivateProfileInformations account_private_informations = new AccountPrivateProfileInformations(account, personalLinks, contactInformations);
+        return ResponseEntity.ok().body(account_private_informations);
+    }
+
+    @GetMapping("/profile/public-view")
+    public ResponseEntity<AccountPublicProfileInformations> sendPublicProfileInformations(@RequestParam String email) 
+        throws 
+            NoAccountWithSuchEmailException
+    {
+        Account account = accountRepository.findAccountByEmail(email).orElseThrow(() -> new NoAccountWithSuchEmailException());
+        List<PersonalLink> personalLinks = personalLinkRepository.findByAccountId(account.getId());
+        AccountPublicProfileInformations acount_public_informations = new AccountPublicProfileInformations(account, personalLinks);
+        return ResponseEntity.ok().body(acount_public_informations);
     }
 }

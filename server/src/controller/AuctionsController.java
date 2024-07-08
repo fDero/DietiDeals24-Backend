@@ -34,8 +34,8 @@ public class AuctionsController {
         this.reverseAuctionsRepository = reverseAuctionsRepository;
     }
 
-    @GetMapping("/auctions")
-    public ResponseEntity<AuctionsPack> sendAuctions(
+    @GetMapping("/auctions/search")
+    public ResponseEntity<AuctionsPack> sendAuctionSearchOutcome(
         @RequestParam(defaultValue = "1")          Integer page, 
         @RequestParam(defaultValue = "10")         Integer size,
         @RequestParam(defaultValue = "")           String macroCategory,

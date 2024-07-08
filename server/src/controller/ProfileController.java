@@ -54,8 +54,8 @@ public class ProfileController {
         Account account = accountRepository.findAccountByEmail(email).orElseThrow(() -> new NoAccountWithSuchEmailException());
         List<PersonalLink> personalLinks = personalLinkRepository.findByAccountId(account.getId());
         List<ContactInformation> contactInformations = contactInformationRepository.findByAccountId(account.getId());
-        AccountPrivateProfileInformations account_private_informations = new AccountPrivateProfileInformations(account, personalLinks, contactInformations);
-        return ResponseEntity.ok().body(account_private_informations);
+        AccountPrivateProfileInformations accountPrivateInformations = new AccountPrivateProfileInformations(account, personalLinks, contactInformations);
+        return ResponseEntity.ok().body(accountPrivateInformations);
     }
 
     @GetMapping("/profile/public-view")
@@ -65,7 +65,7 @@ public class ProfileController {
     {
         Account account = accountRepository.findAccountByEmail(email).orElseThrow(() -> new NoAccountWithSuchEmailException());
         List<PersonalLink> personalLinks = personalLinkRepository.findByAccountId(account.getId());
-        AccountPublicProfileInformations acount_public_informations = new AccountPublicProfileInformations(account, personalLinks);
-        return ResponseEntity.ok().body(acount_public_informations);
+        AccountPublicProfileInformations acountPublicInformations = new AccountPublicProfileInformations(account, personalLinks);
+        return ResponseEntity.ok().body(acountPublicInformations);
     }
 }

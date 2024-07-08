@@ -38,6 +38,11 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<String>(ex.getMessage(), null, HttpStatus.UNAUTHORIZED);
     }
 
+    @ExceptionHandler(NoAuctionWithSuchIdException.class)
+    public ResponseEntity<String> handleNoAccountWithSuchEmailException(NoAuctionWithSuchIdException ex){
+        return new ResponseEntity<String>(ex.getMessage(), null, HttpStatus.UNAUTHORIZED);
+    }
+
     @ExceptionHandler(NoAccountWithSuchEmailException.class)
     public ResponseEntity<String> handleNoAccountWithSuchEmailException(NoAccountWithSuchEmailException ex){
         return new ResponseEntity<String>(ex.getMessage(), null, HttpStatus.UNAUTHORIZED);

@@ -1,14 +1,17 @@
 package controller;
 
 import entity.Auction;
+import exceptions.NoAuctionWithSuchIdException;
 import repository.AuctionRepository;
 import repository.SilentAuctionRepository;
 import response.AuctionsPack;
+import response.SpecificAuctionPublicInformations;
 import repository.ReverseAuctionRepository;
 
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -65,5 +68,20 @@ public class AuctionsController {
         else throw new IllegalArgumentException("Invalid policy");
         AuctionsPack auctionsPack = new AuctionsPack(auctions);
         return ResponseEntity.ok().body(auctionsPack);
+    }
+
+    @GetMapping("/auctions/specific/public-view")
+    public ResponseEntity<SpecificAuctionPublicInformations> sendSpecificAuctionInformations(
+        @RequestParam Integer id
+    )  
+        throws 
+            NoAuctionWithSuchIdException
+    {
+        Optional<Auction> auction = auctionsRepository.findById(id);
+        if (auction.isEmpty()) {
+            throw new NoAuctionWithSuchIdException();
+        }
+        SpecificAuctionPublicInformations auctionSpecificInformations = new SpecificAuctionPublicInformations(auction.get());
+        return ResponseEntity.ok().body(auctionSpecificInformations);
     }
 }

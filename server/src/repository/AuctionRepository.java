@@ -2,6 +2,8 @@ package repository;
 
 import entity.Auction;
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.domain.Pageable;
 
@@ -18,6 +20,8 @@ public interface AuctionRepository extends JpaRepository<Auction, Integer> {
         /* on class internal fields and use them as if they were implemented. Hibernate   */
         /* will generate the code for you and database access functionalities will be     */
         /* provided to you. Please read the spring-boot wiki to understand better         */
+
+        Optional<Auction> findById(Integer id);
 
         List<Auction> findAllByEndTimeAfterOrderByEndTimeAsc(Timestamp currentTime, Pageable pageable);
 

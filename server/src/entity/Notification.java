@@ -26,6 +26,9 @@ public class Notification {
     @Column(name = "visualized")
     Boolean visualized;
 
+    @Column(name = "eliminated")
+    Boolean eliminated;
+
     @Column(name = "email")
     String email;
 

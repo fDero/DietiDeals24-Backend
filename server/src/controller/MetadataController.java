@@ -23,7 +23,7 @@ public class MetadataController {
         this.categoryRepository = categoryRepository;
     }
 
-    @GetMapping("/categories")
+    @GetMapping(value = "/categories", produces = "application/json")
     public ResponseEntity<CategoryPack> sendProfileInformations() {
         List<Category> categories = categoryRepository.findAll();
         return ResponseEntity.ok().body(new CategoryPack(categories));

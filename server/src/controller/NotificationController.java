@@ -8,6 +8,8 @@ import jakarta.transaction.Transactional;
 import repository.NotificationRepository;
 import response.NotificationsPack;
 import java.util.Optional;
+
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import java.util.List;
 import authentication.JwtTokenProvider;
@@ -39,7 +41,7 @@ public class NotificationController {
     }
 
     @RequireJWT
-    @GetMapping("/notifications/all")
+    @GetMapping(value = "/notifications/all", produces = "application/json")
     public ResponseEntity<NotificationsPack> sendProfileInformations(@RequestHeader(name = "Authorization") String authorizationHeader) {
         String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
         String email = jwtTokenProvider.getEmailFromJWT(jwtToken);
@@ -49,7 +51,7 @@ public class NotificationController {
 
     @RequireJWT
     @Transactional
-    @PostMapping("/notifications/mark-as-read")
+    @PostMapping(value = "/notifications/mark-as-read", produces = "text/plain")
     public ResponseEntity<String> markNotificationAsRead(
         @RequestHeader(name = "Authorization") String authorizationHeader,
         @RequestParam(name = "notificationId") int notificationId
@@ -60,11 +62,9 @@ public class NotificationController {
     {
         String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
         String email = jwtTokenProvider.getEmailFromJWT(jwtToken);
-        Optional<Notification> notification = notificationRepository.findById(notificationId);
-        if (!notification.isPresent()){
-            throw new NoSuchNotificationException();
-        }
-        if (notification.get().getEmail() != email){
+        Notification notification = notificationRepository.findById(notificationId)
+            .orElseThrow(() -> new NoSuchNotificationException());
+        if (notification.getEmail() != email){
             throw new NotificationNotYoursException();
         }
         notificationRepository.markNotificationAsRead(notificationId);
@@ -74,7 +74,7 @@ public class NotificationController {
     
     @RequireJWT
     @Transactional
-    @DeleteMapping("/notifications/mark-as-eliminated")
+    @DeleteMapping(value = "/notifications/mark-as-eliminated", produces = "text/plain")
     public ResponseEntity<String> markNotificationAsEliminated(
         @RequestHeader(name = "Authorization") String authorizationHeader,
         @RequestParam(name = "notificationId") int notificationId

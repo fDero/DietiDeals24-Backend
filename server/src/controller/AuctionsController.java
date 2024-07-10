@@ -37,7 +37,7 @@ public class AuctionsController {
         this.reverseAuctionsRepository = reverseAuctionsRepository;
     }
 
-    @GetMapping("/auctions/search")
+    @GetMapping(value = "/auctions/search", produces = "application/json")
     public ResponseEntity<AuctionsPack> sendAuctionSearchOutcome(
         @RequestParam(defaultValue = "1")          Integer page, 
         @RequestParam(defaultValue = "10")         Integer size,
@@ -70,7 +70,7 @@ public class AuctionsController {
         return ResponseEntity.ok().body(auctionsPack);
     }
 
-    @GetMapping("/auctions/specific/public-view")
+    @GetMapping(value = "/auctions/specific/public-view", produces = "application/json")
     public ResponseEntity<SpecificAuctionPublicInformations> sendSpecificAuctionInformations(
         @RequestParam Integer id
     )  

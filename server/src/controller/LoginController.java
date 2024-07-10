@@ -14,6 +14,9 @@ import service.EncryptionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpHeaders;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+
 import authentication.JwtTokenProvider;
 
 import org.jetbrains.annotations.NotNull;
@@ -48,7 +51,7 @@ public class LoginController {
         this.passwordRepository = passwordRepository;
     }
 
-    @PostMapping("/login")
+    @PostMapping(value = "/login", produces = "application/json")
     public ResponseEntity<MinimalAccountInformations> login(@RequestBody @NotNull LoginRequest request) 
         throws 
             AccountValidationException,
@@ -72,6 +75,9 @@ public class LoginController {
         MinimalAccountInformations accountView = new MinimalAccountInformations(account);
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-Auth-Token", jwtTokenProvider.generateToken(account.getEmail()));
+        List<String> allowedHeaders = new ArrayList<>();
+        allowedHeaders.add("X-Auth-Token");
+        headers.setAccessControlAllowHeaders(allowedHeaders);
         return ResponseEntity.ok().headers(headers).body(accountView);
     }
 }

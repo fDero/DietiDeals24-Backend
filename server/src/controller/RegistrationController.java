@@ -14,6 +14,9 @@ import service.EncryptionService;
 import utils.PendingAccountRegistration;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpHeaders;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import org.jetbrains.annotations.NotNull;
@@ -70,7 +73,7 @@ public class RegistrationController {
         return randomGeneratedCode.toString();
     }
 
-    @PostMapping("/register/init")
+    @PostMapping(value = "/register/init", produces = "text/plain")
     public ResponseEntity<String> initializeRegistration(@RequestBody @NotNull AccountRegistrationRequest request) 
         throws 
             AccountValidationException, 
@@ -84,7 +87,7 @@ public class RegistrationController {
         return ResponseEntity.ok().body("an email was sent to: " + request.getEmail());
     }
 
-    @PostMapping("/register/confirm")
+    @PostMapping(value = "/register/confirm", produces = "application/json")
     public ResponseEntity<MinimalAccountInformations> confirmRegistration(@RequestBody @NotNull RegistrationConfirmationRequest request) 
         throws 
             NoPendingAccountConfirmationException, 
@@ -102,6 +105,9 @@ public class RegistrationController {
         MinimalAccountInformations accountView = new MinimalAccountInformations(account);
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-Auth-Token", jwtTokenProvider.generateToken(account.getEmail()));
+        List<String> allowedHeaders = new ArrayList<>();
+        allowedHeaders.add("X-Auth-Token");
+        headers.setAccessControlAllowHeaders(allowedHeaders);
         return ResponseEntity.ok().headers(headers).body(accountView);    
     }
 

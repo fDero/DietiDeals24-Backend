@@ -1,6 +1,8 @@
 package spring;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import exceptions.*;
@@ -13,53 +15,58 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    static HttpHeaders errorResponseHeaders = new HttpHeaders();
+    static {
+        errorResponseHeaders.setContentType(MediaType.TEXT_PLAIN);        
+    }
+
     @ExceptionHandler(AccountValidationException.class)
     public ResponseEntity<String> handleAccountValidationException(AccountValidationException ex){
-        return new ResponseEntity<String>(ex.getMessage(), null, HttpStatus.UNPROCESSABLE_ENTITY);
+        return new ResponseEntity<String>(ex.getMessage(), errorResponseHeaders, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     @ExceptionHandler(AccountAlreadyExistsException.class)
     public ResponseEntity<String> handleAccountAlreadyExistsException(AccountAlreadyExistsException ex){
-        return new ResponseEntity<String>(ex.getMessage(), null, HttpStatus.CONFLICT);
+        return new ResponseEntity<String>(ex.getMessage(), errorResponseHeaders, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(NoPendingAccountConfirmationException.class)
     public ResponseEntity<String> handleNoPendingAccountConfirmationException(NoPendingAccountConfirmationException ex){
-        return new ResponseEntity<String>(ex.getMessage(), null, HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<String>(ex.getMessage(), errorResponseHeaders, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(TooManyConfirmationCodes.class)
     public ResponseEntity<String> handleTooManyConfirmationCodes(TooManyConfirmationCodes ex){
-        return new ResponseEntity<String>(ex.getMessage(), null, HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<String>(ex.getMessage(), errorResponseHeaders, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(WrongConfirmationCodeException.class)
     public ResponseEntity<String> handleWrongConfirmationCodeException(WrongConfirmationCodeException ex){
-        return new ResponseEntity<String>(ex.getMessage(), null, HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<String>(ex.getMessage(), errorResponseHeaders, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(NoAuctionWithSuchIdException.class)
     public ResponseEntity<String> handleNoAccountWithSuchEmailException(NoAuctionWithSuchIdException ex){
-        return new ResponseEntity<String>(ex.getMessage(), null, HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<String>(ex.getMessage(), errorResponseHeaders, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(NoAccountWithSuchEmailException.class)
     public ResponseEntity<String> handleNoAccountWithSuchEmailException(NoAccountWithSuchEmailException ex){
-        return new ResponseEntity<String>(ex.getMessage(), null, HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<String>(ex.getMessage(), errorResponseHeaders, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(AccessDeniedBadCredentialsException.class)
     public ResponseEntity<String> handleAccessDeniedBadCredentialsException(AccessDeniedBadCredentialsException ex){
-        return new ResponseEntity<String>(ex.getMessage(), null, HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<String>(ex.getMessage(), errorResponseHeaders, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(NoHandlerFoundException.class)
     public ResponseEntity<String> handleNoHandlerFoundException(NoHandlerFoundException ex){
-        return new ResponseEntity<String>(ex.getMessage(), null, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<String>(ex.getMessage(), errorResponseHeaders, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex){
-        return new ResponseEntity<String>(ex.getMessage(), null, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<String>(ex.getMessage(), errorResponseHeaders, HttpStatus.BAD_REQUEST);
     }
 }

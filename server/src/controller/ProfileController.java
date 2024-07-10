@@ -44,7 +44,7 @@ public class ProfileController {
     }
 
     @RequireJWT
-    @GetMapping("/profile/owner-view")
+    @GetMapping(value = "/profile/owner-view", produces = "application/json")
     public ResponseEntity<AccountPrivateProfileInformations> sendPrivateProfileInformations(@RequestHeader(name = "Authorization") String authorizationHeader) 
         throws 
             NoAccountWithSuchEmailException 
@@ -58,7 +58,7 @@ public class ProfileController {
         return ResponseEntity.ok().body(accountPrivateInformations);
     }
 
-    @GetMapping("/profile/public-view")
+    @GetMapping(value = "/profile/public-view", produces = "application/json")
     public ResponseEntity<AccountPublicProfileInformations> sendPublicProfileInformations(@RequestParam String email) 
         throws 
             NoAccountWithSuchEmailException

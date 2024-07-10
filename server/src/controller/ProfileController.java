@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import authentication.JwtTokenProvider;
+import authentication.JwtTokenManager;
 import authentication.RequireJWT;
 
 @RestController
@@ -28,14 +28,14 @@ public class ProfileController {
     private final AccountRepository accountRepository;
     private final ContactInformationRepository contactInformationRepository;
     private final PersonalLinkRepository personalLinkRepository;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenManager jwtTokenProvider;
 
     @Autowired
     public ProfileController(
         AccountRepository accountRepository,
         ContactInformationRepository contactInformationRepository,
         PersonalLinkRepository personalLinkRepository,
-        JwtTokenProvider jwtTokenProvider
+        JwtTokenManager jwtTokenProvider
     ) {
         this.accountRepository = accountRepository;
         this.contactInformationRepository = contactInformationRepository;

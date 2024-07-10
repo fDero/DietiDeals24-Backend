@@ -135,8 +135,8 @@
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
             <version>2.3.1</version>
-            </dependency>
-        </dependencies>
+        </dependency>
+    </dependencies>
     <build>
 
         <sourceDirectory>src</sourceDirectory>

@@ -14,24 +14,48 @@ import org.springframework.lang.NonNull;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private JwtTokenProvider tokenProvider;
+    private JwtTokenManager tokenProvider;
 
-    public JwtAuthenticationFilter(JwtTokenProvider tokenProvider) {
+    public JwtAuthenticationFilter(JwtTokenManager tokenProvider) {
         this.tokenProvider = tokenProvider;
     }
 
     @Override
-    protected void doFilterInternal(@NonNull HttpServletRequest request,@NonNull  HttpServletResponse response,@NonNull  FilterChain filterChain)
-            throws 
-                ServletException, 
-                IOException 
+    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull  HttpServletResponse response, @NonNull  FilterChain filterChain)
+        throws 
+            ServletException, 
+            IOException 
     {
         String token = tokenProvider.getTokenFromRequest(request);
-        if (token != null && tokenProvider.validateToken(token)) {
-            String email = tokenProvider.getEmailFromJWT(token);
-            Authentication auth = new JwtAuthentication(token, email, request);
-            SecurityContextHolder.getContext().setAuthentication(auth);
+        boolean tokenIsValid = token != null && tokenProvider.validateToken(token);
+        
+        System.out.println("Token is valid: " + tokenIsValid);
+
+        if (!tokenIsValid) {
+            filterChain.doFilter(request, response);
+            return;
         }
+        
+        System.out.println("AAA");
+
+        String email = tokenProvider.getEmailFromJWT(token);
+        Authentication auth = new JwtAuthentication(token, email, request);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+
+        long tokenUpTime = System.currentTimeMillis() - tokenProvider.getIssuedAt(token);
+        long tokenFullLifeSpan = tokenProvider.getExpiration(token) - tokenProvider.getIssuedAt(token);
+        String tokenWasRenewed = "No";
+
+        if (tokenUpTime > tokenFullLifeSpan / 2) {
+            token = tokenProvider.generateToken(email);
+            tokenWasRenewed = "Yes";
+        }
+        
+        System.out.println("BBB");
+
+        response.addHeader("X-Auth-Token", token);
+        response.addHeader("X-Token-Was-Renewed", tokenWasRenewed);
+        response.addHeader("Access-Control-Expose-Headers", "X-Auth-Token, X-Token-Was-Renewed");
         filterChain.doFilter(request, response);
     }
 }

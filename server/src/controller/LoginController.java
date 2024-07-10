@@ -17,7 +17,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import authentication.JwtTokenProvider;
+import authentication.JwtTokenManager;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +33,7 @@ public class LoginController {
     private final AccountValidationService accountValidationService;
     private final AccountRepository accountRepository;
     private final EncryptionService encryptionService;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenManager jwtTokenProvider;
     private final PasswordRepository passwordRepository;
 
     @Autowired
@@ -41,7 +41,7 @@ public class LoginController {
         AccountValidationService accountValidationService,
         AccountRepository accountRepository,
         EncryptionService encryptionService,
-        JwtTokenProvider jwtTokenProvider,
+        JwtTokenManager jwtTokenProvider,
         PasswordRepository passwordRepository
     ){
         this.accountValidationService = accountValidationService;

@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import authentication.JwtTokenProvider;
+import authentication.JwtTokenManager;
 import exceptions.AccountAlreadyExistsException;
 import exceptions.AccountValidationException;
 import exceptions.NoPendingAccountConfirmationException;
@@ -42,7 +42,7 @@ public class RegistrationController {
     private final EmailService emailService;
     private final PendingAccountRegistrationCacheService pendingAccountsCacheService;
     private final EncryptionService encryptionService;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenManager jwtTokenProvider;
     private final PasswordRepository passwordRepository;
 
     @Autowired
@@ -52,7 +52,7 @@ public class RegistrationController {
             AccountRepository accountRepository,
             PendingAccountRegistrationCacheService pendingAccountsCacheService,
             EncryptionService encryptionService,
-            JwtTokenProvider jwtTokenProvider,
+            JwtTokenManager jwtTokenProvider,
             PasswordRepository passwordRepository
     ) {
         this.emailService = emailService;

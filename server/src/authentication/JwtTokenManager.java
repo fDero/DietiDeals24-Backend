@@ -3,19 +3,15 @@ package authentication;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Random;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.SignatureException;
-import io.jsonwebtoken.UnsupportedJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Component;
 
 
 @Component
-public class JwtTokenProvider {
+public class JwtTokenManager {
 
     private static final String secretHS512Key = generateSecretKey();
 
@@ -45,22 +41,28 @@ public class JwtTokenProvider {
             .getBody().getSubject();
     }
 
+    public long getIssuedAt(String token) {
+        return Jwts.parser()
+            .setSigningKey(secretHS512Key)
+            .parseClaimsJws(token)
+            .getBody().getIssuedAt().getTime();
+    }
+
+    public long getExpiration(String token) {
+        return Jwts.parser()
+            .setSigningKey(secretHS512Key)
+            .parseClaimsJws(token)
+            .getBody().getExpiration().getTime();
+    }
+
     public boolean validateToken(String authToken) {
         try {
             Jwts.parser().setSigningKey(secretHS512Key).parseClaimsJws(authToken);
             return true;
-        } catch (SignatureException ex) {
-            System.out.println("Invalid JWT signature");
-        } catch (MalformedJwtException ex) {
-            System.out.println("Invalid JWT token");
-        } catch (ExpiredJwtException ex) {
-            System.out.println("Expired JWT token");
-        } catch (UnsupportedJwtException ex) {
-            System.out.println("Unsupported JWT token");
-        } catch (IllegalArgumentException ex) {
-            System.out.println("JWT claims string is empty.");
+        } catch (Exception ex) {
+            System.out.println("Invalid token: " + ex.getMessage());
+            return false;
         }
-        return false;
     }
 
     public String getTokenFromRequest(HttpServletRequest request) {

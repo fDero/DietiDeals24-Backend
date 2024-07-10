@@ -9,7 +9,7 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import authentication.JwtAuthenticationFilter;
-import authentication.JwtTokenProvider;
+import authentication.JwtTokenManager;
 import authentication.RequireJWT;
 
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -29,13 +29,13 @@ import org.springframework.http.HttpStatus;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private JwtTokenProvider tokenProvider;
+    private JwtTokenManager tokenProvider;
 
     private Set<String> authorizationAwareEndpoints = new HashSet<>();
 
     @Autowired
     public SecurityConfig(
-        JwtTokenProvider tokenProvider,
+        JwtTokenManager tokenProvider,
         RequestMappingHandlerMapping requestMappingHandlerMapping
     ) {
         this.tokenProvider = tokenProvider;

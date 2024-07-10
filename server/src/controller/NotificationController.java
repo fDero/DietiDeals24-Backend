@@ -3,17 +3,14 @@ package controller;
 import entity.Notification;
 import exceptions.NoSuchNotificationException;
 import exceptions.NotificationNotYoursException;
-import jakarta.transaction.Transactional;
 
 import repository.NotificationRepository;
 import response.NotificationsPack;
 import java.util.Optional;
 
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import java.util.List;
-import authentication.JwtTokenProvider;
-
+import authentication.JwtTokenManager;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,18 +20,19 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import authentication.RequireJWT;
+import jakarta.transaction.Transactional;
 
 
 @RestController
 public class NotificationController {
     
     private final NotificationRepository notificationRepository;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenManager jwtTokenProvider;
 
     @Autowired
     public NotificationController(
         NotificationRepository notificationRepository,
-        JwtTokenProvider jwtTokenProvider
+        JwtTokenManager jwtTokenProvider
     ) {
         this.notificationRepository = notificationRepository;
         this.jwtTokenProvider = jwtTokenProvider;
@@ -80,7 +78,7 @@ public class NotificationController {
         @RequestParam(name = "notificationId") int notificationId
     ) 
         throws
-        NoSuchNotificationException,
+            NoSuchNotificationException,
             NotificationNotYoursException
     {
         String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);

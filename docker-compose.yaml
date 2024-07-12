@@ -5,6 +5,7 @@ services:
   server:
     image: maven:3.9-amazoncorretto-21-debian
     environment:
+      DIETIDEALS24_GEO_API_KEY: ${DIETIDEALS24_GEO_API_KEY}
       DIETIDEALS24_GOOGLE_SMTP_PASSWORD: ${DIETIDEALS24_GOOGLE_SMTP_PASSWORD}
       DIETIDEALS24_GOOGLE_SMTP_USERNAME: "dietideals24@gmail.com"
       POSTGRES_USER: "postgres"

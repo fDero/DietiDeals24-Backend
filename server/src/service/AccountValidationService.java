@@ -7,7 +7,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.regex.Pattern;
 import exceptions.AccountAlreadyExistsException;
 import exceptions.AccountValidationException;
@@ -21,18 +20,15 @@ import org.springframework.stereotype.Service;
 public class AccountValidationService {
 
     private final AccountRepository accountRepository;
-    static private final ArrayList<String> avialableCountries = new ArrayList<>(Arrays.asList(
-        "AL", "AD", "AT", "BY", "BE", "BA", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE",
-        "GR", "HU", "IS", "IE", "IT", "VA", "LV", "LI", "LT", "LU", "MK", "MT", "MD", "MC", "GB",
-        "ME", "NL", "NO", "PL", "PT", "RO", "RU", "SM", "RS", "SK", "SI", "ES", "SE", "CH", "UA"
-    ));
 
     @Autowired
-    AccountValidationService(AccountRepository accountRepository){
+    AccountValidationService(
+        AccountRepository accountRepository
+    ){
         this.accountRepository = accountRepository;
     }
 
-    public void validateEmail(@NotNull String email, ArrayList<String> errors){
+    public void validateEmail(String email, ArrayList<String> errors){
         if (email == null){
             errors.add("email field is missing");
             return;
@@ -44,7 +40,7 @@ public class AccountValidationService {
         }
     }
 
-    public void validatePassword(@NotNull String password, ArrayList<String> errors){
+    public void validatePassword(String password, ArrayList<String> errors){
         if (password == null){
             errors.add("missing password field (it must contains at least 8 characters, one special char, one lowercase and one uppercase letter)");
             return;
@@ -56,7 +52,7 @@ public class AccountValidationService {
         if (password.contains(" ")) errors.add("passwords can't contain spaces");
     }
 
-    public void validateBirthday(@NotNull String birthdayString, ArrayList<String> errors){
+    public void validateBirthday(String birthdayString, ArrayList<String> errors){
         Timestamp eighteenYearsAgo = Timestamp.valueOf(LocalDate.now().atStartOfDay().minusYears(18));
         Timestamp birthday = null;
         if (birthdayString == null){
@@ -76,14 +72,8 @@ public class AccountValidationService {
         }
     }
 
-    public void validateCountry(@NotNull String country, ArrayList<String> errors){
-        if (country == null){
-            errors.add("missing country field (only EU countries are supported)");
-            return;
-        }
-        if (!avialableCountries.contains(country)) {
-            errors.add("unrecognized country! remember: only EU countries are supported");
-        }
+    public void validateGeographicalData(String country, String city, ArrayList<String> errors){
+        // for now, every city / country is valid
     }
 
     public void validateAccountRegistrationRequest(@NotNull AccountRegistrationRequest account) 
@@ -95,7 +85,7 @@ public class AccountValidationService {
         this.validateBirthday(account.getBirthday(), errors);
         this.validateEmail(account.getEmail(), errors);
         this.validatePassword(account.getPassword(), errors);
-        this.validateCountry(account.getCountry(), errors);
+        this.validateGeographicalData(account.getCountry(), account.getCity(), errors);
         if (!errors.isEmpty()) {
             throw new AccountValidationException(String.join(", ", errors));
         }

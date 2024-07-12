@@ -22,12 +22,12 @@ public class NotificationsPackSerializer extends JsonSerializer<NotificationsPac
             gen.writeStartObject();
             gen.writeStringField("notificationType", notification.getNotificationType());
             if (notification.getSilentAuctionId() != null){
-                gen.writeNumberField("silentAuctionId", notification.getSilentAuctionId());
+                gen.writeNumberField("auctionId", notification.getSilentAuctionId());
             }
             if (notification.getReverseAuctionId() != null){
-                gen.writeNumberField("reverseAuctionId", notification.getReverseAuctionId());
+                gen.writeNumberField("auctionId", notification.getReverseAuctionId());
             }
-            gen.writeBooleanField("visualized", notification.getVisualized());
+            gen.writeBooleanField("read", notification.getVisualized());
             gen.writeEndObject();
         }
         gen.writeEndArray();

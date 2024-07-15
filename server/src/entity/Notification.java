@@ -29,9 +29,6 @@ public class Notification {
     @Column(name = "eliminated")
     Boolean eliminated;
 
-    @Column(name = "email")
-    String email;
-
     @Id @Column(name = "notification_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

@@ -1,5 +1,5 @@
 
-CREATE TABLE NotificationData (
+CREATE TABLE Notification (
     
     auction_id          INT,
     notification_type   VARCHAR(20) NOT NULL,
@@ -13,10 +13,4 @@ CREATE TABLE NotificationData (
 
     FOREIGN KEY (auction_id)
     REFERENCES Auction(auction_id)
-);
-
-CREATE VIEW Notification AS (
-    SELECT Account.email, NotificationData.*
-    FROM   Account, NotificationData
-    WHERE  Account.account_id = NotificationData.account_id
 );

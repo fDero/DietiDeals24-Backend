@@ -35,11 +35,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-        
-        System.out.println("AAA");
 
-        String email = tokenProvider.getEmailFromJWT(token);
-        Authentication auth = new JwtAuthentication(token, email, request);
+        String username = tokenProvider.getUsernameFromJWT(token);
+        Authentication auth = new JwtAuthentication(token, username, request);
         SecurityContextHolder.getContext().setAuthentication(auth);
 
         long tokenUpTime = System.currentTimeMillis() - tokenProvider.getIssuedAt(token);
@@ -47,11 +45,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String tokenWasRenewed = "No";
 
         if (tokenUpTime > tokenFullLifeSpan / 2) {
-            token = tokenProvider.generateToken(email);
+            token = tokenProvider.generateToken(username);
             tokenWasRenewed = "Yes";
         }
-        
-        System.out.println("BBB");
 
         response.addHeader("X-Auth-Token", token);
         response.addHeader("X-Token-Was-Renewed", tokenWasRenewed);

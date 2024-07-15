@@ -104,7 +104,7 @@ public class RegistrationController {
         pendingAccountsCacheService.delete(request.getEmail());
         MinimalAccountInformations accountView = new MinimalAccountInformations(account);
         HttpHeaders headers = new HttpHeaders();
-        headers.set("X-Auth-Token", jwtTokenProvider.generateToken(account.getEmail()));
+        headers.set("X-Auth-Token", jwtTokenProvider.generateToken(account.getUsername()));
         List<String> allowedHeaders = new ArrayList<>();
         allowedHeaders.add("X-Auth-Token");
         headers.setAccessControlAllowHeaders(allowedHeaders);

@@ -92,6 +92,9 @@ public class AccountValidationService {
         if (accountRepository.existsAccountByEmail(account.getEmail())) {
             throw new AccountAlreadyExistsException("an account already exists with this email address");
         }
+        if (accountRepository.existsAccountByUsername(account.getUsername())) {
+            throw new AccountAlreadyExistsException("an account already exists with this username");
+        }
     }
 
     public void validatePassword(@NotNull String password)

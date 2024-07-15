@@ -14,7 +14,6 @@ import org.springframework.stereotype.Repository;
 public interface NotificationRepository extends JpaRepository<Notification, Integer> {
     
     List<Notification> findByAccountId(int accountId);
-    List<Notification> findByEmail(String email);
     Optional<Notification> findById(Integer id);
 
     @Query("UPDATE Notification n SET n.visualized = true WHERE n.id = :notificationId")

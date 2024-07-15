@@ -50,8 +50,8 @@ public class ProfileController {
             NoAccountWithSuchEmailException 
     {
         String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
-        String email = jwtTokenProvider.getEmailFromJWT(jwtToken);
-        Account account = accountRepository.findAccountByEmail(email).orElseThrow(() -> new NoAccountWithSuchEmailException());
+        String username = jwtTokenProvider.getUsernameFromJWT(jwtToken);
+        Account account = accountRepository.findAccountByUsername(username).orElseThrow(() -> new NoAccountWithSuchEmailException());
         List<PersonalLink> personalLinks = personalLinkRepository.findByAccountId(account.getId());
         List<ContactInformation> contactInformations = contactInformationRepository.findByAccountId(account.getId());
         AccountPrivateProfileInformations accountPrivateInformations = new AccountPrivateProfileInformations(account, personalLinks, contactInformations);
@@ -59,11 +59,11 @@ public class ProfileController {
     }
 
     @GetMapping(value = "/profile/public-view", produces = "application/json")
-    public ResponseEntity<AccountPublicProfileInformations> sendPublicProfileInformations(@RequestParam String email) 
+    public ResponseEntity<AccountPublicProfileInformations> sendPublicProfileInformations(@RequestParam String username) 
         throws 
             NoAccountWithSuchEmailException
     {
-        Account account = accountRepository.findAccountByEmail(email).orElseThrow(() -> new NoAccountWithSuchEmailException());
+        Account account = accountRepository.findAccountByUsername(username).orElseThrow(() -> new NoAccountWithSuchEmailException());
         List<PersonalLink> personalLinks = personalLinkRepository.findByAccountId(account.getId());
         AccountPublicProfileInformations acountPublicInformations = new AccountPublicProfileInformations(account, personalLinks);
         return ResponseEntity.ok().body(acountPublicInformations);

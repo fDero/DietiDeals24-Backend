@@ -18,5 +18,8 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
         /* provided to you. Please read the spring-boot wiki to understand better         */
 
         boolean existsAccountByEmail(String email);
+        boolean existsAccountByUsername(String username);
+        
         Optional<Account> findAccountByEmail(String email);
+        Optional<Account> findAccountByUsername(String username);
 }

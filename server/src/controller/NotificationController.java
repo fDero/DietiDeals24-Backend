@@ -1,12 +1,15 @@
 package controller;
 
 import entity.Notification;
+import exceptions.NoAccountWithSuchEmailException;
 import exceptions.NoSuchNotificationException;
 import exceptions.NotificationNotYoursException;
-
+import repository.AccountRepository;
 import repository.NotificationRepository;
 import response.NotificationsPack;
 import java.util.Optional;
+
+import entity.Account;
 
 import org.springframework.http.ResponseEntity;
 import java.util.List;
@@ -28,22 +31,30 @@ public class NotificationController {
     
     private final NotificationRepository notificationRepository;
     private final JwtTokenManager jwtTokenProvider;
+    private final AccountRepository accountRepository;
 
     @Autowired
     public NotificationController(
         NotificationRepository notificationRepository,
-        JwtTokenManager jwtTokenProvider
+        JwtTokenManager jwtTokenProvider,
+        AccountRepository accountRepository
     ) {
         this.notificationRepository = notificationRepository;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.accountRepository = accountRepository;
     }
 
     @RequireJWT
     @GetMapping(value = "/notifications/all", produces = "application/json")
-    public ResponseEntity<NotificationsPack> sendProfileInformations(@RequestHeader(name = "Authorization") String authorizationHeader) {
+    public ResponseEntity<NotificationsPack> sendProfileInformations(@RequestHeader(name = "Authorization") String authorizationHeader) 
+        throws NoAccountWithSuchEmailException 
+    {
         String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
-        String email = jwtTokenProvider.getEmailFromJWT(jwtToken);
-        List<Notification> notifications = notificationRepository.findByEmail(email);
+        String username = jwtTokenProvider.getUsernameFromJWT(jwtToken);
+        Account account = accountRepository.findAccountByUsername(username).orElseThrow(
+            () -> new NoAccountWithSuchEmailException()
+        );
+        List<Notification> notifications = notificationRepository.findByAccountId(account.getId());
         return ResponseEntity.ok().body(new NotificationsPack(notifications));
     }
 
@@ -56,15 +67,12 @@ public class NotificationController {
     ) 
         throws
             NoSuchNotificationException,
-            NotificationNotYoursException
+            NotificationNotYoursException,
+            NoAccountWithSuchEmailException
     {
-        String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
-        String email = jwtTokenProvider.getEmailFromJWT(jwtToken);
         Notification notification = notificationRepository.findById(notificationId)
             .orElseThrow(() -> new NoSuchNotificationException());
-        if (notification.getEmail() != email){
-            throw new NotificationNotYoursException();
-        }
+        ensureNotificationOwnership(notification, authorizationHeader);
         notificationRepository.markNotificationAsRead(notificationId);
         return ResponseEntity.ok().body("done");
     }
@@ -79,18 +87,32 @@ public class NotificationController {
     ) 
         throws
             NoSuchNotificationException,
-            NotificationNotYoursException
+            NotificationNotYoursException,
+            NoAccountWithSuchEmailException
     {
-        String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
-        String email = jwtTokenProvider.getEmailFromJWT(jwtToken);
+        
         Optional<Notification> notification = notificationRepository.findById(notificationId);
         if (!notification.isPresent()){
             throw new NoSuchNotificationException();
         }
-        if (notification.get().getEmail() != email){
-            throw new NotificationNotYoursException();
-        }
+        ensureNotificationOwnership(notification.get(), authorizationHeader);
         notificationRepository.markNotificationAsRead(notificationId);
         return ResponseEntity.ok().body("done");
+    }
+
+    public void ensureNotificationOwnership(Notification notification, String authorizationHeader)
+        throws 
+            NotificationNotYoursException,
+            NoAccountWithSuchEmailException
+    {
+        String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
+        String username = jwtTokenProvider.getUsernameFromJWT(jwtToken);
+        Optional<Account> account = accountRepository.findAccountByUsername(username);
+        if (account.isEmpty()){
+            throw new NoAccountWithSuchEmailException();
+        }
+        if (notification.getAccountId() != account.get().getId()){
+            throw new NotificationNotYoursException();
+        }
     }
 }

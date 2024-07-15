@@ -27,14 +27,14 @@ public class JwtTokenManager {
         return randomString.toString();
     }
 
-    public String generateToken(String email) {
+    public String generateToken(String username) {
         Date now = Date.from(Instant.now());
         Date expiryDate = new Date(now.getTime() + 864000000); //10 days
-        return Jwts.builder().setSubject(email).setIssuedAt(now)
+        return Jwts.builder().setSubject(username).setIssuedAt(now)
             .setExpiration(expiryDate).signWith(SignatureAlgorithm.HS512, secretHS512Key).compact();
     }
 
-    public String getEmailFromJWT(String token) {
+    public String getUsernameFromJWT(String token) {
         return Jwts.parser()
             .setSigningKey(secretHS512Key)
             .parseClaimsJws(token)

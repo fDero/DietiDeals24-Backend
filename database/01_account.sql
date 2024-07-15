@@ -19,6 +19,7 @@ CREATE TABLE Account (
     past_deals_counter           INT DEFAULT 0,
 
     UNIQUE(email),
+    UNIQUE(username),
     account_id           SERIAL PRIMARY KEY
 );
 

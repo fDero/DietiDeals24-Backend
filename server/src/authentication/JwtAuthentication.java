@@ -11,18 +11,18 @@ import jakarta.servlet.http.HttpServletRequest;
 public class JwtAuthentication implements Authentication {
 
     private final String token;
-    private final String email;
+    private final String username;
     private final HttpServletRequest request;
     
-    JwtAuthentication(String token, String email, HttpServletRequest request){
+    JwtAuthentication(String token, String username, HttpServletRequest request){
         this.token = token;
-        this.email = email;
+        this.username = username;
         this.request = request;
     }
 
     @Override
     public String getName() {
-       return email;
+       return username;
     }
 
     @Override
@@ -42,7 +42,7 @@ public class JwtAuthentication implements Authentication {
 
     @Override
     public Object getPrincipal() {
-        return email;
+        return username;
     }
 
     @Override

@@ -17,6 +17,9 @@ public class NotificationsPackSerializer extends JsonSerializer<NotificationsPac
     ) 
         throws IOException  
     {
+        long nonReadCounter = 0;
+        long notificationsCounter = value.getNotifications().size();
+        gen.writeStartObject();
         gen.writeStartArray();
         for (Notification notification : value.getNotifications()) {
             gen.writeStartObject();
@@ -27,9 +30,16 @@ public class NotificationsPackSerializer extends JsonSerializer<NotificationsPac
             if (notification.getReverseAuctionId() != null){
                 gen.writeNumberField("auctionId", notification.getReverseAuctionId());
             }
+            if (!notification.getVisualized()){
+                nonReadCounter++;
+            }
             gen.writeBooleanField("read", notification.getVisualized());
             gen.writeEndObject();
         }
         gen.writeEndArray();
+        gen.writeNumberField("nonReadNotifications", nonReadCounter);
+        gen.writeNumberField("readNotifications", notificationsCounter - nonReadCounter);
+        gen.writeNumberField("notificationsCounter", notificationsCounter);
+        gen.writeEndObject();
     }
 }

@@ -40,7 +40,7 @@ public class GeographicalAwarenessService {
             System.out.println(jsonString);
             GeographicalCountryDescriptor[] countries = gson.fromJson(jsonString, GeographicalCountryDescriptor[].class);
             return Arrays.asList(countries);
-        } catch (IOException | InterruptedException e) {
+        } catch (Exception e) {
             throw new RuntimeException("Error while fetching European countries", e);
         }
     }
@@ -60,7 +60,7 @@ public class GeographicalAwarenessService {
             GeographicalCityDescriptor[] countries = gson.fromJson(jsonString, GeographicalCityDescriptor[].class);
             return Arrays.asList(countries);
         }
-        catch (IOException | InterruptedException e) {
+        catch (Exception e) {
             throw new UnrecognizedCountryException();
         }
     }

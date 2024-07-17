@@ -77,7 +77,7 @@ public class LoginController {
         headers.set("X-Auth-Token", jwtTokenProvider.generateToken(account.getUsername()));
         List<String> allowedHeaders = new ArrayList<>();
         allowedHeaders.add("X-Auth-Token");
-        headers.setAccessControlAllowHeaders(allowedHeaders);
+        headers.setAccessControlExposeHeaders(allowedHeaders);
         return ResponseEntity.ok().headers(headers).body(accountView);
     }
 }

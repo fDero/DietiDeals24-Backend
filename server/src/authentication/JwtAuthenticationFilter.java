@@ -27,6 +27,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             IOException 
     {
         response.addHeader("Access-Control-Allow-Origin", "*");
+        response.addHeader("Access-Control-Allow-Header", "Authorization");
         String token = tokenProvider.getTokenFromRequest(request);
         boolean tokenIsValid = token != null && tokenProvider.validateToken(token);
         

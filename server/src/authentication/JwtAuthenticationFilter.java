@@ -27,7 +27,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             IOException 
     {
         response.addHeader("Access-Control-Allow-Origin", "*");
-        response.addHeader("Access-Control-Allow-Header", "Authorization");
+        response.addHeader("Access-Control-Allow-Headers", "Authorization");
         response.addHeader("Access-Control-Allow-Credentials", "true");
         response.addHeader("Vary", "Origin");
         

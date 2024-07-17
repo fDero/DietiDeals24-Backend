@@ -1,6 +1,10 @@
 package service;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.Arrays;
 import java.util.List;
 
@@ -13,15 +17,10 @@ import exceptions.UnrecognizedCountryException;
 import utils.GeographicalCityDescriptor;
 import utils.GeographicalCountryDescriptor;
 
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-
 @Service
 public class GeographicalAwarenessService {
     
     private final String key;
-    private final OkHttpClient client = new OkHttpClient().newBuilder().build();
     private final Gson gson = new Gson();
 
     public GeographicalAwarenessService(@Value("${geo.api.key}") String key){
@@ -30,17 +29,18 @@ public class GeographicalAwarenessService {
 
     public List<GeographicalCountryDescriptor> fetchEuropeanCountries() {
         try {
-            Request request = new Request.Builder()
-                .url("https://api.apilayer.com/geo/country/region/EU")
-                .addHeader("apikey", key)
-                .method("GET", null)
+            HttpClient httpClient = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://api.apilayer.com/geo/country/region/EU"))
+                .GET()
+                .header("apikey", key)
                 .build();
-            Response response = client.newCall(request).execute();
-            String jsonString = response.body().string();
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            String jsonString = response.body();
             System.out.println(jsonString);
             GeographicalCountryDescriptor[] countries = gson.fromJson(jsonString, GeographicalCountryDescriptor[].class);
             return Arrays.asList(countries);
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             throw new RuntimeException("Error while fetching European countries", e);
         }
     }
@@ -49,17 +49,18 @@ public class GeographicalAwarenessService {
         throws UnrecognizedCountryException 
     {
         try {
-            Request request = new Request.Builder()
-                .url("https://api.apilayer.com/geo/country/cities/" + country_code)
-                .addHeader("apikey", key)
-                .method("GET", null)
+            HttpClient httpClient = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://api.apilayer.com/geo/country/cities/" + country_code))
+                .GET()
+                .header("apikey", key)
                 .build();
-            Response response = client.newCall(request).execute();
-            String jsonString = response.body().string();
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            String jsonString = response.body();
             GeographicalCityDescriptor[] countries = gson.fromJson(jsonString, GeographicalCityDescriptor[].class);
             return Arrays.asList(countries);
         }
-        catch (IOException e) {
+        catch (IOException | InterruptedException e) {
             throw new UnrecognizedCountryException();
         }
     }

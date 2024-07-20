@@ -3,10 +3,8 @@ package controller;
 import entity.Auction;
 import exceptions.NoAuctionWithSuchIdException;
 import repository.AuctionRepository;
-import repository.SilentAuctionRepository;
 import response.AuctionsPack;
 import response.SpecificAuctionPublicInformations;
-import repository.ReverseAuctionRepository;
 
 import org.springframework.http.ResponseEntity;
 
@@ -23,18 +21,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuctionsController {
     
     private final AuctionRepository auctionsRepository;
-    private final SilentAuctionRepository silentAuctionsRepository;
-    private final ReverseAuctionRepository reverseAuctionsRepository;
-
+    
     @Autowired
     public AuctionsController(
-        AuctionRepository auctionsRepository,
-        SilentAuctionRepository silentAuctionsRepository,
-        ReverseAuctionRepository reverseAuctionsRepository
+        AuctionRepository auctionsRepository
     ) {
         this.auctionsRepository = auctionsRepository;
-        this.silentAuctionsRepository = silentAuctionsRepository;
-        this.reverseAuctionsRepository = reverseAuctionsRepository;
     }
 
     @GetMapping(value = "/auctions/search", produces = "application/json")

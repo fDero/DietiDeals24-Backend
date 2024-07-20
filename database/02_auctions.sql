@@ -7,7 +7,7 @@ CREATE TABLE Auction (
     creator_id          INT NOT NULL,
     country             VARCHAR(5)  NOT NULL,
     city                VARCHAR(50) NOT NULL,
-    item_condition      TEXT NOT NULL,
+    item_condition      TEXT,
     item_category       TEXT NOT NULL,
     macro_category      TEXT NOT NULL,
     start_time          TIMESTAMP NOT NULL,
@@ -23,50 +23,14 @@ CREATE TABLE Auction (
     REFERENCES Account(account_id)
 );
 
+CREATE TABLE Bid (
+    auction_id  INT NOT NULL,
+    bidder_id   INT NOT NULL,
+    bid_amount  NUMERIC NOT NULL,
+    bid_date    TIMESTAMP NOT NULL,
+    bid_id      SERIAL PRIMARY KEY,
 
-CREATE VIEW ReverseAuction AS (
-    SELECT 
-        maximum_bid, lowest_bid_so_far, creator_id, country, city, item_condition, item_category, 
-        macro_category, start_time, end_time, item_name, description, pictures_urls, currency, auction_id
-    FROM 
-        Auction WHERE auction_type = 'reverse'
-);
-
-
-CREATE VIEW SilentAuction AS (
-    SELECT 
-        minimum_bid, creator_id, country, city, item_condition, 
-        item_category, macro_category, start_time, end_time, item_name, 
-        description, pictures_urls, currency, auction_id 
-    FROM 
-        Auction WHERE auction_type = 'silent'
-);
-
-
-CREATE TABLE SilentAuctionBid (
-    silent_auction_id INT NOT NULL,
-    bidder_id         INT NOT NULL,
-    bid               NUMERIC NOT NULL,
-    bid_date          TIMESTAMP NOT NULL,
-
-    PRIMARY KEY (silent_auction_id, bidder_id),
-    
-    FOREIGN KEY (silent_auction_id) 
-    REFERENCES Auction(auction_id),
-
-    FOREIGN KEY (bidder_id) 
-    REFERENCES Account(account_id)
-);
-
-CREATE TABLE ReverseAuctionBid (
-    reverse_auction_id INT NOT NULL,
-    bidder_id         INT NOT NULL,
-    bid               NUMERIC NOT NULL,
-    bid_date          TIMESTAMP NOT NULL,
-
-    PRIMARY KEY (reverse_auction_id, bidder_id),
-    
-    FOREIGN KEY (reverse_auction_id) 
+    FOREIGN KEY (auction_id) 
     REFERENCES Auction(auction_id),
 
     FOREIGN KEY (bidder_id) 

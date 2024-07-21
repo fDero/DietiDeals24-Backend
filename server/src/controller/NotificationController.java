@@ -51,10 +51,7 @@ public class NotificationController {
     {
         String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
         String username = jwtTokenProvider.getUsernameFromJWT(jwtToken);
-        Account account = accountRepository.findAccountByUsername(username).orElseThrow(
-            () -> new NoAccountWithSuchEmailException()
-        );
-        List<Notification> notifications = notificationRepository.findByAccountId(account.getId());
+        List<Notification> notifications = notificationRepository.findByAccountUsername(username);
         return ResponseEntity.ok().body(new NotificationsPack(notifications));
     }
 
@@ -107,11 +104,7 @@ public class NotificationController {
     {
         String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
         String username = jwtTokenProvider.getUsernameFromJWT(jwtToken);
-        Optional<Account> account = accountRepository.findAccountByUsername(username);
-        if (account.isEmpty()){
-            throw new NoAccountWithSuchEmailException();
-        }
-        if (notification.getAccountId() != account.get().getId()){
+        if (!notification.getAccountUsername().equals(username)){
             throw new NotificationNotYoursException();
         }
     }

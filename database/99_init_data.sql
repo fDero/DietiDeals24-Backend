@@ -111,12 +111,9 @@ VALUES
     (11, 'out-bid', 'vincentg', TRUE, FALSE),
     (11, 'auction-aborted', 'vincentg', TRUE, FALSE),
     (15, 'bid-rejected', 'vincentg', TRUE, FALSE),
-    (14, 'bid-rejected', marior, FALSE, FALSE),
-    (14, 'bid-rejected', marior, FALSE, FALSE),
-    (14, 'bid-rejected', marior, FALSE, FALSE),
-    (14, 'bid-rejected', marior, FALSE, FALSE),
-    (14, 'bid-rejected', marior, FALSE, FALSE),
-    (14, 'bid-rejected', marior, FALSE, FALSE);
-    
-
-    
+    (14, 'bid-rejected', 'marior', FALSE, FALSE),
+    (14, 'bid-rejected', 'marior', FALSE, FALSE),
+    (14, 'bid-rejected', 'marior', FALSE, FALSE),
+    (14, 'bid-rejected', 'marior', FALSE, FALSE),
+    (14, 'bid-rejected', 'marior', FALSE, FALSE),
+    (14, 'bid-rejected', 'marior', FALSE, FALSE);    

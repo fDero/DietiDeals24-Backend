@@ -18,7 +18,9 @@ CREATE TABLE Account (
     online_auctions_counter      INT DEFAULT 0,
     past_deals_counter           INT DEFAULT 0,
 
+    UNIQUE(username),
     UNIQUE(email),
+    
     account_id           SERIAL PRIMARY KEY
 );
 

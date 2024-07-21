@@ -18,7 +18,7 @@ public class Notification {
     String notificationType;
 
     @Column(name = "account_username")
-    Integer accountId;
+    String accountUsername;
 
     @Column(name = "visualized")
     Boolean visualized;

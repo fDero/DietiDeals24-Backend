@@ -24,12 +24,7 @@ public class NotificationsPackSerializer extends JsonSerializer<NotificationsPac
         for (Notification notification : value.getNotifications()) {
             gen.writeStartObject();
             gen.writeStringField("notificationType", notification.getNotificationType());
-            if (notification.getSilentAuctionId() != null){
-                gen.writeNumberField("auctionId", notification.getSilentAuctionId());
-            }
-            if (notification.getReverseAuctionId() != null){
-                gen.writeNumberField("auctionId", notification.getReverseAuctionId());
-            }
+            gen.writeNumberField("auctionId", notification.getAuctionId());
             if (!notification.getVisualized()){
                 nonReadCounter++;
             }

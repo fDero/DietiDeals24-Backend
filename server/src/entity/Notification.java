@@ -11,16 +11,13 @@ import lombok.Setter;
 @Table(name = "Notification")
 public class Notification {
     
-    @Column(name = "silent_auction_id")
-    Integer silentAuctionId;
-    
-    @Column(name = "reverse_auction_id")
-    Integer reverseAuctionId;
+    @Column(name = "auction_id")
+    Integer auctionId;
 
     @Column(name = "notification_type")
     String notificationType;
 
-    @Column(name = "account_id")
+    @Column(name = "account_username")
     Integer accountId;
 
     @Column(name = "visualized")

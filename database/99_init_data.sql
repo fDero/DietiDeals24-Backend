@@ -54,8 +54,6 @@ INSERT INTO Category (macro_category, item_category) VALUES
     ('services', 'Voice over'),
     ('services', 'Writing and translation');
 
-
-
 INSERT INTO Account 
     (name, surname, birthday, country, city, email, username, account_creation,
     last_login, profile_picture_url, bio, unread_notifications_counter, online_auctions_counter, past_deals_counter)
@@ -86,19 +84,39 @@ VALUES
 INSERT INTO Auction
     (maximum_bid, minimum_bid, number_of_bids, lowest_bid_so_far, creator_id, country, city, item_condition, item_category, macro_category, start_time, end_time, item_name, description, pictures_urls, auction_type, currency)
 VALUES
-    (NULL, 100, 2, NULL, 1, 'UK', 'London', 'new', 'Electronics', 'products', '2025-01-01 00:00:00', '2025-10-10 00:00:00', 'iPhone 13', 'Brand new iPhone 13', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR'),
-    (NULL, 100, 1, NULL, 2, 'UK', 'Brighton', 'used', 'Cars', 'products', '2025-01-01 00:00:00', '2025-10-10 00:00:00', 'Mini Countrymen', '163 Horse Power, 50000km', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR'),
-    (NULL, 100, 3, NULL, 4, 'IT', 'Milano', 'as-new', 'Electronics', 'products', '2025-01-01 00:00:00', '2025-10-10 00:00:00', 'Ryzen 7 7700X', 'Still in the original box', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR'),
-    (NULL, 100, 3, NULL, 4, 'IT', 'Milano', 'broken', 'Videogames and consoles', 'products', '2025-01-01 00:00:00', '2025-10-10 00:00:00', 'Old PS4', 'The controller fails to connect to it', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR'),
-    (NULL, 100, 3, NULL, 4, 'IT', 'Milano', 'broken', 'Videogames and consoles', 'products', '2025-01-01 00:00:00', '2025-10-10 00:00:00', 'Old PS4', 'The controller fails to connect to it', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR'),
-    (NULL, 100, 9, NULL, 4, 'IT', 'Napoli', NULL, 'School Tutoring', 'service', '2025-01-01 00:00:00', '2025-10-10 00:00:00', 'Math tutoring for my son', 'high-school math, calculus and polynomial algebra', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'reverse', 'EUR'),
-    (NULL, 100, 2, NULL, 5, 'UK', 'Manchester', 'used', 'Clothing', 'products', '2025-01-01 00:00:00', '2025-10-10 00:00:00', 'Designer Jacket', 'High-end designer jacket', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR'),
-    (NULL, 100, 1, NULL, 6, 'UK', 'Liverpool', 'new', 'Home furniture', 'products', '2025-01-01 00:00:00', '2025-10-10 00:00:00', 'Modern Sofa', 'Brand new modern sofa', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR'),
-    (NULL, 100, 3, NULL, 7, 'UK', 'Birmingham', 'used', 'Musical instruments', 'products', '2025-01-01 00:00:00', '2025-10-10 00:00:00', 'Electric Guitar', 'Used electric guitar in good condition', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR'),
-    (NULL, 100, 3, NULL, 8, 'UK', 'Leeds', 'new', 'Toys', 'products', '2025-01-01 00:00:00', '2025-10-10 00:00:00', 'LEGO Set', 'Brand new LEGO set', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR'),
-    (NULL, 100, 3, NULL, 9, 'IT', 'Napoli', 'used', 'Books', 'products', '2025-01-01 00:00:00', '2025-10-10 00:00:00', 'Harry Potter Full Saga', 'Used books in good condition', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR'),
-    (NULL, 100, 3, NULL, 5, 'UK', 'Bristol', 'as-new', 'Bikes', 'products', '2025-01-01 00:00:00', '2025-10-10 00:00:00', 'Mountain Bike', 'Almost new mountain bike', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR'),
-    (NULL, 100, 3, NULL, 6, 'UK', 'Edinburgh', 'used', 'Coins and banknotes', 'products', '2025-01-01 00:00:00', '2025-10-10 00:00:00', 'Rare Coin', 'Rare coin from the 18th century', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR'),
-    (NULL, 100, 3, NULL, 7, 'UK', 'Glasgow', 'new', 'Music, CD and vinils', 'products', '2025-01-01 00:00:00', '2025-10-10 00:00:00', 'Vinyl Record', 'Brand new vinyl record', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR'),
-    (NULL, 100, 3, NULL, 8, 'UK', 'Cardiff', 'used', 'Telephony', 'products', '2025-01-01 00:00:00', '2025-10-10 00:00:00', 'Samsung Galaxy S21', 'Used Samsung Galaxy S21 in good condition', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR'),
-    (NULL, 100, 3, NULL, 9, 'IT', 'Napoli', 'new', 'Movies and DVDs', 'products', '2025-01-01 00:00:00', '2025-10-10 00:00:00', 'Blu-ray Movie', 'Brand new Blu-ray movie', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR');
+    (NULL, 100, 2, NULL, 1, 'UK', 'London', 'new', 'Electronics', 'products', '2023-01-01 00:00:00', '2025-10-10 00:00:00', 'iPhone 13', 'Brand new iPhone 13', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR'),
+    (NULL, 100, 1, NULL, 2, 'UK', 'Brighton', 'used', 'Cars', 'products', '2023-01-01 00:00:00', '2025-10-10 00:00:00', 'Mini Countrymen', '163 Horse Power, 50000km', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR'),
+    (NULL, 100, 3, NULL, 4, 'IT', 'Milano', 'as-new', 'Electronics', 'products', '2023-01-01 00:00:00', '2024-03-10 00:00:00', 'Ryzen 7 7700X', 'Still in the original box', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR'),
+    (NULL, 100, 3, NULL, 4, 'IT', 'Milano', 'broken', 'Videogames and consoles', 'products', '2023-01-01 00:00:00', '2023-10-10 00:00:00', 'Old PS4', 'The controller fails to connect to it', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR'),
+    (NULL, 100, 9, NULL, 4, 'IT', 'Napoli', NULL, 'School Tutoring', 'service', '2023-01-01 00:00:00', '2023-10-10 00:00:00', 'Math tutoring for my son', 'high-school math, calculus and polynomial algebra', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'reverse', 'EUR'),
+    (NULL, 100, 2, NULL, 5, 'UK', 'Manchester', 'used', 'Clothing', 'products', '2023-01-01 00:00:00', '2025-10-10 00:00:00', 'Designer Jacket', 'High-end designer jacket', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR'),
+    (NULL, 100, 1, NULL, 6, 'UK', 'Liverpool', 'new', 'Home furniture', 'products', '2023-01-01 00:00:00', '2025-10-10 00:00:00', 'Modern Sofa', 'Brand new modern sofa', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR'),
+    (NULL, 100, 3, NULL, 7, 'UK', 'Birmingham', 'used', 'Musical instruments', 'products', '2023-01-01 00:00:00', '2025-10-10 00:00:00', 'Electric Guitar', 'Used electric guitar in good condition', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR'),
+    (NULL, 100, 3, NULL, 8, 'UK', 'Leeds', 'new', 'Toys', 'products', '2023-01-01 00:00:00', '2025-10-10 00:00:00', 'LEGO Set', 'Brand new LEGO set', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR'),
+    (NULL, 100, 3, NULL, 9, 'IT', 'Napoli', 'used', 'Books', 'products', '2023-01-01 00:00:00', '2025-10-10 00:00:00', 'Harry Potter Full Saga', 'Used books in good condition', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR'),
+    (NULL, 100, 3, NULL, 5, 'UK', 'Bristol', 'as-new', 'Bikes', 'products', '2023-01-01 00:00:00', '2025-10-10 00:00:00', 'Mountain Bike', 'Almost new mountain bike', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR'),
+    (NULL, 100, 3, NULL, 6, 'UK', 'Edinburgh', 'used', 'Coins and banknotes', 'products', '2023-01-01 00:00:00', '2025-10-10 00:00:00', 'Rare Coin', 'Rare coin from the 18th century', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR'),
+    (NULL, 100, 3, NULL, 7, 'UK', 'Glasgow', 'new', 'Music, CD and vinils', 'products', '2023-01-01 00:00:00', '2025-10-10 00:00:00', 'Vinyl Record', 'Brand new vinyl record', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR'),
+    (NULL, 100, 3, NULL, 8, 'UK', 'Cardiff', 'used', 'Telephony', 'products', '2023-01-01 00:00:00', '2023-10-10 00:00:00', 'Samsung Galaxy S21', 'Used Samsung Galaxy S21 in good condition', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR'),
+    (NULL, 100, 3, NULL, 9, 'IT', 'Napoli', 'new', 'Movies and DVDs', 'products', '2023-01-01 00:00:00', '2023-10-10 00:00:00', 'Blu-ray Movie', 'Brand new Blu-ray movie', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR');
+
+INSERT INTO Notification
+    (auction_id, notification_type, account_username, visualized, eliminated)
+VALUES
+    (3, 'auction-over', 'johndoe', FALSE, FALSE),
+    (4, 'auction-expired', 'johndoe', FALSE, FALSE),
+    (5, 'auction-over', 'sikkia', FALSE, FALSE),
+    (4, 'out-bid', 'robertn', TRUE, FALSE),
+    (4, 'winning-bid', 'sikkia', FALSE, FALSE),
+    (11, 'out-bid', 'vincentg', TRUE, FALSE),
+    (11, 'auction-aborted', 'vincentg', TRUE, FALSE),
+    (15, 'bid-rejected', 'vincentg', TRUE, FALSE),
+    (14, 'bid-rejected', marior, FALSE, FALSE),
+    (14, 'bid-rejected', marior, FALSE, FALSE),
+    (14, 'bid-rejected', marior, FALSE, FALSE),
+    (14, 'bid-rejected', marior, FALSE, FALSE),
+    (14, 'bid-rejected', marior, FALSE, FALSE),
+    (14, 'bid-rejected', marior, FALSE, FALSE);
+    
+
+    

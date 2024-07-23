@@ -21,8 +21,10 @@ services:
       - './server:/server'
     working_dir: "/server"
     depends_on:
-      - database
-      - cache
+      database:
+          condition: service_healthy
+      cache:
+          condition: service_healthy
 
   database:
     image: postgres:13
@@ -34,6 +36,16 @@ services:
       - ./postgres_volume:/var/lib/postgresql/data
       - ./database:/docker-entrypoint-initdb.d:ro
     command: ["postgres", "-p", "5433"]
+    healthcheck:
+      test: pg_isready -U postgres -d dietideals24 -p 5433
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   cache:
     image: redis:latest
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5

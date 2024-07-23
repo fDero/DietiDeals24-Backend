@@ -16,9 +16,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class GlobalExceptionHandler {
 
     static HttpHeaders errorResponseHeaders = new HttpHeaders();
-    static {
-        errorResponseHeaders.setContentType(MediaType.TEXT_PLAIN);        
-    }
+    static { errorResponseHeaders.setContentType(MediaType.TEXT_PLAIN); }
 
     @ExceptionHandler(AccountValidationException.class)
     public ResponseEntity<String> handleAccountValidationException(AccountValidationException ex){

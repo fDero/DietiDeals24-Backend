@@ -32,7 +32,7 @@ public class NotificationsPackSerializer extends JsonSerializer<NotificationsPac
             gen.writeEndObject();
         }
         gen.writeEndArray();
-        gen.writeNumberField("nonReadNotifications", nonReadCounter);
+        gen.writeNumberField("unreadNotifications", nonReadCounter);
         gen.writeNumberField("readNotifications", notificationsCounter - nonReadCounter);
         gen.writeNumberField("notificationsCounter", notificationsCounter);
         gen.writeEndObject();

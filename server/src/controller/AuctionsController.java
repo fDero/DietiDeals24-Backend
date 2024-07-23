@@ -37,7 +37,7 @@ public class AuctionsController {
         @RequestParam(defaultValue = "")           String keywords,
         @RequestParam(defaultValue = "")           String category,
         @RequestParam(defaultValue = "")           String type,
-        @RequestParam(defaultValue = "expiration") String policy
+        @RequestParam(defaultValue = "trending")   String policy
     )  {
         int zeroIndexedPage = page - 1;
         List<Auction> auctions = null;

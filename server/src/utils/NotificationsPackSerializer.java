@@ -20,7 +20,7 @@ public class NotificationsPackSerializer extends JsonSerializer<NotificationsPac
         long nonReadCounter = 0;
         long notificationsCounter = value.getNotifications().size();
         gen.writeStartObject();
-        gen.writeStartArray();
+        gen.writeArrayFieldStart("notifications");
         for (Notification notification : value.getNotifications()) {
             gen.writeStartObject();
             gen.writeStringField("notificationType", notification.getNotificationType());

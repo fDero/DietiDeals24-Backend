@@ -16,6 +16,7 @@ import java.util.List;
 import authentication.JwtTokenManager;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,12 +47,18 @@ public class NotificationController {
 
     @RequireJWT
     @GetMapping(value = "/notifications/all", produces = "application/json")
-    public ResponseEntity<NotificationsPack> sendProfileInformations(@RequestHeader(name = "Authorization") String authorizationHeader) 
+    public ResponseEntity<NotificationsPack> sendNotifications(
+        @RequestHeader(name = "Authorization") String authorizationHeader,
+        @RequestParam(defaultValue = "1")      Integer page, 
+        @RequestParam(defaultValue = "5")      Integer size
+    ) 
         throws NoAccountWithSuchEmailException 
     {
+        int zeroIndexedPage = page - 1;
+        PageRequest pageDescriptor = PageRequest.of(zeroIndexedPage, size);
         String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
         String username = jwtTokenProvider.getUsernameFromJWT(jwtToken);
-        List<Notification> notifications = notificationRepository.findByAccountUsername(username);
+        List<Notification> notifications = notificationRepository.findByAccountUsername(username, pageDescriptor);
         return ResponseEntity.ok().body(new NotificationsPack(notifications));
     }
 

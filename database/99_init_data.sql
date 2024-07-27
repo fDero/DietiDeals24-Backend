@@ -100,7 +100,7 @@ VALUES
     (NULL, 100, 3, NULL, 8, 'UK', 'Cardiff', 'used', 'Telephony', 'products', '2023-01-01 00:00:00', '2023-10-10 00:00:00', 'Samsung Galaxy S21', 'Used Samsung Galaxy S21 in good condition', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR'),
     (NULL, 100, 3, NULL, 9, 'IT', 'Napoli', 'new', 'Movies and DVDs', 'products', '2023-01-01 00:00:00', '2023-10-10 00:00:00', 'Blu-ray Movie', 'Brand new Blu-ray movie', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR');
 
-INSERT INTO Notification
+INSERT INTO NotificationData
     (auction_id, notification_type, account_username, visualized, eliminated)
 VALUES
     (3, 'auction-over', 'johndoe', FALSE, FALSE),

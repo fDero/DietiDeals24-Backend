@@ -31,9 +31,11 @@ public class SpecificAuctionPublicInformationsSerializer extends JsonSerializer<
             gen.writeNumberField("lowestBidSoFar", value.getLowestBidSoFar());
         }
         gen.writeStringField("endTime", value.getEndTime().toString());
-        String[] pictureUrls = value.getPicturesUrls();
-        String firstPictureUrl = pictureUrls.length > 0 ? pictureUrls[0] : null;
-        gen.writeStringField("pictureUrl", firstPictureUrl);
+        gen.writeArrayFieldStart("picturesUrls");
+        for (String pictureUrl : value.getPicturesUrls()){
+            gen.writeString(pictureUrl);
+        }
+        gen.writeEndArray();
         gen.writeStringField("status", "ACTIVE");
         gen.writeStringField("currency", value.getCurrency());
         gen.writeEndObject();

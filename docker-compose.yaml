@@ -22,9 +22,9 @@ services:
     working_dir: "/server"
     depends_on:
       database:
-          condition: service_healthy
-      cache:
-          condition: service_healthy
+        condition: service_healthy
+      cache:      
+        condition: service_healthy
 
   database:
     image: postgres:13
@@ -38,14 +38,14 @@ services:
     command: ["postgres", "-p", "5433"]
     healthcheck:
       test: pg_isready -U postgres -d dietideals24 -p 5433
-      interval: 5s
-      timeout: 5s
-      retries: 5
+      interval: 3s
+      timeout: 900s
+      retries: 200
 
   cache:
     image: redis:latest
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+      interval: 3s
+      timeout: 900s
+      retries: 300

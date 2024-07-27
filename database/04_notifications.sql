@@ -3,7 +3,7 @@ CREATE TABLE NotificationType (
     notification_type VARCHAR(20) PRIMARY KEY
 );
 
-CREATE TABLE Notification (
+CREATE TABLE NotificationData (
     
     auction_id          INT,
     notification_type   VARCHAR(20) NOT NULL,
@@ -21,4 +21,16 @@ CREATE TABLE Notification (
 
     FOREIGN KEY (auction_id)
     REFERENCES Auction(auction_id)
+);
+
+CREATE VIEW Notification AS (
+    SELECT 
+        NotificationData.notification_type,
+        NotificationData.account_username,
+        NotificationData.notification_id,
+        NotificationData.visualized,
+        NotificationData.eliminated,
+        Auction.*
+    FROM NotificationData, Auction
+    WHERE NotificationData.auction_id = Auction.auction_id
 );

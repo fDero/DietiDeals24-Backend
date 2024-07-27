@@ -25,17 +25,17 @@ public class NotificationsPackSerializer extends JsonSerializer<NotificationsPac
         gen.writeArrayFieldStart("notifications");
         for (Notification notification : value.getNotifications()) {
             gen.writeStartObject();
+            gen.writeNumberField("id", notification.getId());
             gen.writeStringField("notificationType", notification.getNotificationType());
-            gen.writeStartObject();
-            gen.writeObjectFieldStart("auction");
-            Auction auction = notification.toAuction();
-            AuctionSerializerHelper.serializeBasics(gen, auction);
-            AuctionSerializerHelper.serializeJustOnePictureUrl(gen, auction);
-            gen.writeEndObject();
-            if (!notification.getVisualized()){
-                nonReadCounter++;
-            }
             gen.writeBooleanField("read", notification.getVisualized());
+            {
+                gen.writeObjectFieldStart("auction");
+                Auction auction = notification.toAuction();
+                AuctionSerializerHelper.serializeBasics(gen, auction);
+                AuctionSerializerHelper.serializeJustOnePictureUrl(gen, auction);
+                gen.writeEndObject();
+            }
+            gen.writeEndObject();
         }
         gen.writeEndArray();
         gen.writeNumberField("unreadNotifications", nonReadCounter);

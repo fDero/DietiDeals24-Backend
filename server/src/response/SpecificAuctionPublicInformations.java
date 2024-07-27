@@ -1,8 +1,5 @@
 package response;
 
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
 import lombok.Setter;

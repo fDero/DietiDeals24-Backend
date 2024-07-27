@@ -17,27 +17,9 @@ public class SpecificAuctionPublicInformationsSerializer extends JsonSerializer<
         throws IOException 
     { 
         gen.writeStartObject();
-        gen.writeStringField("id", value.getId().toString());
-        gen.writeStringField("title", value.getItemName());
-        gen.writeStringField("country", value.getCountry());
-        gen.writeStringField("city", value.getCity());
-        gen.writeStringField("conditions", value.getItemCondition());
-        gen.writeStringField("type", value.getAuctionType());
-        if (value.getAuctionType().equals("silent")) {
-            gen.writeNumberField("minimumBid", value.getMinimumBid());
-        } 
-        else if (value.getAuctionType().equals("reverse")) {
-            gen.writeNumberField("maximumBid", value.getMaximumBid());
-            gen.writeNumberField("lowestBidSoFar", value.getLowestBidSoFar());
-        }
-        gen.writeStringField("endTime", value.getEndTime().toString());
-        gen.writeArrayFieldStart("picturesUrls");
-        for (String pictureUrl : value.getPicturesUrls()){
-            gen.writeString(pictureUrl);
-        }
-        gen.writeEndArray();
-        gen.writeStringField("status", "ACTIVE");
-        gen.writeStringField("currency", value.getCurrency());
+        AuctionSerializerHelper.serializeBasics(gen, value.getAuction());
+        AuctionSerializerHelper.serializeAllPicturesUrls(gen, value.getAuction());
+        AuctionSerializerHelper.serializeDescription(gen, value.getAuction());
         gen.writeEndObject();
     }
 

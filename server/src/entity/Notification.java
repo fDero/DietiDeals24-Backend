@@ -83,4 +83,12 @@ public class Notification {
     @Id @Column(name = "notification_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    public Auction toAuction() {
+        return new Auction(
+            maximumBid, minimumBid, numberOfBids, lowestBidSoFar, creatorId, country, 
+            city, itemCondition, itemCategory, macroCategory, startTime, endTime, itemName, 
+            description, picturesUrls, auctionType, currency, auctionId
+        );
+    }
 }

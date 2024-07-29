@@ -34,13 +34,13 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig {
 
     private JwtTokenManager tokenProvider;
-
     private Set<String> authorizationAwareEndpoints = new HashSet<>();
-
+    
     @Autowired
     public SecurityConfig(
-            JwtTokenManager tokenProvider,
-            RequestMappingHandlerMapping requestMappingHandlerMapping) {
+        JwtTokenManager tokenProvider,
+        RequestMappingHandlerMapping requestMappingHandlerMapping
+    ) {
         this.tokenProvider = tokenProvider;
         Map<RequestMappingInfo, HandlerMethod> endpointPaths = requestMappingHandlerMapping.getHandlerMethods();
         for (Map.Entry<RequestMappingInfo, HandlerMethod> entry : endpointPaths.entrySet()) {

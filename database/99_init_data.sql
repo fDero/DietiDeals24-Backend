@@ -98,7 +98,8 @@ VALUES
     (NULL, 100, 3, NULL, 6, 'UK', 'Edinburgh', 'used', 'Coins and banknotes', 'products', '2023-01-01 00:00:00', '2025-10-10 00:00:00', 'Rare Coin', 'Rare coin from the 18th century', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR'),
     (NULL, 100, 3, NULL, 7, 'UK', 'Glasgow', 'new', 'Music, CD and vinils', 'products', '2023-01-01 00:00:00', '2025-10-10 00:00:00', 'Vinyl Record', 'Brand new vinyl record', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR'),
     (NULL, 100, 3, NULL, 8, 'UK', 'Cardiff', 'used', 'Telephony', 'products', '2023-01-01 00:00:00', '2023-10-10 00:00:00', 'Samsung Galaxy S21', 'Used Samsung Galaxy S21 in good condition', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR'),
-    (NULL, 100, 3, NULL, 9, 'IT', 'Napoli', 'new', 'Movies and DVDs', 'products', '2023-01-01 00:00:00', '2023-10-10 00:00:00', 'Blu-ray Movie', 'Brand new Blu-ray movie', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR');
+    (NULL, 100, 3, NULL, 9, 'IT', 'Napoli', 'new', 'Movies and DVDs', 'products', '2023-01-01 00:00:00', '2023-10-10 00:00:00', 'Blu-ray Movie', 'Brand new Blu-ray movie', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR'),
+    (NULL, 100, 9, NULL, 4, 'IT', 'Napoli', NULL, 'School Tutoring', 'service', '2023-01-01 00:00:00', '2025-10-10 00:00:00', 'Math tutoring for my son', 'high-school math, calculus and polynomial algebra', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'reverse', 'EUR');
 
 INSERT INTO NotificationData
     (auction_id, notification_type, account_username, visualized, eliminated)

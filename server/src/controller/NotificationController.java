@@ -9,8 +9,6 @@ import repository.NotificationRepository;
 import response.NotificationsPack;
 import java.util.Optional;
 
-import entity.Account;
-
 import org.springframework.http.ResponseEntity;
 import java.util.List;
 import authentication.JwtTokenManager;

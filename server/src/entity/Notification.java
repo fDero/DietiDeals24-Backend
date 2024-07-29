@@ -86,7 +86,7 @@ public class Notification {
 
     public Auction toAuction() {
         return new Auction(
-            maximumBid, minimumBid, numberOfBids, lowestBidSoFar, creatorId, country, 
+            maximumBid, minimumBid, numberOfBids, lowestBidSoFar, creatorId, accountUsername, country, 
             city, itemCondition, itemCategory, macroCategory, startTime, endTime, itemName, 
             description, picturesUrls, auctionType, currency, auctionId
         );

@@ -11,7 +11,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.lang.NonNull;
 
-
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private JwtTokenManager tokenProvider;
@@ -21,19 +20,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull  HttpServletResponse response, @NonNull  FilterChain filterChain)
-        throws 
-            ServletException, 
-            IOException 
-    {
-        response.addHeader("Access-Control-Allow-Origin", "*");
-        response.addHeader("Access-Control-Allow-Headers", "*");
-        response.addHeader("Access-Control-Allow-Credentials", "true");
-        response.addHeader("Vary", "Origin");
-        
+    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
+            @NonNull FilterChain filterChain)
+            throws ServletException,
+            IOException {
+
         String token = tokenProvider.getTokenFromRequest(request);
         boolean tokenIsValid = token != null && tokenProvider.validateToken(token);
-        
+
         System.out.println("Token is valid: " + tokenIsValid);
 
         if (!tokenIsValid) {

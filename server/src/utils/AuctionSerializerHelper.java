@@ -24,6 +24,7 @@ public abstract class AuctionSerializerHelper {
         else if (value.getAuctionType().equals("reverse")) {
             gen.writeNumberField("maximumBid", value.getMaximumBid());
             gen.writeNumberField("lowestBidSoFar", value.getLowestBidSoFar());
+            gen.writeNumberField("numberOfBids", value.getNumberOfBids());
         }
         gen.writeStringField("endTime", value.getEndTime().toString());
         gen.writeStringField("status", "ACTIVE");

@@ -17,7 +17,6 @@ public abstract class AuctionSerializerHelper {
         gen.writeStringField("type", value.getAuctionType());
         gen.writeStringField("category", value.getItemCategory());
         gen.writeStringField("macroCategory", value.getMacroCategory());
-        gen.writeStringField("username", value.getUsername());
         if (value.getAuctionType().equals("silent")) {
             gen.writeNumberField("minimumBid", value.getMinimumBid());
         } 

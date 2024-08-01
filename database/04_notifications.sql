@@ -7,14 +7,13 @@ CREATE TABLE NotificationData (
     
     auction_id          INT,
     notification_type   VARCHAR(20) NOT NULL,
-    account_username    VARCHAR(30) NOT NULL,
+    account_id          INT NOT NULL,
     notification_id     SERIAL PRIMARY KEY,
     visualized          BOOLEAN NOT NULL DEFAULT FALSE,
     eliminated          BOOLEAN NOT NULL DEFAULT FALSE,
 
-
-    FOREIGN KEY (account_username) 
-    REFERENCES Account(username),
+    FOREIGN KEY (account_id) 
+    REFERENCES Account(account_id),
 
     FOREIGN KEY (notification_type)
     REFERENCES NotificationType(notification_type),
@@ -26,7 +25,7 @@ CREATE TABLE NotificationData (
 CREATE VIEW Notification AS (
     SELECT 
         NotificationData.notification_type,
-        NotificationData.account_username,
+        NotificationData.account_id,
         NotificationData.notification_id,
         NotificationData.visualized,
         NotificationData.eliminated,

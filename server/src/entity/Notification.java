@@ -20,8 +20,8 @@ public class Notification {
     @Column(name = "notification_type")
     String notificationType;
 
-    @Column(name = "account_username")
-    String accountUsername;
+    @Column(name = "account_id")
+    Integer accountId;
 
     @Column(name = "visualized")
     Boolean visualized;
@@ -86,7 +86,7 @@ public class Notification {
 
     public Auction toAuction() {
         return new Auction(
-            maximumBid, minimumBid, numberOfBids, lowestBidSoFar, creatorId, accountUsername, country, 
+            maximumBid, minimumBid, numberOfBids, lowestBidSoFar, creatorId, country, 
             city, itemCondition, itemCategory, macroCategory, startTime, endTime, itemName, 
             description, picturesUrls, auctionType, currency, auctionId
         );

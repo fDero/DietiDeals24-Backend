@@ -50,13 +50,15 @@ public class NotificationController {
         @RequestParam(defaultValue = "1")      Integer page, 
         @RequestParam(defaultValue = "5")      Integer size
     ) 
-        throws NoAccountWithSuchEmailException 
+        throws 
+            NoAccountWithSuchEmailException, 
+            NumberFormatException
     {
         int zeroIndexedPage = page - 1;
         PageRequest pageDescriptor = PageRequest.of(zeroIndexedPage, size);
         String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
-        String username = jwtTokenProvider.getUsernameFromJWT(jwtToken);
-        List<Notification> notifications = notificationRepository.findByAccountUsername(username, pageDescriptor);
+        String id = jwtTokenProvider.getIdFromJWT(jwtToken);
+        List<Notification> notifications = notificationRepository.findByAccountId(Integer.valueOf(id), pageDescriptor);
         return ResponseEntity.ok().body(new NotificationsPack(notifications));
     }
 
@@ -108,8 +110,8 @@ public class NotificationController {
             NoAccountWithSuchEmailException
     {
         String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
-        String username = jwtTokenProvider.getUsernameFromJWT(jwtToken);
-        if (!notification.getAccountUsername().equals(username)){
+        String id = jwtTokenProvider.getIdFromJWT(jwtToken);
+        if (!notification.getAuctionId().toString().equals(id)){
             throw new NotificationNotYoursException();
         }
     }

@@ -74,7 +74,7 @@ public class LoginController {
         accountRepository.save(account);
         MinimalAccountInformations accountView = new MinimalAccountInformations(account);
         HttpHeaders headers = new HttpHeaders();
-        headers.set("X-Auth-Token", jwtTokenProvider.generateToken(account.getUsername()));
+        headers.set("X-Auth-Token", jwtTokenProvider.generateToken(account.getId().toString()));
         List<String> allowedHeaders = new ArrayList<>();
         allowedHeaders.add("X-Auth-Token");
         headers.setAccessControlExposeHeaders(allowedHeaders);

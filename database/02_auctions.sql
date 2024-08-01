@@ -18,7 +18,6 @@ CREATE TABLE Auction (
     auction_type        TEXT NOT NULL,
     currency            VARCHAR(3) NOT NULL,
     auction_id          SERIAL PRIMARY KEY,
-    username            VARCHAR(30) NOT NULL,
     
     FOREIGN KEY (creator_id)
     REFERENCES Account(account_id)

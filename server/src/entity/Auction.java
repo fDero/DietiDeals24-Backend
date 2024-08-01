@@ -29,9 +29,6 @@ public class Auction {
     @Column(name = "creator_id")
     private Integer creatorId;
 
-    @Column(name = "username")
-    private String username;
-
     @Column(name = "country")
     private String country;
 

@@ -20,8 +20,8 @@ public class NotificationData {
     @Column(name = "notification_type")
     String notificationType;
 
-    @Column(name = "account_username")
-    String accountUsername;
+    @Column(name = "account_id")
+    Integer accountId;
 
     @Column(name = "visualized")
     Boolean visualized;

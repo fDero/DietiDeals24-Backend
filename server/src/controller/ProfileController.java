@@ -47,11 +47,11 @@ public class ProfileController {
     @GetMapping(value = "/profile/owner-view", produces = "application/json")
     public ResponseEntity<AccountPrivateProfileInformations> sendPrivateProfileInformations(@RequestHeader(name = "Authorization") String authorizationHeader) 
         throws 
-            NoAccountWithSuchEmailException 
+            NoAccountWithSuchEmailException
     {
         String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
-        String username = jwtTokenProvider.getUsernameFromJWT(jwtToken);
-        Account account = accountRepository.findAccountByUsername(username).orElseThrow(() -> new NoAccountWithSuchEmailException());
+        String id = jwtTokenProvider.getIdFromJWT(jwtToken);
+        Account account = accountRepository.findById(Integer.valueOf(id)).orElseThrow(() -> new NoAccountWithSuchEmailException());
         List<PersonalLink> personalLinks = personalLinkRepository.findByAccountId(account.getId());
         List<ContactInformation> contactInformations = contactInformationRepository.findByAccountId(account.getId());
         AccountPrivateProfileInformations accountPrivateInformations = new AccountPrivateProfileInformations(account, personalLinks, contactInformations);
@@ -59,11 +59,11 @@ public class ProfileController {
     }
 
     @GetMapping(value = "/profile/public-view", produces = "application/json")
-    public ResponseEntity<AccountPublicProfileInformations> sendPublicProfileInformations(@RequestParam String username) 
+    public ResponseEntity<AccountPublicProfileInformations> sendPublicProfileInformations(@RequestParam Integer id) 
         throws 
             NoAccountWithSuchEmailException
     {
-        Account account = accountRepository.findAccountByUsername(username).orElseThrow(() -> new NoAccountWithSuchEmailException());
+        Account account = accountRepository.findById(id).orElseThrow(() -> new NoAccountWithSuchEmailException());
         List<PersonalLink> personalLinks = personalLinkRepository.findByAccountId(account.getId());
         AccountPublicProfileInformations acountPublicInformations = new AccountPublicProfileInformations(account, personalLinks);
         return ResponseEntity.ok().body(acountPublicInformations);

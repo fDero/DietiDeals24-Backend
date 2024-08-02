@@ -16,4 +16,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @Getter @AllArgsConstructor
 public class NotificationsPack {
     private List<Notification> notifications;
+    long readNotificationsCounter;
+    long unreadNotificationsCounter;
 }

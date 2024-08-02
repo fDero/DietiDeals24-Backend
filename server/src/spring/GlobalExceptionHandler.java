@@ -33,6 +33,11 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<String>(ex.getMessage(), errorResponseHeaders, HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(NotificationNotYoursException.class)
+    public ResponseEntity<String> handleNoPendingAccountConfirmationException(NotificationNotYoursException ex){
+        return new ResponseEntity<String>(ex.getMessage(), errorResponseHeaders, HttpStatus.UNAUTHORIZED);
+    }
+
     @ExceptionHandler(NoPendingAccountConfirmationException.class)
     public ResponseEntity<String> handleNoPendingAccountConfirmationException(NoPendingAccountConfirmationException ex){
         return new ResponseEntity<String>(ex.getMessage(), errorResponseHeaders, HttpStatus.UNAUTHORIZED);

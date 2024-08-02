@@ -111,7 +111,7 @@ public class NotificationController {
     {
         String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
         String id = jwtTokenProvider.getIdFromJWT(jwtToken);
-        if (!notification.getAuctionId().toString().equals(id)){
+        if (!notification.getAccountId().toString().equals(id)){
             throw new NotificationNotYoursException();
         }
     }

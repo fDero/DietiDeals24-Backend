@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.domain.Pageable;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+
 import org.springframework.stereotype.Repository;
 
 
@@ -47,4 +49,16 @@ public interface AuctionRepository extends JpaRepository<Auction, Integer> {
                         new Timestamp(System.currentTimeMillis()), itemCategory, searchString, auctionType, macroCategory, pageable
                 );
         };
+
+        long countByStatusAndCreatorId(String status, int creatorId);
+
+        long countByWinnerId(int winnerId);
+
+        default long countPastDealsById(Integer id){
+                return countByStatusAndCreatorId("closed", id) + countByWinnerId(id);
+        }
+
+        default long countOnlineAuctionsById(Integer id){
+                return countByStatusAndCreatorId("active", id);
+        }
 }

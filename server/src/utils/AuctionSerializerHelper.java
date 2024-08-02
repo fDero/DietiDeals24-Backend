@@ -26,7 +26,7 @@ public abstract class AuctionSerializerHelper {
             gen.writeNumberField("numberOfBids", value.getNumberOfBids());
         }
         gen.writeStringField("endTime", value.getEndTime().toString());
-        gen.writeStringField("status", "ACTIVE");
+        gen.writeStringField("status", value.getStatus());
         gen.writeStringField("currency", value.getCurrency());
     }
 

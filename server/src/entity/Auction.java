@@ -65,6 +65,12 @@ public class Auction {
     @Column(name = "currency")
     private String currency;
 
+    @Column(name = "winner_id")
+    private Integer winnerId;
+
+    @Column(name = "status")
+    private String status;
+
     @Column(name = "auction_id")
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

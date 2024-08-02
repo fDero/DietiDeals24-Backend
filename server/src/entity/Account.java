@@ -23,9 +23,6 @@ public class Account {
         this.city = pendingAccount.getCity();
         this.email = pendingAccount.getEmail();
         this.username = pendingAccount.getUsername();
-        this.unreadNotificationsCounter = 0;
-        this.onlineAuctionsCounter = 0;
-        this.pastDealsCounter = 0;
         this.accountCreation = new Timestamp(System.currentTimeMillis());
         this.lastLogin = new Timestamp(System.currentTimeMillis());
     }
@@ -62,15 +59,6 @@ public class Account {
 
     @Column(name = "bio")
     private String bio;
-
-    @Column(name = "unread_notifications_counter")
-    private Integer unreadNotificationsCounter;
-
-    @Column(name = "online_auctions_counter")
-    private Integer onlineAuctionsCounter;
-
-    @Column(name = "past_deals_counter")
-    private Integer pastDealsCounter;
 
     @Id @Column(name = "account_id") 
     @GeneratedValue(strategy = GenerationType.IDENTITY)

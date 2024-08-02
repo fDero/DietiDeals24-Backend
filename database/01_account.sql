@@ -14,10 +14,6 @@ CREATE TABLE Account (
     profile_picture_url  VARCHAR(100),
     bio                  TEXT,
 
-    unread_notifications_counter INT DEFAULT 0,
-    online_auctions_counter      INT DEFAULT 0,
-    past_deals_counter           INT DEFAULT 0,
-
     UNIQUE(username),
     UNIQUE(email),
     

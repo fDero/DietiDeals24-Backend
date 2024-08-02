@@ -18,10 +18,9 @@ public class MinimalAccountInformationsSerializer extends JsonSerializer<Minimal
         throws IOException 
     {
         gen.writeStartObject();
-        gen.writeStringField("email", value.getEmail());
-        gen.writeStringField("username", value.getUsername());
-        gen.writeStringField("profilePictureUrl", value.getProfilePictureUrl());
-        gen.writeNumberField("unreadNotificationsCounter", value.getUnreadNotificationsCounter());
+        gen.writeStringField("email", value.getAccount().getEmail());
+        gen.writeStringField("username", value.getAccount().getUsername());
+        gen.writeStringField("profilePictureUrl", value.getAccount().getProfilePictureUrl());
         gen.writeEndObject();
     }
     

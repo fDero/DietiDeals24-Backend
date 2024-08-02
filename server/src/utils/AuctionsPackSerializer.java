@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import entity.Auction;
 import response.AuctionsPack;
-import response.SpecificAuctionPublicInformations;
 
 
 public class AuctionsPackSerializer extends JsonSerializer<AuctionsPack> {
@@ -20,7 +19,6 @@ public class AuctionsPackSerializer extends JsonSerializer<AuctionsPack> {
         throws IOException  
     {
         gen.writeStartArray();
-        SpecificAuctionPublicInformationsSerializer serializer = new SpecificAuctionPublicInformationsSerializer();
         for (Auction auction : value.getAuctions()) {
             gen.writeStartObject();
             AuctionSerializerHelper.serializeBasics(gen, auction);

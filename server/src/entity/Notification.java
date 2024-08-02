@@ -80,6 +80,12 @@ public class Notification {
     @Column(name = "currency")
     private String currency;
 
+    @Column(name = "winner_id")
+    private Integer winnerId;
+
+    @Column(name = "status")
+    private String status;
+
     @Id @Column(name = "notification_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -88,7 +94,7 @@ public class Notification {
         return new Auction(
             maximumBid, minimumBid, numberOfBids, lowestBidSoFar, creatorId, country, 
             city, itemCondition, itemCategory, macroCategory, startTime, endTime, itemName, 
-            description, picturesUrls, auctionType, currency, auctionId
+            description, picturesUrls, auctionType, currency, winnerId, status, auctionId
         );
     }
 }

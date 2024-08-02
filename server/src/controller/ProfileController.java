@@ -5,6 +5,7 @@ import entity.ContactInformation;
 import entity.PersonalLink;
 import exceptions.NoAccountWithSuchEmailException;
 import repository.AccountRepository;
+import repository.AuctionRepository;
 import repository.ContactInformationRepository;
 import repository.PersonalLinkRepository;
 import response.AccountPrivateProfileInformations;
@@ -26,6 +27,7 @@ import authentication.RequireJWT;
 public class ProfileController {
     
     private final AccountRepository accountRepository;
+    private final AuctionRepository auctionRepository;
     private final ContactInformationRepository contactInformationRepository;
     private final PersonalLinkRepository personalLinkRepository;
     private final JwtTokenManager jwtTokenProvider;
@@ -33,6 +35,7 @@ public class ProfileController {
     @Autowired
     public ProfileController(
         AccountRepository accountRepository,
+        AuctionRepository auctionRepository,
         ContactInformationRepository contactInformationRepository,
         PersonalLinkRepository personalLinkRepository,
         JwtTokenManager jwtTokenProvider
@@ -41,6 +44,7 @@ public class ProfileController {
         this.contactInformationRepository = contactInformationRepository;
         this.personalLinkRepository = personalLinkRepository;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.auctionRepository = auctionRepository;
     }
 
     @RequireJWT
@@ -54,7 +58,9 @@ public class ProfileController {
         Account account = accountRepository.findById(Integer.valueOf(id)).orElseThrow(() -> new NoAccountWithSuchEmailException());
         List<PersonalLink> personalLinks = personalLinkRepository.findByAccountId(account.getId());
         List<ContactInformation> contactInformations = contactInformationRepository.findByAccountId(account.getId());
-        AccountPrivateProfileInformations accountPrivateInformations = new AccountPrivateProfileInformations(account, personalLinks, contactInformations);
+        long onlineAuctionsCounter = auctionRepository.countOnlineAuctionsById(account.getId());
+        long pastDealsCounter = auctionRepository.countPastDealsById(account.getId());
+        AccountPrivateProfileInformations accountPrivateInformations = new AccountPrivateProfileInformations(account, personalLinks, contactInformations, onlineAuctionsCounter, pastDealsCounter);
         return ResponseEntity.ok().body(accountPrivateInformations);
     }
 
@@ -65,7 +71,9 @@ public class ProfileController {
     {
         Account account = accountRepository.findById(id).orElseThrow(() -> new NoAccountWithSuchEmailException());
         List<PersonalLink> personalLinks = personalLinkRepository.findByAccountId(account.getId());
-        AccountPublicProfileInformations acountPublicInformations = new AccountPublicProfileInformations(account, personalLinks);
+        long onlineAuctionsCounter = auctionRepository.countOnlineAuctionsById(account.getId());
+        long pastDealsCounter = auctionRepository.countPastDealsById(account.getId());
+        AccountPublicProfileInformations acountPublicInformations = new AccountPublicProfileInformations(account, personalLinks, onlineAuctionsCounter, pastDealsCounter);
         return ResponseEntity.ok().body(acountPublicInformations);
     }
 }

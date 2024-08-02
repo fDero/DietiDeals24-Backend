@@ -1,4 +1,18 @@
 
+CREATE TABLE AuctionStatus (
+    status_descriptor VARCHAR(20) PRIMARY KEY
+);
+
+CREATE TABLE Category (
+    macro_category VARCHAR(50) NOT NULL,
+    item_category  VARCHAR(50) NOT NULL,
+    category_id    SERIAL PRIMARY KEY
+);
+
+CREATE TABLE AuctionType (
+    auction_type VARCHAR(50) NOT NULL    
+);
+
 CREATE TABLE Auction (
     maximum_bid         NUMERIC,
     minimum_bid         NUMERIC,
@@ -19,9 +33,19 @@ CREATE TABLE Auction (
     currency            VARCHAR(3) NOT NULL,
     auction_id          SERIAL PRIMARY KEY,
     
+    winner_id           INT,
+    status              TEXT NOT NULL DEFAULT 'active',
+
+    FOREIGN KEY (status)
+    REFERENCES AuctionStatus(status_descriptor),
+
+    FOREIGN KEY (winner_id)
+    REFERENCES Account(account_id),
+
     FOREIGN KEY (creator_id)
     REFERENCES Account(account_id)
 );
+
 
 CREATE TABLE Bid (
     auction_id  INT NOT NULL,

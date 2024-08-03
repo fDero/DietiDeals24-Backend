@@ -4,7 +4,6 @@ import java.io.IOException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import entity.ContactInformation;
 import entity.PersonalLink;
 import response.AccountPrivateProfileInformations;
 
@@ -23,7 +22,6 @@ public class AccountPrivateProfileInformationsSerializer extends JsonSerializer<
 
         gen.writeStartObject();
         serializeLinks(value, gen, serializers);
-        serializeContactInformations(value, gen, serializers);
         gen.writeStringField("name", value.getAccount().getName());
         gen.writeStringField("surname", value.getAccount().getSurname());
         gen.writeStringField("birthday", birthayString);
@@ -50,23 +48,6 @@ public class AccountPrivateProfileInformationsSerializer extends JsonSerializer<
             gen.writeStartObject();
             gen.writeStringField("link", link.getLink());
             gen.writeStringField("description", link.getDescription());
-            gen.writeEndObject();
-        }
-        gen.writeEndArray();
-    }
-
-    private void serializeContactInformations(
-        AccountPrivateProfileInformations value, 
-        JsonGenerator gen, 
-        SerializerProvider serializers
-    ) 
-        throws IOException 
-    {    
-        gen.writeArrayFieldStart("contactInformations");
-        for (ContactInformation info : value.getContactInformation()) {
-            gen.writeStartObject();
-            gen.writeStringField("email", info.getEmail());
-            gen.writeStringField("phone", info.getPhone());
             gen.writeEndObject();
         }
         gen.writeEndArray();

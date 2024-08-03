@@ -8,19 +8,16 @@ import lombok.Setter;
 
 @Entity @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
-@Table(name = "ContactInformation")
-public class ContactInformation {
+@Table(name = "Iban")
+public class Iban {
     
-    @Column(name = "email")
-    String email;
-    
-    @Column(name = "phone")
-    String phone;
-
     @Column(name = "account_id")
-    Integer accountId;
+    private Integer accountId;
 
-    @Id @Column(name = "contact_id")
+    @Column(name = "iban_string")
+    private String ibanString;
+
+    @Id @Column(name = "iban_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 }

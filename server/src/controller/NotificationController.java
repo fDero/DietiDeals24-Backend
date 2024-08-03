@@ -4,7 +4,6 @@ import entity.Notification;
 import exceptions.NoAccountWithSuchEmailException;
 import exceptions.NoSuchNotificationException;
 import exceptions.NotificationNotYoursException;
-import repository.AccountRepository;
 import repository.NotificationRepository;
 import response.NotificationsPack;
 import java.util.Optional;

@@ -127,7 +127,6 @@ public class NotificationController {
             NotificationNotYoursException,
             NoAccountWithSuchEmailException
     {
-        
         Optional<Notification> notification = notificationRepository.findById(notificationId);
         if (!notification.isPresent()){
             throw new NoSuchNotificationException();

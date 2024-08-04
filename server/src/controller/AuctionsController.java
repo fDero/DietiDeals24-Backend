@@ -5,14 +5,12 @@ import exceptions.NoAuctionWithSuchIdException;
 import repository.AuctionRepository;
 import response.AuctionsPack;
 import response.SpecificAuctionPublicInformations;
-
+import service.AuctionFilteredSearchService;
 import org.springframework.http.ResponseEntity;
-
 import java.util.List;
-import java.util.Optional;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,12 +19,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuctionsController {
     
     private final AuctionRepository auctionsRepository;
-    
+    private final AuctionFilteredSearchService auctionFilteredSearchService;
+
     @Autowired
     public AuctionsController(
-        AuctionRepository auctionsRepository
+        AuctionRepository auctionsRepository,
+        AuctionFilteredSearchService auctionFilteredSearchService
     ) {
         this.auctionsRepository = auctionsRepository;
+        this.auctionFilteredSearchService = auctionFilteredSearchService;
     }
 
     @GetMapping(value = "/auctions/search", produces = "application/json")
@@ -39,25 +40,12 @@ public class AuctionsController {
         @RequestParam(defaultValue = "")           String type,
         @RequestParam(defaultValue = "trending")   String policy
     )  {
-        int zeroIndexedPage = page - 1;
-        List<Auction> auctions = null;
-        if (policy.equals("expiration"))
-            auctions = auctionsRepository.findActiveAuctionsFilteredExpiration(
-                category, 
-                keywords, 
-                macroCategory, 
-                type,
-                PageRequest.of(zeroIndexedPage, size)
-            );
-        else if (policy.equals("trending"))
-            auctions = auctionsRepository.findActiveAuctionsFilteredTrending(
-                category, 
-                keywords, 
-                macroCategory, 
-                type,
-                PageRequest.of(zeroIndexedPage, size)
-            );
-        else throw new IllegalArgumentException("Invalid policy");
+        List<Auction> auctions = auctionFilteredSearchService
+            .performPagedSearch(page, size)
+            .searchingForAnAuctionOfType(type)
+            .searchingForAnAuctionForItem(macroCategory, keywords, category)
+            .withPolicy(policy)
+            .fetchResults();
         AuctionsPack auctionsPack = new AuctionsPack(auctions);
         return ResponseEntity.ok().body(auctionsPack);
     }
@@ -69,11 +57,8 @@ public class AuctionsController {
         throws 
             NoAuctionWithSuchIdException
     {
-        Optional<Auction> auction = auctionsRepository.findById(id);
-        if (auction.isEmpty()) {
-            throw new NoAuctionWithSuchIdException();
-        }
-        SpecificAuctionPublicInformations auctionSpecificInformations = new SpecificAuctionPublicInformations(auction.get());
+        Auction auction = auctionsRepository.findById(id).orElseThrow(() -> new NoAuctionWithSuchIdException());
+        SpecificAuctionPublicInformations auctionSpecificInformations = new SpecificAuctionPublicInformations(auction);
         return ResponseEntity.ok().body(auctionSpecificInformations);
     }
 }

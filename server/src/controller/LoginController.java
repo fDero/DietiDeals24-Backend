@@ -1,19 +1,15 @@
 package controller;
 
 import entity.Account;
-import entity.Password;
 import exceptions.AccessDeniedBadCredentialsException;
 import exceptions.AccountValidationException;
 import exceptions.NoAccountWithSuchEmailException;
-import repository.AccountRepository;
-import repository.PasswordRepository;
 import request.LoginRequest;
 import response.MinimalAccountInformations;
+import service.AccountManagementService;
 import service.AccountValidationService;
-import service.EncryptionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpHeaders;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,24 +27,19 @@ import org.springframework.web.bind.annotation.RestController;
 public class LoginController {
 
     private final AccountValidationService accountValidationService;
-    private final AccountRepository accountRepository;
-    private final EncryptionService encryptionService;
+    
+    private AccountManagementService accountManagementService;
     private final JwtTokenManager jwtTokenProvider;
-    private final PasswordRepository passwordRepository;
 
     @Autowired
     public LoginController(
         AccountValidationService accountValidationService,
-        AccountRepository accountRepository,
-        EncryptionService encryptionService,
-        JwtTokenManager jwtTokenProvider,
-        PasswordRepository passwordRepository
+        AccountManagementService accountManagementService,
+        JwtTokenManager jwtTokenProvider
     ){
         this.accountValidationService = accountValidationService;
-        this.accountRepository = accountRepository;
-        this.encryptionService = encryptionService;
+        this.accountManagementService = accountManagementService;
         this.jwtTokenProvider = jwtTokenProvider;
-        this.passwordRepository = passwordRepository;
     }
 
     @PostMapping(value = "/login", produces = "application/json")
@@ -59,19 +50,7 @@ public class LoginController {
             AccessDeniedBadCredentialsException
     {
         accountValidationService.validatePassword(request.getPassword());
-        Account account = accountRepository.findAccountByEmail(request.getEmail())
-            .orElseThrow(() -> new NoAccountWithSuchEmailException());
-        Password password = passwordRepository.findPasswordByAccountId(account.getId())
-            .orElseThrow(() -> new NoAccountWithSuchEmailException());
-        String realPasswordSalt = password.getPasswordSalt();
-        String realPasswordHash = password.getPasswordHash();
-        String candidatePlainTextPassword = request.getPassword();
-        String candidatePasswordHash = encryptionService.encryptPassword(candidatePlainTextPassword, realPasswordSalt);
-        if (!candidatePasswordHash.equals(realPasswordHash)){
-            throw new AccessDeniedBadCredentialsException();
-        }
-        account.setLastLogin(new Timestamp(System.currentTimeMillis()));
-        accountRepository.save(account);
+        Account account = accountManagementService.performAccountLogin(request.getEmail(), request.getPassword());
         MinimalAccountInformations accountView = new MinimalAccountInformations(account);
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-Auth-Token", jwtTokenProvider.generateToken(account.getId().toString()));

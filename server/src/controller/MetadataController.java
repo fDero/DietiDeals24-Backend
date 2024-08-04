@@ -5,11 +5,11 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import entity.Category;
 import exceptions.UnrecognizedCountryException;
-import repository.CategoryRepository;
 import response.CategoryPack;
 import response.CitiesInformationsPack;
 import response.CountriesInformationsPack;
 import service.GeographicalAwarenessService;
+import service.MetadataGatheringService;
 import utils.GeographicalCityDescriptor;
 import utils.GeographicalCountryDescriptor;
 
@@ -21,21 +21,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class MetadataController {
 
-    private final CategoryRepository categoryRepository;
+    private final MetadataGatheringService metadataGatheringService;
     private final GeographicalAwarenessService countryDescriptor;
 
     @Autowired
     public MetadataController(
-        CategoryRepository categoryRepository,
+        MetadataGatheringService metadataGatheringService,
         GeographicalAwarenessService countryDescriptor
     ){
-        this.categoryRepository = categoryRepository;
+        this.metadataGatheringService = metadataGatheringService;
         this.countryDescriptor = countryDescriptor;
     }
 
     @GetMapping(value = "/categories", produces = "application/json")
     public ResponseEntity<CategoryPack> sendProfileInformations() {
-        List<Category> categories = categoryRepository.findAll();
+        List<Category> categories = metadataGatheringService.fetchCategories();
         return ResponseEntity.ok().body(new CategoryPack(categories));
     }
 

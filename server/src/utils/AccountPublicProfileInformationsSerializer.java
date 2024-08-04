@@ -24,6 +24,7 @@ public class AccountPublicProfileInformationsSerializer extends JsonSerializer<A
         gen.writeStringField("profilePictureUrl", value.getAccount().getProfilePictureUrl());
         gen.writeNumberField("onlineAuctionsCounter", value.getOnlineAuctionsCounter());
         gen.writeNumberField("pastDealsCounter", value.getPastDealsCounter());
+        gen.writeStringField("userId", value.getAccount().getId().toString());
         gen.writeEndObject();
     }
 

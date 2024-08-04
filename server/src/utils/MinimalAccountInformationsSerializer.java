@@ -20,6 +20,7 @@ public class MinimalAccountInformationsSerializer extends JsonSerializer<Minimal
         gen.writeStartObject();
         gen.writeStringField("email", value.getAccount().getEmail());
         gen.writeStringField("username", value.getAccount().getUsername());
+        gen.writeStringField("userId", value.getAccount().getId().toString());
         gen.writeStringField("profilePictureUrl", value.getAccount().getProfilePictureUrl());
         gen.writeEndObject();
     }

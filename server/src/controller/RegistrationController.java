@@ -1,12 +1,11 @@
 package controller;
 
 import entity.Account;
-import entity.Password;
-import repository.AccountRepository;
 import repository.PasswordRepository;
 import request.AccountRegistrationRequest;
 import request.RegistrationConfirmationRequest;
 import response.MinimalAccountInformations;
+import service.AccountManagementService;
 import service.AccountValidationService;
 import service.PendingAccountRegistrationCacheService;
 import service.EmailService;
@@ -38,30 +37,26 @@ import exceptions.WrongConfirmationCodeException;
 public class RegistrationController {
 
     private final AccountValidationService accountValidationService;
-    private final AccountRepository accountRepository;
+    private final AccountManagementService accountManagementService;
     private final EmailService emailService;
     private final PendingAccountRegistrationCacheService pendingAccountsCacheService;
-    private final EncryptionService encryptionService;
     private final JwtTokenManager jwtTokenProvider;
-    private final PasswordRepository passwordRepository;
-
+    
     @Autowired
     public RegistrationController(
-            EmailService emailService,
-            AccountValidationService accountValidationService,
-            AccountRepository accountRepository,
-            PendingAccountRegistrationCacheService pendingAccountsCacheService,
-            EncryptionService encryptionService,
-            JwtTokenManager jwtTokenProvider,
-            PasswordRepository passwordRepository
+        EmailService emailService,
+        AccountManagementService accountManagementService,
+        AccountValidationService accountValidationService,
+        PendingAccountRegistrationCacheService pendingAccountsCacheService,
+        EncryptionService encryptionService,
+        JwtTokenManager jwtTokenProvider,
+        PasswordRepository passwordRepository
     ) {
         this.emailService = emailService;
+        this.accountManagementService = accountManagementService;
         this.accountValidationService = accountValidationService;
-        this.accountRepository = accountRepository;
         this.pendingAccountsCacheService = pendingAccountsCacheService;
-        this.encryptionService = encryptionService;
         this.jwtTokenProvider = jwtTokenProvider;
-        this.passwordRepository = passwordRepository;
     }
 
     @NotNull
@@ -96,11 +91,7 @@ public class RegistrationController {
     {
         PendingAccountRegistration pendingAccount = pendingAccountsCacheService.retrieve(request.getEmail());
         ensureValidConfirmationCode(pendingAccount, request.getCode());
-        String passwordSalt = encryptionService.generateRandomSalt();
-        String passwordHash = encryptionService.encryptPassword(pendingAccount.getPassword(), passwordSalt);
-        Account account = accountRepository.save(new Account(pendingAccount));
-        Password password = new Password(passwordSalt, passwordHash, account.getId());
-        passwordRepository.save(password);
+        Account account = accountManagementService.createAccount(pendingAccount);
         pendingAccountsCacheService.delete(request.getEmail());
         MinimalAccountInformations accountView = new MinimalAccountInformations(account);
         HttpHeaders headers = new HttpHeaders();

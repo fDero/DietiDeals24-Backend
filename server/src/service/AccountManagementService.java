@@ -18,6 +18,7 @@ import repository.PasswordRepository;
 import repository.PersonalLinkRepository;
 import response.AccountPrivateProfileInformations;
 import response.AccountPublicProfileInformations;
+import utils.PendingAccountRegistration;
 
 @Service
 public class AccountManagementService {
@@ -82,5 +83,14 @@ public class AccountManagementService {
         long onlineAuctionsCounter = auctionRepository.countOnlineAuctionsById(account.getId());
         long pastDealsCounter = auctionRepository.countPastDealsById(account.getId());
         return new AccountPrivateProfileInformations(account, personalLinks, onlineAuctionsCounter, pastDealsCounter);
+    }
+
+    public Account createAccount(PendingAccountRegistration pendingAccount){
+        Account account = accountRepository.save(new Account(pendingAccount));
+        String passwordSalt = encryptionService.generateRandomSalt();
+        String passwordHash = encryptionService.encryptPassword(pendingAccount.getPassword(), passwordSalt);
+        Password password = new Password(passwordSalt, passwordHash, account.getId());
+        passwordRepository.save(password);
+        return account;
     }
 }

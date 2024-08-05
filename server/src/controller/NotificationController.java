@@ -4,12 +4,8 @@ import entity.Notification;
 import exceptions.NoAccountWithSuchEmailException;
 import exceptions.NoSuchNotificationException;
 import exceptions.NotificationNotYoursException;
-import repository.NotificationRepository;
 import response.NotificationsPack;
 import service.NotificationManagementService;
-
-import java.util.Optional;
-
 import org.springframework.http.ResponseEntity;
 import java.util.List;
 import authentication.JwtTokenManager;

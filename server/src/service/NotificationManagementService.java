@@ -1,19 +1,17 @@
 package service;
 
 import java.util.List;
-
-import org.aspectj.weaver.ast.Not;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-
 import entity.Auction;
+import org.springframework.data.domain.Pageable;
 import entity.Bid;
 import entity.Notification;
 import entity.NotificationData;
 import exceptions.NoSuchNotificationException;
 import repository.NotificationDataRepository;
 import repository.NotificationRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class NotificationManagementService {

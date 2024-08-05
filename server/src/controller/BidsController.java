@@ -5,9 +5,8 @@ import authentication.JwtTokenManager;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import authentication.RequireJWT;
 
@@ -15,6 +14,8 @@ import entity.Bid;
 import exceptions.AuctionNotActiveException;
 import exceptions.BidOnYourOwnAuctionException;
 import exceptions.NoSuchAuctionException;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import request.NewBidRequest;
 import service.BidsManagementService;
 
 @RestController
@@ -34,11 +35,10 @@ public class BidsController {
 
     @RequireJWT
     @Transactional
-    @GetMapping(value = "/bids/new", produces = "text/plain")
+    @PostMapping(value = "/bids/new", produces = "text/plain")
     public ResponseEntity<String> registerNewBid(
         @RequestHeader(name = "Authorization") String authorizationHeader,
-        @RequestParam(name = "auctionId") Integer auctionId,
-        @RequestParam(name = "amount") Long amount
+        @RequestBody NewBidRequest newBidRequest
     ) 
         throws 
             NoSuchAuctionException,
@@ -49,8 +49,8 @@ public class BidsController {
         String id = jwtTokenProvider.getIdFromJWT(jwtToken);
         Bid bid = new Bid();
         bid.setBidderId(Integer.valueOf(id));
-        bid.setAuctionId(auctionId);
-        bid.setBidAmount(amount);
+        bid.setAuctionId(newBidRequest.getAuctionId());
+        bid.setBidAmount(newBidRequest.getBidAmount());
         bid.setBidDate(new java.sql.Timestamp(System.currentTimeMillis()));
         bidsManagementService.saveBid(bid);
         return ResponseEntity.ok().body("done");

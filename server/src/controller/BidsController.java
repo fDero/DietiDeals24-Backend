@@ -15,25 +15,21 @@ import entity.Bid;
 import exceptions.AuctionNotActiveException;
 import exceptions.BidOnYourOwnAuctionException;
 import exceptions.NoSuchAuctionException;
-import repository.BidRepository;
-import service.BidValidationService;
+import service.BidsManagementService;
 
 @RestController
 public class BidsController {
 
     private final JwtTokenManager jwtTokenProvider;
-    private final BidRepository bidRepository;
-    private final BidValidationService bidValidationService;
+    private final BidsManagementService bidsManagementService;
 
     @Autowired
     public BidsController(
         JwtTokenManager jwtTokenProvider,
-        BidRepository bidRepository,
-        BidValidationService bidValidationService
+        BidsManagementService bidsManagementService
     ) {
         this.jwtTokenProvider = jwtTokenProvider;
-        this.bidRepository = bidRepository;
-        this.bidValidationService = bidValidationService;
+        this.bidsManagementService = bidsManagementService;
     }
 
     @RequireJWT
@@ -56,8 +52,7 @@ public class BidsController {
         bid.setAuctionId(auctionId);
         bid.setBidAmount(amount);
         bid.setBidDate(new java.sql.Timestamp(System.currentTimeMillis()));
-        bidRepository.save(bid);
-        bidValidationService.validateBid(bid);
+        bidsManagementService.saveBid(bid);
         return ResponseEntity.ok().body("done");
     }
 }

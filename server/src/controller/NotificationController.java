@@ -6,6 +6,8 @@ import exceptions.NoSuchNotificationException;
 import exceptions.NotificationNotYoursException;
 import repository.NotificationRepository;
 import response.NotificationsPack;
+import service.NotificationManagementService;
+
 import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
@@ -27,15 +29,15 @@ import jakarta.transaction.Transactional;
 @RestController
 public class NotificationController {
     
-    private final NotificationRepository notificationRepository;
+    private final NotificationManagementService notificationmanagementService;
     private final JwtTokenManager jwtTokenProvider;
 
     @Autowired
     public NotificationController(
-        NotificationRepository notificationRepository,
+        NotificationManagementService notificationmanagementService,
         JwtTokenManager jwtTokenProvider
     ) {
-        this.notificationRepository = notificationRepository;
+        this.notificationmanagementService = notificationmanagementService;
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
@@ -54,9 +56,9 @@ public class NotificationController {
         PageRequest pageDescriptor = PageRequest.of(zeroIndexedPage, size);
         String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
         String id = jwtTokenProvider.getIdFromJWT(jwtToken);
-        List<Notification> notifications = notificationRepository.findByAccountId(Integer.valueOf(id), pageDescriptor);
-        long readNotifications = notificationRepository.countReadNotifications(Integer.valueOf(id));
-        long unreadNotifications = notificationRepository.countUnreadNotifications(Integer.valueOf(id));
+        List<Notification> notifications = notificationmanagementService.findByUser(id, pageDescriptor);
+        long readNotifications = notificationmanagementService.countReadNotifications(id);
+        long unreadNotifications = notificationmanagementService.countUnreadNotifications(id);
         NotificationsPack notificationsPack = new NotificationsPack(notifications, readNotifications, unreadNotifications);
         return ResponseEntity.ok().body(notificationsPack);
     }
@@ -74,7 +76,7 @@ public class NotificationController {
     {
         String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
         String id = jwtTokenProvider.getIdFromJWT(jwtToken);
-        notificationRepository.markAllNotificationsAsRead(Integer.valueOf(id));
+        notificationmanagementService.markAllNotificationsAsRead(id);
         return ResponseEntity.ok().body("done");
     }
 
@@ -91,7 +93,7 @@ public class NotificationController {
     {
         String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
         String id = jwtTokenProvider.getIdFromJWT(jwtToken);
-        notificationRepository.markAllNotificationsAsEliminated(Integer.valueOf(id));
+        notificationmanagementService.markAllNotificationsAsEliminated(id);
         return ResponseEntity.ok().body("done");
     }
 
@@ -107,10 +109,9 @@ public class NotificationController {
             NotificationNotYoursException,
             NoAccountWithSuchEmailException
     {
-        Notification notification = notificationRepository.findById(notificationId)
-            .orElseThrow(() -> new NoSuchNotificationException());
+        Notification notification = notificationmanagementService.findByNotificationId(notificationId);
         ensureNotificationOwnership(notification, authorizationHeader);
-        notificationRepository.markNotificationAsRead(notificationId);
+        notificationmanagementService.markNotificationAsRead(notificationId);
         return ResponseEntity.ok().body("done");
     }
 
@@ -127,12 +128,9 @@ public class NotificationController {
             NotificationNotYoursException,
             NoAccountWithSuchEmailException
     {
-        Optional<Notification> notification = notificationRepository.findById(notificationId);
-        if (!notification.isPresent()){
-            throw new NoSuchNotificationException();
-        }
-        ensureNotificationOwnership(notification.get(), authorizationHeader);
-        notificationRepository.markNotificationAsRead(notificationId);
+        Notification notification = notificationmanagementService.findByNotificationId(notificationId);
+        ensureNotificationOwnership(notification, authorizationHeader);
+        notificationmanagementService.markNotificationAsRead(notificationId);
         return ResponseEntity.ok().body("done");
     }
 

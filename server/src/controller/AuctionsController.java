@@ -6,6 +6,8 @@ import repository.AuctionRepository;
 import response.AuctionsPack;
 import response.SpecificAuctionPublicInformations;
 import service.AuctionFilteredSearchService;
+import service.AuctionManagementService;
+
 import org.springframework.http.ResponseEntity;
 import java.util.List;
 
@@ -20,14 +22,18 @@ public class AuctionsController {
     
     private final AuctionRepository auctionsRepository;
     private final AuctionFilteredSearchService auctionFilteredSearchService;
+    private final AuctionManagementService auctionManagementService;
 
     @Autowired
     public AuctionsController(
         AuctionRepository auctionsRepository,
-        AuctionFilteredSearchService auctionFilteredSearchService
+        AuctionFilteredSearchService auctionFilteredSearchService,
+        AuctionManagementService auctionManagementService
     ) {
+        auctionManagementService.updateAuctions();
         this.auctionsRepository = auctionsRepository;
         this.auctionFilteredSearchService = auctionFilteredSearchService;
+        this.auctionManagementService = auctionManagementService;
     }
 
     @GetMapping(value = "/auctions/search", produces = "application/json")
@@ -40,6 +46,7 @@ public class AuctionsController {
         @RequestParam(defaultValue = "")           String type,
         @RequestParam(defaultValue = "trending")   String policy
     )  {
+        auctionManagementService.updateAuctions();
         List<Auction> auctions = auctionFilteredSearchService
             .performPagedSearch(page, size)
             .searchingForAnAuctionOfType(type)
@@ -57,6 +64,7 @@ public class AuctionsController {
         throws 
             NoAuctionWithSuchIdException
     {
+        auctionManagementService.updateAuctions();
         Auction auction = auctionsRepository.findById(id).orElseThrow(() -> new NoAuctionWithSuchIdException());
         SpecificAuctionPublicInformations auctionSpecificInformations = new SpecificAuctionPublicInformations(auction);
         return ResponseEntity.ok().body(auctionSpecificInformations);

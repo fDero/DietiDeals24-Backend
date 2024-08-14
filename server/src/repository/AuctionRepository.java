@@ -4,6 +4,8 @@ import entity.Auction;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.domain.Pageable;
 import java.sql.Timestamp;
 
@@ -13,6 +15,8 @@ import org.springframework.stereotype.Repository;
 public interface AuctionRepository extends JpaRepository<Auction, Integer> {
 
         Optional<Auction> findById(Integer id);
+
+        List<Auction> findAllByCreatorIdAndStatus(Integer creatorId, String status);
 
         List<Auction> findAllByEndTimeAfterOrderByEndTimeAsc(Timestamp currentTime, Pageable pageable);
 
@@ -57,4 +61,8 @@ public interface AuctionRepository extends JpaRepository<Auction, Integer> {
         default long countOnlineAuctionsById(Integer id){
                 return countByStatusAndCreatorId("active", id);
         }
+
+        @Modifying
+        @Query("UPDATE Auction a SET a.status = 'pending' WHERE a.status = 'active' AND a.endTime < CURRENT_TIMESTAMP")
+        void markAuctionsAsPending();
 }

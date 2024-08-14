@@ -16,6 +16,7 @@ import exceptions.BidOnYourOwnAuctionException;
 import exceptions.NoSuchAuctionException;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import request.NewBidRequest;
+import service.AuctionManagementService;
 import service.BidsManagementService;
 
 @RestController
@@ -23,14 +24,17 @@ public class BidsController {
 
     private final JwtTokenManager jwtTokenProvider;
     private final BidsManagementService bidsManagementService;
+    private final AuctionManagementService auctionManagementService;
 
     @Autowired
     public BidsController(
         JwtTokenManager jwtTokenProvider,
-        BidsManagementService bidsManagementService
+        BidsManagementService bidsManagementService,
+        AuctionManagementService auctionManagementService
     ) {
         this.jwtTokenProvider = jwtTokenProvider;
         this.bidsManagementService = bidsManagementService;
+        this.auctionManagementService = auctionManagementService;
     }
 
     @RequireJWT
@@ -45,6 +49,7 @@ public class BidsController {
             AuctionNotActiveException,
             BidOnYourOwnAuctionException
     {
+        auctionManagementService.updateAuctions();
         String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
         String id = jwtTokenProvider.getIdFromJWT(jwtToken);
         Bid bid = new Bid();

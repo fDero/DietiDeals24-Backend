@@ -3,7 +3,7 @@ INSERT INTO AuctionStatus (status_descriptor) VALUES
     ('active'),
     ('pending'),
     ('aborted'),
-    ('expired'),
+    ('rejected'),
     ('closed');
 
 INSERT INTO AuctionType (auction_type) VALUES 
@@ -93,7 +93,7 @@ VALUES
     (NULL, 100, 2, NULL, id_by_username('johndoe'),  'UK', 'London', 'new', 'Electronics', 'products', '2023-01-01 00:00:00', '2025-10-10 00:00:00', 'iPhone 13', 'Brand new iPhone 13', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR', 'active', NULL),
     (NULL, 100, 1, NULL, id_by_username('mikeg'),    'UK', 'Brighton', 'used', 'Cars', 'products', '2023-01-01 00:00:00', '2025-10-10 00:00:00', 'Mini Countrymen', '163 Horse Power, 50000km', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR', 'active', NULL),
     (NULL, 100, 3, NULL, id_by_username('marior'),   'IT', 'Milano', 'as-new', 'Electronics', 'products', '2023-01-01 00:00:00', '2024-03-10 00:00:00', 'Ryzen 7 7700X', 'Still in the original box', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR', 'closed', NULL),
-    (NULL, 100, 3, NULL, id_by_username('marior'),   'IT', 'Milano', 'broken', 'Videogames and consoles', 'products', '2023-01-01 00:00:00', '2023-10-10 00:00:00', 'Old PS4', 'The controller fails to connect to it', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR', 'expired', NULL),
+    (NULL, 100, 3, NULL, id_by_username('marior'),   'IT', 'Milano', 'broken', 'Videogames and consoles', 'products', '2023-01-01 00:00:00', '2023-10-10 00:00:00', 'Old PS4', 'The controller fails to connect to it', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR', 'rejected', NULL),
     (100, NULL, 9, 60,   id_by_username('marior'),   'IT', 'Napoli', NULL, 'School Tutoring', 'service', '2023-01-01 00:00:00', '2023-10-10 00:00:00', 'Math tutoring for my son', 'high-school math, calculus and polynomial algebra', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'reverse', 'EUR', 'closed', NULL),
     (NULL, 100, 2, NULL, id_by_username('sarahp'),   'UK', 'Manchester', 'used', 'Clothing', 'products', '2023-01-01 00:00:00', '2025-10-10 00:00:00', 'Designer Jacket', 'High-end designer jacket', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR', 'active', NULL),
     (NULL, 100, 1, NULL, id_by_username('vincentg'), 'UK', 'Liverpool', 'new', 'Home furniture', 'products', '2023-01-01 00:00:00', '2025-10-10 00:00:00', 'Modern Sofa', 'Brand new modern sofa', '{https://example.com/pic1.jpg, https://example.com/pic2.jpg}', 'silent', 'EUR', 'active', NULL),

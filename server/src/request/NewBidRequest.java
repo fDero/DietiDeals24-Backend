@@ -9,6 +9,6 @@ public class NewBidRequest {
     private Integer auctionId;
     private Long bidAmount;
     private Integer paymentMethodId;
-    private NewCreditCardRequest newSingleUseCreditCard;
-    private NewCreditCardRequest newSavedCreditCard;
+    private NewCreditCardRequest OneTimePaymentMethod;
+    private NewCreditCardRequest paymentMethodToBeSaved;
 }

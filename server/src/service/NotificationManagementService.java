@@ -7,6 +7,7 @@ import entity.Bid;
 import entity.Notification;
 import entity.NotificationData;
 import exceptions.NoSuchNotificationException;
+import repository.AuctionRepository;
 import repository.NotificationDataRepository;
 import repository.NotificationRepository;
 
@@ -22,7 +23,8 @@ public class NotificationManagementService {
     @Autowired
     public NotificationManagementService(
         NotificationRepository notificationRepository,
-        NotificationDataRepository notificationDataRepository
+        NotificationDataRepository notificationDataRepository,
+        AuctionRepository auctionRepository
     ) {
         this.notificationRepository = notificationRepository;
         this.notificationDataRepository = notificationDataRepository;

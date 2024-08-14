@@ -33,3 +33,20 @@ CREATE VIEW Notification AS (
     FROM NotificationData, Auction
     WHERE NotificationData.auction_id = Auction.auction_id
 );
+
+CREATE FUNCTION notify_on_status_change() RETURNS trigger AS $$
+BEGIN
+	
+	IF (new.status = 'pending') 
+    THEN
+        INSERT INTO NotificationData (auction_id, notification_type, account_id)
+        VALUES (new.auction_id, 'auction-over', new.creator_id);
+    END IF; 
+
+    RETURN new;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER notify_on_status_change_trigger 
+AFTER UPDATE ON Auction
+FOR EACH ROW EXECUTE FUNCTION notify_on_status_change();

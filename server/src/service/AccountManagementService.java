@@ -23,6 +23,7 @@ import utils.PendingAccountRegistration;
 @Service
 public class AccountManagementService {
 
+    private final AuctionManagementService auctionManagementService;
     private final AccountRepository accountRepository;
     private final PasswordRepository passwordRepository;
     private final EncryptionService encryptionService;
@@ -35,13 +36,15 @@ public class AccountManagementService {
         PasswordRepository passwordRepository,
         EncryptionService encryptionService,
         PersonalLinkRepository personalLinkRepository,
-        AuctionRepository auctionRepository
+        AuctionRepository auctionRepository,
+        AuctionManagementService auctionManagementService
     ) {
         this.accountRepository = accountRepository;
         this.passwordRepository = passwordRepository;
         this.encryptionService = encryptionService;
         this.personalLinkRepository = personalLinkRepository;
         this.auctionRepository = auctionRepository;
+        this.auctionManagementService = auctionManagementService;
     }
 
     public Account performAccountLogin(String email, String candidatePlainTextPassword) 
@@ -69,6 +72,7 @@ public class AccountManagementService {
     {
         Account account = accountRepository.findById(Integer.valueOf(id)).orElseThrow(() -> new NoAccountWithSuchEmailException());
         List<PersonalLink> personalLinks = personalLinkRepository.findByAccountId(account.getId());
+        auctionManagementService.updateAuctions();
         long onlineAuctionsCounter = auctionRepository.countOnlineAuctionsById(account.getId());
         long pastDealsCounter = auctionRepository.countPastDealsById(account.getId());
         return new AccountPublicProfileInformations(account, personalLinks, onlineAuctionsCounter, pastDealsCounter);
@@ -80,6 +84,7 @@ public class AccountManagementService {
     {
         Account account = accountRepository.findById(Integer.valueOf(id)).orElseThrow(() -> new NoAccountWithSuchEmailException());
         List<PersonalLink> personalLinks = personalLinkRepository.findByAccountId(account.getId());
+        auctionManagementService.updateAuctions();
         long onlineAuctionsCounter = auctionRepository.countOnlineAuctionsById(account.getId());
         long pastDealsCounter = auctionRepository.countPastDealsById(account.getId());
         return new AccountPrivateProfileInformations(account, personalLinks, onlineAuctionsCounter, pastDealsCounter);

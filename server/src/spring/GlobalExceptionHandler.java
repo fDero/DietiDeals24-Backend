@@ -28,6 +28,11 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<String>(ex.getMessage(), errorResponseHeaders, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
+    @ExceptionHandler(UnrecognizedCityException.class)
+    public ResponseEntity<String> handleAccountValidationException(UnrecognizedCityException ex){
+        return new ResponseEntity<String>(ex.getMessage(), errorResponseHeaders, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
     @ExceptionHandler(AccountAlreadyExistsException.class)
     public ResponseEntity<String> handleAccountAlreadyExistsException(AccountAlreadyExistsException ex){
         return new ResponseEntity<String>(ex.getMessage(), errorResponseHeaders, HttpStatus.CONFLICT);

@@ -30,6 +30,8 @@ import exceptions.AccountAlreadyExistsException;
 import exceptions.AccountValidationException;
 import exceptions.NoPendingAccountConfirmationException;
 import exceptions.TooManyConfirmationCodes;
+import exceptions.UnrecognizedCityException;
+import exceptions.UnrecognizedCountryException;
 import exceptions.WrongConfirmationCodeException;
 
 @Transactional
@@ -72,7 +74,9 @@ public class RegistrationController {
     public ResponseEntity<String> initializeRegistration(@RequestBody @NotNull AccountRegistrationRequest request) 
         throws 
             AccountValidationException, 
-            AccountAlreadyExistsException 
+            AccountAlreadyExistsException,
+            UnrecognizedCityException, 
+            UnrecognizedCountryException 
     {
         accountValidationService.validateAccountRegistrationRequest(request);
         String confirmationCode = this.generateConfirmationCode();

@@ -2,14 +2,19 @@ package service;
 
 import repository.AccountRepository;
 import request.AccountRegistrationRequest;
+import utils.GeographicalCityDescriptor;
+
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 import exceptions.AccountAlreadyExistsException;
 import exceptions.AccountValidationException;
+import exceptions.UnrecognizedCityException;
+import exceptions.UnrecognizedCountryException;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +25,15 @@ import org.springframework.stereotype.Service;
 public class AccountValidationService {
 
     private final AccountRepository accountRepository;
+    private final GeographicalAwarenessService geographicalAwarenessService;
 
     @Autowired
     AccountValidationService(
-        AccountRepository accountRepository
+        AccountRepository accountRepository,
+        GeographicalAwarenessService geographicalAwarenessService
     ){
         this.accountRepository = accountRepository;
+        this.geographicalAwarenessService = geographicalAwarenessService;
     }
 
     public void validateEmail(String email, ArrayList<String> errors){
@@ -72,14 +80,26 @@ public class AccountValidationService {
         }
     }
 
-    public void validateGeographicalData(String country, String city, ArrayList<String> errors){
-        // for now, every city / country is valid
+    public void validateGeographicalData(String country, String city, ArrayList<String> errors)
+        throws 
+            UnrecognizedCityException, 
+            UnrecognizedCountryException
+    {
+        List<GeographicalCityDescriptor> cities = geographicalAwarenessService.fetchCitiesFromCountry(country);
+        for (GeographicalCityDescriptor cityDescriptor : cities) {
+            if (cityDescriptor.getName().equals(city)) {
+                return;
+            }
+        }
+        throw new UnrecognizedCityException();
     }
 
     public void validateAccountRegistrationRequest(@NotNull AccountRegistrationRequest account) 
         throws 
             AccountValidationException, 
-            AccountAlreadyExistsException 
+            AccountAlreadyExistsException,
+            UnrecognizedCityException,
+            UnrecognizedCountryException 
     {
         ArrayList<String> errors = new ArrayList<>();
         this.validateBirthday(account.getBirthday(), errors);

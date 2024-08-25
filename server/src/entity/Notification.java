@@ -83,6 +83,9 @@ public class Notification {
     @Column(name = "winner_id")
     private Integer winnerId;
 
+    @Column(name = "winning_bid")
+    private Integer winningBid;
+
     @Column(name = "status")
     private String status;
 
@@ -94,7 +97,7 @@ public class Notification {
         return new Auction(
             maximumBid, minimumBid, numberOfBids, lowestBidSoFar, creatorId, country, 
             city, itemCondition, itemCategory, macroCategory, startTime, endTime, itemName, 
-            description, picturesUrls, auctionType, currency, winnerId, status, auctionId
+            description, picturesUrls, auctionType, currency, winnerId, winningBid, status, auctionId
         );
     }
 }

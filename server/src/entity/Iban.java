@@ -9,8 +9,8 @@ import lombok.Setter;
 @Entity @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 @Table(name = "Iban")
-public class Iban {
-    
+public class Iban extends PaymentMethod {
+
     @Column(name = "account_id")
     private Integer accountId;
 

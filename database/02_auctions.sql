@@ -34,6 +34,7 @@ CREATE TABLE Auction (
     auction_id          SERIAL PRIMARY KEY,
     
     winner_id           INT,
+    winning_bid         INT,
     status              TEXT NOT NULL DEFAULT 'active',
 
     FOREIGN KEY (status)

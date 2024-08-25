@@ -68,6 +68,9 @@ public class Auction {
     @Column(name = "winner_id")
     private Integer winnerId;
 
+    @Column(name = "winning_bid")
+    private Integer winningBid;
+
     @Column(name = "status")
     private String status;
 

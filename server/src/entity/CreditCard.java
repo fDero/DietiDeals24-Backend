@@ -11,7 +11,7 @@ import lombok.Setter;
 @Entity @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 @Table(name = "CreditCard")
-public class CreditCard extends PaymentMethod {
+public class CreditCard  {
 
     @Column(name = "account_id")
     private Integer accountId;

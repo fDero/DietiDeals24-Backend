@@ -1,4 +1,4 @@
-package entity;
+package request;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -9,9 +9,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
     property = "type"
 )
 @JsonSubTypes({
-    @JsonSubTypes.Type(value = CreditCard.class, name = "CREDIT_CARD"),
-    @JsonSubTypes.Type(value = Iban.class, name = "IBAN")
+    @JsonSubTypes.Type(value = NewCreditCreditCardRequest.class, name = "CREDIT_CARD"),
+    @JsonSubTypes.Type(value = NewIbanRequest.class, name = "IBAN")
 })
-public class PaymentMethod {
+public class NewPaymentMethodRequest {
     public String type;
 }

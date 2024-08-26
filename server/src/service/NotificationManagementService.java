@@ -72,30 +72,11 @@ public class NotificationManagementService {
 
     public void notifyUserOfNewBid(Bid bid, Auction auction) {
         NotificationData notification = new NotificationData();
-
-        System.out.println("----------------A----");
-
-        notification.setAccountId(bid.getAuctionId());
-
-        System.out.println("A--------------------");
-
-        notification.setAuctionId(auction.getCreatorId());
-
-        System.out.println("-----------A--------");
-
+        notification.setAccountId(auction.getCreatorId());
+        notification.setAuctionId(auction.getId());
         notification.setNotificationType("new-bid");
-
-        
-        System.out.println("-------------------A-");
-
         notification.setVisualized(false);
         notification.setEliminated(false);
-
-        
-        System.out.println("----A--------------A-");
-
         notificationDataRepository.save(notification);
-        
-        System.out.println("----A------A-------A-");
     }
 }

@@ -8,11 +8,11 @@ import request.LoginRequest;
 import response.MinimalAccountInformations;
 import service.AccountManagementService;
 import service.AccountValidationService;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpHeaders;
 import java.util.ArrayList;
 import java.util.List;
-
 import authentication.JwtTokenManager;
 
 import org.jetbrains.annotations.NotNull;
@@ -27,8 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class LoginController {
 
     private final AccountValidationService accountValidationService;
-    
-    private AccountManagementService accountManagementService;
+    private final AccountManagementService accountManagementService;
     private final JwtTokenManager jwtTokenProvider;
 
     @Autowired

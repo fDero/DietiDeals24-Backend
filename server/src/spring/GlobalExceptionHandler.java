@@ -82,4 +82,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex){
         return new ResponseEntity<String>(ex.getMessage(), errorResponseHeaders, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(AuctionNotActiveException.class)
+    public ResponseEntity<String> handleAuctionNotActiveException(AuctionNotActiveException ex){
+        return new ResponseEntity<String>(ex.getMessage(), errorResponseHeaders, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    @ExceptionHandler(BidOnYourOwnAuctionException.class)
+    public ResponseEntity<String> handleBidOnYourOwnAuctionException(BidOnYourOwnAuctionException ex){
+        return new ResponseEntity<String>(ex.getMessage(), errorResponseHeaders, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
 }

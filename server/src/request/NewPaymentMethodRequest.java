@@ -12,6 +12,4 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
     @JsonSubTypes.Type(value = NewCreditCreditCardRequest.class, name = "CREDIT_CARD"),
     @JsonSubTypes.Type(value = NewIbanRequest.class, name = "IBAN")
 })
-public class NewPaymentMethodRequest {
-    public String type;
-}
+public interface NewPaymentMethodRequest { }

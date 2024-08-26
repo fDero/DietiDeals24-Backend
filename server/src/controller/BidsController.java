@@ -1,44 +1,43 @@
 package controller;
 
-import org.springframework.http.ResponseEntity;
-import authentication.JwtTokenManager;
-
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
-import authentication.RequireJWT;
-
 import entity.Bid;
 import exceptions.AuctionNotActiveException;
 import exceptions.BidOnYourOwnAuctionException;
 import exceptions.NoSuchAuctionException;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import request.NewBidRequest;
 import service.AuctionManagementService;
 import service.BidsManagementService;
+import org.springframework.http.ResponseEntity;
+import authentication.JwtTokenManager;
 
+import authentication.RequireJWT;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RestController;
+
+@Transactional
 @RestController
 public class BidsController {
 
     private final JwtTokenManager jwtTokenProvider;
-    private final BidsManagementService bidsManagementService;
     private final AuctionManagementService auctionManagementService;
+    private final BidsManagementService bidsManagementService;
 
     @Autowired
     public BidsController(
         JwtTokenManager jwtTokenProvider,
-        BidsManagementService bidsManagementService,
-        AuctionManagementService auctionManagementService
-    ) {
+        AuctionManagementService auctionManagementService,
+        BidsManagementService bidsManagementService
+    ){
         this.jwtTokenProvider = jwtTokenProvider;
         this.bidsManagementService = bidsManagementService;
         this.auctionManagementService = auctionManagementService;
     }
 
     @RequireJWT
-    @Transactional
     @PostMapping(value = "/bids/new", produces = "text/plain")
     public ResponseEntity<String> registerNewBid(
         @RequestHeader(name = "Authorization") String authorizationHeader,
@@ -48,8 +47,10 @@ public class BidsController {
             NoSuchAuctionException,
             AuctionNotActiveException,
             BidOnYourOwnAuctionException
-    {
+    {        
         auctionManagementService.updateAuctions();
+        System.out.println(newBidRequest.getAuctionId());
+        System.out.println(newBidRequest.getBidAmount());
         String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
         String id = jwtTokenProvider.getIdFromJWT(jwtToken);
         Bid bid = new Bid();

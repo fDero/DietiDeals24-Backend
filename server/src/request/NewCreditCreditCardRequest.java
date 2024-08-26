@@ -7,8 +7,9 @@ import lombok.Setter;
 
 @Getter @NoArgsConstructor 
 @Setter @AllArgsConstructor
-public class NewCreditCreditCardRequest extends NewPaymentMethodRequest {
+public class NewCreditCreditCardRequest implements NewPaymentMethodRequest {
 
+    private String type;
     private String paymentProcessorToken;
     private Integer last4digits;
 }

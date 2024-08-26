@@ -50,10 +50,22 @@ public class BidsManagementService {
             AuctionNotActiveException,
             BidOnYourOwnAuctionException
     {
+        System.out.println("Saving bid");
+
         Integer auctionId = bid.getAuctionId();
         Auction auction = auctionRepository.findById(auctionId).orElseThrow(() -> new NoSuchAuctionException());
+        
+        
+        System.out.println("Validating bid");
+        
         validateBid(bid, auction);
+
+        System.out.println("Validated bid");
+
         bidRepository.save(bid);
+
+        System.out.println("Bid saved");
+
         notificationManagementService.notifyUserOfNewBid(bid, auction);
     }
 }

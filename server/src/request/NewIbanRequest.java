@@ -7,7 +7,8 @@ import lombok.Setter;
 
 @Getter @NoArgsConstructor 
 @Setter @AllArgsConstructor
-public class NewIbanRequest extends NewPaymentMethodRequest {
+public class NewIbanRequest implements NewPaymentMethodRequest {
 
+    private String type;
     private String ibanString;
 }

@@ -131,7 +131,7 @@ public class NotificationController {
     {
         Notification notification = notificationmanagementService.findByNotificationId(notificationId);
         ensureNotificationOwnership(notification, authorizationHeader);
-        notificationmanagementService.markNotificationAsRead(notificationId);
+        notificationmanagementService.markNotificationAsEliminated(notificationId);
         return ResponseEntity.ok().body("done");
     }
 

@@ -4,17 +4,18 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.sql.Timestamp;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
 
 import exceptions.UnrecognizedCountryException;
+import response.CitiesInformationsPack;
+import response.CountriesInformationsPack;
 import utils.GeographicalCityDescriptor;
 import utils.GeographicalCountryDescriptor;
 
@@ -24,21 +25,12 @@ public class GeographicalAwarenessService {
     private final String key;
     private final Gson gson = new Gson();
 
-    List<GeographicalCountryDescriptor> europeanCountries;
-    Timestamp europeanCountriesLastUpdate = null;
-
-    HashMap<String, List<GeographicalCityDescriptor>> citiesByCountry = new HashMap<>();
-    HashMap<String, Timestamp> citiesByCountryLastUpdate = new HashMap<>();
-
     public GeographicalAwarenessService(@Value("${geo.api.key}") String key){
         this.key = key;
     }
     
-    public List<GeographicalCountryDescriptor> fetchEuropeanCountries() {
-        Timestamp oldestAcceptableUpateTimestamp = new Timestamp(System.currentTimeMillis() - 60 * 60);
-        if (europeanCountriesLastUpdate != null && europeanCountriesLastUpdate.after(oldestAcceptableUpateTimestamp)) {
-            return europeanCountries;
-        }
+    @Cacheable(value = "europeanCountries")
+    public CountriesInformationsPack fetchEuropeanCountries() {
         try {
             HttpClient httpClient = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
@@ -50,21 +42,18 @@ public class GeographicalAwarenessService {
             String jsonString = response.body();
             System.out.println(jsonString);
             GeographicalCountryDescriptor[] countries = gson.fromJson(jsonString, GeographicalCountryDescriptor[].class);
-            europeanCountries = Arrays.asList(countries);
-            europeanCountriesLastUpdate = new Timestamp(System.currentTimeMillis());
-            return europeanCountries;
+            List<GeographicalCountryDescriptor> europeanCountries = Arrays.asList(countries);
+            CountriesInformationsPack pack = new CountriesInformationsPack(europeanCountries);
+            return pack;
         } catch (Exception e) {
             throw new RuntimeException("Error while fetching European countries", e);
         }
     }
 
-    public List<GeographicalCityDescriptor> fetchCitiesFromCountry(String country_code)
+    @Cacheable(value = "citiesByCountry", key = "#country_code")
+    public CitiesInformationsPack fetchCitiesFromCountry(String country_code)
         throws UnrecognizedCountryException 
     {
-        Timestamp oldestAcceptableUpateTimestamp = new Timestamp(System.currentTimeMillis() - 60 * 60);
-        if (citiesByCountryLastUpdate.containsKey(country_code) && citiesByCountryLastUpdate.get(country_code).after(oldestAcceptableUpateTimestamp)) {
-            return citiesByCountry.get(country_code);
-        }
         try {
             HttpClient httpClient = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
@@ -75,10 +64,9 @@ public class GeographicalAwarenessService {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             String jsonString = response.body();
             GeographicalCityDescriptor[] countries = gson.fromJson(jsonString, GeographicalCityDescriptor[].class);
-            List<GeographicalCityDescriptor> res = Arrays.asList(countries);
-            citiesByCountry.put(country_code, res);
-            citiesByCountryLastUpdate.put(country_code, new Timestamp(System.currentTimeMillis()));
-            return res;
+            List<GeographicalCityDescriptor> cities = Arrays.asList(countries);
+            CitiesInformationsPack pack = new CitiesInformationsPack(cities);
+            return pack;
         }
         catch (Exception e) {
             throw new UnrecognizedCountryException();
@@ -87,7 +75,8 @@ public class GeographicalAwarenessService {
 
     public boolean checkThatCityBelogsToCountry(String country_code, String city_name) {
         try {
-            List<GeographicalCityDescriptor> cities = fetchCitiesFromCountry(country_code);
+            CitiesInformationsPack pack = fetchCitiesFromCountry(country_code);
+            List<GeographicalCityDescriptor> cities = pack.getCities();
             for (GeographicalCityDescriptor city : cities) {
                 if (city.getName().equals(city_name)) {
                     return true;

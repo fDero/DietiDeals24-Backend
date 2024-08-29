@@ -41,15 +41,15 @@ public class MetadataController {
 
     @GetMapping(value = "/countries", produces = "application/json")
     public ResponseEntity<CountriesInformationsPack> sendCountriesInformations() {
-        List<GeographicalCountryDescriptor> countries = countryDescriptor.fetchEuropeanCountries();
-        return ResponseEntity.ok().body(new CountriesInformationsPack(countries));
+        CountriesInformationsPack countries = countryDescriptor.fetchEuropeanCountries();
+        return ResponseEntity.ok().body(countries);
     }
 
     @GetMapping(value = "/cities", produces = "application/json")
     public ResponseEntity<CitiesInformationsPack> sendCitiesInformations(@RequestParam String country) 
         throws UnrecognizedCountryException 
     {
-        List<GeographicalCityDescriptor> cities = countryDescriptor.fetchCitiesFromCountry(country);
-        return ResponseEntity.ok().body(new CitiesInformationsPack(cities));
+        CitiesInformationsPack cities = countryDescriptor.fetchCitiesFromCountry(country);
+        return ResponseEntity.ok().body(cities);
     }
 }

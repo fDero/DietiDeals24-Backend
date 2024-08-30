@@ -22,6 +22,7 @@ public class AuctionsPackSerializer extends JsonSerializer<AuctionsPack> {
         for (Auction auction : value.getAuctions()) {
             gen.writeStartObject();
             AuctionSerializerHelper.serializeBasics(gen, auction);
+            AuctionSerializerHelper.serializeBidsData(gen, auction);
             AuctionSerializerHelper.serializeJustOnePictureUrl(gen, auction);
             gen.writeEndObject();
         }

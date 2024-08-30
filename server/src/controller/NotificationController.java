@@ -52,7 +52,7 @@ public class NotificationController {
             NoAccountWithSuchEmailException, 
             NumberFormatException
     {
-        auctionManagementService.updateAuctions();
+        auctionManagementService.updateStatuses();
         int zeroIndexedPage = page - 1;
         PageRequest pageDescriptor = PageRequest.of(zeroIndexedPage, size);
         String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);

@@ -1,6 +1,8 @@
 package utils;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+
 import com.fasterxml.jackson.core.JsonGenerator;
 import entity.Auction;
 
@@ -18,17 +20,24 @@ public abstract class AuctionSerializerHelper {
         gen.writeStringField("category", value.getItemCategory());
         gen.writeStringField("macroCategory", value.getMacroCategory());
         gen.writeStringField("userId", value.getCreatorId().toString());
-        if (value.getAuctionType().equals("silent")) {
-            gen.writeNumberField("minimumBid", value.getMinimumBid());
-        } 
-        else if (value.getAuctionType().equals("reverse")) {
-            gen.writeNumberField("maximumBid", value.getMaximumBid());
-            gen.writeNumberField("lowestBidSoFar", value.getLowestBidSoFar());
-            gen.writeNumberField("numberOfBids", value.getNumberOfBids());
-        }
         gen.writeStringField("endTime", value.getEndTime().toString());
         gen.writeStringField("status", value.getStatus());
         gen.writeStringField("currency", value.getCurrency());
+    }
+
+    static void serializeBidsData(JsonGenerator gen, Auction value) 
+        throws IOException
+    {
+        gen.writeNumberField("maximumBid", value.getMaximumBid());
+        gen.writeNumberField("minimumBid", value.getMinimumBid());
+        boolean isNotSilent = !value.getAuctionType().equals("silent");
+        boolean isNotActive = !value.getStatus().equals("active");
+        if (isNotSilent || isNotActive) { 
+            gen.writeNumberField("highestBidSoFar", value.getHighestBidSoFar());
+            gen.writeNumberField("lowestBidSoFar", value.getLowestBidSoFar());
+            gen.writeNumberField("numberOfBids", value.getNumberOfBids());
+            gen.writeNumberField("currentBidderId", value.getCurrentBidderId());    
+        }
     }
 
     static void serializeAllPicturesUrls(JsonGenerator gen, Auction value) 

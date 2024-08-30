@@ -8,23 +8,22 @@ import entity.Bid;
 import exceptions.AuctionNotActiveException;
 import exceptions.BidOnYourOwnAuctionException;
 import exceptions.NoSuchAuctionException;
-import repository.AuctionRepository;
 import repository.BidRepository;
 
 @Service
 public class BidsManagementService {
     
-    private final AuctionRepository auctionRepository;
+    private final AuctionManagementService auctionManagementService;
     private final BidRepository bidRepository;
     private final NotificationManagementService notificationManagementService;
 
     @Autowired
     BidsManagementService(
-        AuctionRepository auctionRepository,
+        AuctionManagementService auctionManagementService,
         BidRepository bidRepository,
         NotificationManagementService notificationManagementService
     ) {
-        this.auctionRepository = auctionRepository;
+        this.auctionManagementService = auctionManagementService;
         this.bidRepository = bidRepository;
         this.notificationManagementService = notificationManagementService;
     }
@@ -51,9 +50,10 @@ public class BidsManagementService {
             BidOnYourOwnAuctionException
     {
         Integer auctionId = bid.getAuctionId();
-        Auction auction = auctionRepository.findById(auctionId).orElseThrow(() -> new NoSuchAuctionException());   
+        Auction auction = auctionManagementService.findById(auctionId);   
         validateBid(bid, auction);
         bidRepository.save(bid);
+        auctionManagementService.updateBidsRecord(auction, bid);
         notificationManagementService.notifyUserOfNewBid(bid, auction);
     }
 }

@@ -41,6 +41,12 @@ public class Notification {
     @Column(name = "lowest_bid_so_far")
     private BigDecimal lowestBidSoFar;
 
+    @Column(name = "highest_bid_so_far")
+    private BigDecimal highestBidSoFar;
+
+    @Column(name = "current_bidder_id")
+    private BigDecimal currentBidderId;
+
     @Column(name = "creator_id")
     private Integer creatorId;
 
@@ -80,12 +86,6 @@ public class Notification {
     @Column(name = "currency")
     private String currency;
 
-    @Column(name = "winner_id")
-    private Integer winnerId;
-
-    @Column(name = "winning_bid")
-    private Integer winningBid;
-
     @Column(name = "status")
     private String status;
 
@@ -95,9 +95,9 @@ public class Notification {
 
     public Auction toAuction() {
         return new Auction(
-            maximumBid, minimumBid, numberOfBids, lowestBidSoFar, creatorId, country, 
+            maximumBid, minimumBid, numberOfBids, lowestBidSoFar, highestBidSoFar, currentBidderId, creatorId, country, 
             city, itemCondition, itemCategory, macroCategory, startTime, endTime, itemName, 
-            description, picturesUrls, auctionType, currency, winnerId, winningBid, status, auctionId
+            description, picturesUrls, auctionType, currency, status, auctionId
         );
     }
 }

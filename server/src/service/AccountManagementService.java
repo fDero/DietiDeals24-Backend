@@ -72,7 +72,7 @@ public class AccountManagementService {
     {
         Account account = accountRepository.findById(Integer.valueOf(id)).orElseThrow(() -> new NoAccountWithSuchEmailException());
         List<PersonalLink> personalLinks = personalLinkRepository.findByAccountId(account.getId());
-        auctionManagementService.updateAuctions();
+        auctionManagementService.updateStatuses();
         long onlineAuctionsCounter = auctionRepository.countOnlineAuctionsById(account.getId());
         long pastDealsCounter = auctionRepository.countPastDealsById(account.getId());
         return new AccountPublicProfileInformations(account, personalLinks, onlineAuctionsCounter, pastDealsCounter);
@@ -84,7 +84,7 @@ public class AccountManagementService {
     {
         Account account = accountRepository.findById(Integer.valueOf(id)).orElseThrow(() -> new NoAccountWithSuchEmailException());
         List<PersonalLink> personalLinks = personalLinkRepository.findByAccountId(account.getId());
-        auctionManagementService.updateAuctions();
+        auctionManagementService.updateStatuses();
         long onlineAuctionsCounter = auctionRepository.countOnlineAuctionsById(account.getId());
         long pastDealsCounter = auctionRepository.countPastDealsById(account.getId());
         return new AccountPrivateProfileInformations(account, personalLinks, onlineAuctionsCounter, pastDealsCounter);

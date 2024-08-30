@@ -52,6 +52,7 @@ public interface AuctionRepository extends JpaRepository<Auction, Integer> {
 
         long countByStatusAndCreatorId(String status, int creatorId);
 
+        @Query("SELECT COUNT(a) FROM Auction a WHERE a.status = 'closed' AND a.currentBidderId = ?1")
         long countByWinnerId(int winnerId);
 
         default long countPastDealsById(Integer id){

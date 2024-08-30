@@ -1,5 +1,6 @@
 package entity;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 import jakarta.persistence.Column;
@@ -26,7 +27,7 @@ public class Bid {
     private Integer bidderId;
 
     @Column(name = "bid_amount")
-    private Long bidAmount;
+    private BigDecimal bidAmount;
 
     @Column(name = "bid_date")
     private Timestamp bidDate;

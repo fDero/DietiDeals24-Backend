@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,7 +31,7 @@ public class AuctionsController {
         AuctionFilteredSearchService auctionFilteredSearchService,
         AuctionManagementService auctionManagementService
     ) {
-        auctionManagementService.updateAuctions();
+        auctionManagementService.updateStatuses();
         this.auctionsRepository = auctionsRepository;
         this.auctionFilteredSearchService = auctionFilteredSearchService;
         this.auctionManagementService = auctionManagementService;
@@ -46,7 +47,7 @@ public class AuctionsController {
         @RequestParam(defaultValue = "")           String type,
         @RequestParam(defaultValue = "trending")   String policy
     )  {
-        auctionManagementService.updateAuctions();
+        auctionManagementService.updateStatuses();
         List<Auction> auctions = auctionFilteredSearchService
             .performPagedSearch(page, size)
             .searchingForAnAuctionOfType(type)
@@ -59,12 +60,13 @@ public class AuctionsController {
 
     @GetMapping(value = "/auctions/specific/public-view", produces = "application/json")
     public ResponseEntity<SpecificAuctionPublicInformations> sendSpecificAuctionInformations(
-        @RequestParam Integer id
+        @RequestParam Integer id,
+        @RequestHeader String Authorization
     )  
         throws 
             NoAuctionWithSuchIdException
     {
-        auctionManagementService.updateAuctions();
+        auctionManagementService.updateStatuses();
         Auction auction = auctionsRepository.findById(id).orElseThrow(() -> new NoAuctionWithSuchIdException());
         SpecificAuctionPublicInformations auctionSpecificInformations = new SpecificAuctionPublicInformations(auction);
         return ResponseEntity.ok().body(auctionSpecificInformations);

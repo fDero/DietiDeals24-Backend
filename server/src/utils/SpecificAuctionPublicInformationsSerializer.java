@@ -18,6 +18,7 @@ public class SpecificAuctionPublicInformationsSerializer extends JsonSerializer<
     { 
         gen.writeStartObject();
         AuctionSerializerHelper.serializeBasics(gen, value.getAuction());
+        AuctionSerializerHelper.serializeBidsData(gen, value.getAuction());
         AuctionSerializerHelper.serializeAllPicturesUrls(gen, value.getAuction());
         AuctionSerializerHelper.serializeDescription(gen, value.getAuction());
         gen.writeEndObject();

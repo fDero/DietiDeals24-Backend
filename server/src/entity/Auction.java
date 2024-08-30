@@ -26,6 +26,12 @@ public class Auction {
     @Column(name = "lowest_bid_so_far")
     private BigDecimal lowestBidSoFar;
 
+    @Column(name = "highest_bid_so_far")
+    private BigDecimal highestBidSoFar;
+
+    @Column(name = "current_bidder_id")
+    private BigDecimal currentBidderId;
+
     @Column(name = "creator_id")
     private Integer creatorId;
 
@@ -64,12 +70,6 @@ public class Auction {
 
     @Column(name = "currency")
     private String currency;
-
-    @Column(name = "winner_id")
-    private Integer winnerId;
-
-    @Column(name = "winning_bid")
-    private Integer winningBid;
 
     @Column(name = "status")
     private String status;

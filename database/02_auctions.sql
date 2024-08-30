@@ -17,7 +17,9 @@ CREATE TABLE Auction (
     maximum_bid         NUMERIC,
     minimum_bid         NUMERIC,
     lowest_bid_so_far   NUMERIC,
-    number_of_bids      INT NOT NULL,
+    highest_bid_so_far  NUMERIC,
+    current_bidder_id   INT,
+    number_of_bids      INT NOT NULL DEFAULT 0,
     creator_id          INT NOT NULL,
     country             VARCHAR(5)  NOT NULL,
     city                VARCHAR(50) NOT NULL,
@@ -31,16 +33,14 @@ CREATE TABLE Auction (
     pictures_urls       TEXT[],
     auction_type        TEXT NOT NULL,
     currency            VARCHAR(3) NOT NULL,
-    auction_id          SERIAL PRIMARY KEY,
-    
-    winner_id           INT,
-    winning_bid         INT,
     status              TEXT NOT NULL DEFAULT 'active',
+    auction_id          SERIAL PRIMARY KEY,
 
+    
     FOREIGN KEY (status)
     REFERENCES AuctionStatus(status_descriptor),
 
-    FOREIGN KEY (winner_id)
+    FOREIGN KEY (current_bidder_id)
     REFERENCES Account(account_id),
 
     FOREIGN KEY (creator_id)

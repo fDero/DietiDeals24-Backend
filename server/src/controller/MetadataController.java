@@ -10,8 +10,6 @@ import response.CitiesInformationsPack;
 import response.CountriesInformationsPack;
 import service.GeographicalAwarenessService;
 import service.MetadataGatheringService;
-import utils.GeographicalCityDescriptor;
-import utils.GeographicalCountryDescriptor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

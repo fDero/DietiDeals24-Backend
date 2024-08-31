@@ -1,7 +1,6 @@
 package utils;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import entity.Auction;

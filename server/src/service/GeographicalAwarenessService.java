@@ -14,8 +14,6 @@ import org.springframework.stereotype.Service;
 import com.google.gson.Gson;
 
 import exceptions.UnrecognizedCountryException;
-import response.CitiesInformationsPack;
-import response.CountriesInformationsPack;
 import utils.GeographicalCityDescriptor;
 import utils.GeographicalCountryDescriptor;
 
@@ -28,10 +26,37 @@ public class GeographicalAwarenessService {
     public GeographicalAwarenessService(@Value("${geo.api.key}") String key){
         this.key = key;
     }
-    
-    @Cacheable(value = "europeanCountries")
-    public CountriesInformationsPack fetchEuropeanCountries() {
+
+    public List<GeographicalCountryDescriptor> fetchEuropeanCountries() {
         try {
+            String jsonString = fetchEuropeanCountriesRaw();
+            System.out.println(jsonString);
+            GeographicalCountryDescriptor[] countries = gson.fromJson(jsonString, GeographicalCountryDescriptor[].class);
+            List<GeographicalCountryDescriptor> europeanCountries = Arrays.asList(countries);
+            return europeanCountries;
+        } catch (Exception e) {
+            throw new RuntimeException("Error while fetching European countries", e);
+        }
+    }
+
+    public List<GeographicalCityDescriptor> fetchCitiesFromCountry(String country_code)
+        throws UnrecognizedCountryException 
+    {
+        try {
+            String jsonString = fetchCitiesFromCountryRaw(country_code);
+            GeographicalCityDescriptor[] countries = gson.fromJson(jsonString, GeographicalCityDescriptor[].class);
+            List<GeographicalCityDescriptor> cities = Arrays.asList(countries);
+            return cities;
+        }
+        catch (Exception e) {
+            throw new UnrecognizedCountryException();
+        }
+    }
+
+    @Cacheable(value = "europeanCountries")
+    private String fetchEuropeanCountriesRaw() {
+        try {
+            System.out.println("3");
             HttpClient httpClient = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("https://api.apilayer.com/geo/country/region/EU"))
@@ -41,17 +66,14 @@ public class GeographicalAwarenessService {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             String jsonString = response.body();
             System.out.println(jsonString);
-            GeographicalCountryDescriptor[] countries = gson.fromJson(jsonString, GeographicalCountryDescriptor[].class);
-            List<GeographicalCountryDescriptor> europeanCountries = Arrays.asList(countries);
-            CountriesInformationsPack pack = new CountriesInformationsPack(europeanCountries);
-            return pack;
+            return jsonString;
         } catch (Exception e) {
             throw new RuntimeException("Error while fetching European countries", e);
         }
     }
 
     @Cacheable(value = "citiesByCountry", key = "#country_code")
-    public CitiesInformationsPack fetchCitiesFromCountry(String country_code)
+    private String fetchCitiesFromCountryRaw(String country_code)
         throws UnrecognizedCountryException 
     {
         try {
@@ -63,10 +85,7 @@ public class GeographicalAwarenessService {
                 .build();
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             String jsonString = response.body();
-            GeographicalCityDescriptor[] countries = gson.fromJson(jsonString, GeographicalCityDescriptor[].class);
-            List<GeographicalCityDescriptor> cities = Arrays.asList(countries);
-            CitiesInformationsPack pack = new CitiesInformationsPack(cities);
-            return pack;
+            return jsonString;
         }
         catch (Exception e) {
             throw new UnrecognizedCountryException();
@@ -75,8 +94,7 @@ public class GeographicalAwarenessService {
 
     public boolean checkThatCityBelogsToCountry(String country_code, String city_name) {
         try {
-            CitiesInformationsPack pack = fetchCitiesFromCountry(country_code);
-            List<GeographicalCityDescriptor> cities = pack.getCities();
+            List<GeographicalCityDescriptor> cities = fetchCitiesFromCountry(country_code);
             for (GeographicalCityDescriptor city : cities) {
                 if (city.getName().equals(city_name)) {
                     return true;

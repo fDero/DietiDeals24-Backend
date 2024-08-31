@@ -41,13 +41,13 @@ public class AuctionManagementService {
         auction.setLowestBidSoFar(lowestBidBeforeCurrent.min(newBid.getBidAmount()));
         if (auction.getAuctionType() == "reverse") {
             if (auction.getHighestBidSoFar().equals(newBid.getBidAmount())) {
-                auction.setCurrentBidderId(newBid.getBidderId());
+                auction.setCurrentBidderId(BigDecimal.valueOf(newBid.getBidderId()));
             }
         }
         else {
             assert (auction.getAuctionType() == "silent");
             if (auction.getLowestBidSoFar().equals(newBid.getBidAmount())) {
-                auction.setCurrentBidderId(newBid.getBidderId());
+                auction.setCurrentBidderId(BigDecimal.valueOf(newBid.getBidderId()));
             }
         }
         Integer oldNumberOfBids = auction.getNumberOfBids();

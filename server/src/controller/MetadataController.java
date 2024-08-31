@@ -10,6 +10,8 @@ import response.CitiesInformationsPack;
 import response.CountriesInformationsPack;
 import service.GeographicalAwarenessService;
 import service.MetadataGatheringService;
+import utils.GeographicalCityDescriptor;
+import utils.GeographicalCountryDescriptor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,15 +41,17 @@ public class MetadataController {
 
     @GetMapping(value = "/countries", produces = "application/json")
     public ResponseEntity<CountriesInformationsPack> sendCountriesInformations() {
-        CountriesInformationsPack countries = countryDescriptor.fetchEuropeanCountries();
-        return ResponseEntity.ok().body(countries);
+        List<GeographicalCountryDescriptor> countries = countryDescriptor.fetchEuropeanCountries();
+        CountriesInformationsPack countriesPack = new CountriesInformationsPack(countries);
+        return ResponseEntity.ok().body(countriesPack);
     }
 
     @GetMapping(value = "/cities", produces = "application/json")
     public ResponseEntity<CitiesInformationsPack> sendCitiesInformations(@RequestParam String country) 
         throws UnrecognizedCountryException 
     {
-        CitiesInformationsPack cities = countryDescriptor.fetchCitiesFromCountry(country);
-        return ResponseEntity.ok().body(cities);
+        List<GeographicalCityDescriptor> cities = countryDescriptor.fetchCitiesFromCountry(country);
+        CitiesInformationsPack citiesPack = new CitiesInformationsPack(cities);
+        return ResponseEntity.ok().body(citiesPack);
     }
 }

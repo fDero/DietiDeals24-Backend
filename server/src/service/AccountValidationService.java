@@ -2,7 +2,6 @@ package service;
 
 import repository.AccountRepository;
 import request.AccountRegistrationRequest;
-import response.CitiesInformationsPack;
 import utils.GeographicalCityDescriptor;
 
 import java.sql.Timestamp;
@@ -86,8 +85,7 @@ public class AccountValidationService {
             UnrecognizedCityException, 
             UnrecognizedCountryException
     {
-        CitiesInformationsPack pack = geographicalAwarenessService.fetchCitiesFromCountry(country);
-        List<GeographicalCityDescriptor> cities = pack.getCities();
+        List<GeographicalCityDescriptor> cities = geographicalAwarenessService.fetchCitiesFromCountry(country);
         for (GeographicalCityDescriptor cityDescriptor : cities) {
             if (cityDescriptor.getName().equals(city)) {
                 return;

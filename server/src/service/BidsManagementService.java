@@ -53,7 +53,8 @@ public class BidsManagementService {
         Auction auction = auctionManagementService.findById(auctionId);   
         validateBid(bid, auction);
         bidRepository.save(bid);
+        notificationManagementService.notifyOldBidderOfBeingOutbid(bid, auction);
         auctionManagementService.updateBidsRecord(auction, bid);
-        notificationManagementService.notifyUserOfNewBid(bid, auction);
+        notificationManagementService.notifyAuctionCreatorOfNewBid(bid, auction);
     }
 }

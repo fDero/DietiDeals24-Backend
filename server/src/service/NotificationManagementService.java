@@ -70,11 +70,25 @@ public class NotificationManagementService {
         notificationDataRepository.updateEliminatedByAccountId(true, id);
     }
 
-    public void notifyUserOfNewBid(Bid bid, Auction auction) {
+    public void notifyAuctionCreatorOfNewBid(Bid bid, Auction auction) {
         NotificationData notification = new NotificationData();
         notification.setAccountId(auction.getCreatorId());
         notification.setAuctionId(auction.getId());
         notification.setNotificationType("new-bid");
+        notification.setVisualized(false);
+        notification.setEliminated(false);
+        notificationDataRepository.save(notification);
+    }
+
+    public void notifyOldBidderOfBeingOutbid(Bid bid, Auction auction) {
+        NotificationData notification = new NotificationData();
+        if (auction.getCurrentBidderId() == null) {
+            return;
+        }
+        Integer oldBidderId = auction.getCurrentBidderId().toBigInteger().intValue();
+        notification.setAccountId(oldBidderId);
+        notification.setAuctionId(auction.getId());
+        notification.setNotificationType("outbid");
         notification.setVisualized(false);
         notification.setEliminated(false);
         notificationDataRepository.save(notification);

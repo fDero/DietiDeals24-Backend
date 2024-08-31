@@ -35,18 +35,15 @@ public class AuctionManagementService {
     }
 
     public void updateBidsRecord(Auction auction, Bid newBid) {
-        BigDecimal highestBidBeforeCurrent = auction.getHighestBidSoFar();
-        BigDecimal lowestBidBeforeCurrent = auction.getLowestBidSoFar();
-        auction.setHighestBidSoFar(highestBidBeforeCurrent.max(newBid.getBidAmount()));
-        auction.setLowestBidSoFar(lowestBidBeforeCurrent.min(newBid.getBidAmount()));
-        if (auction.getAuctionType() == "reverse") {
-            if (auction.getHighestBidSoFar().equals(newBid.getBidAmount())) {
+        if (auction.getHighestBidSoFar() == null || auction.getHighestBidSoFar().compareTo(newBid.getBidAmount()) < 0) {
+            auction.setHighestBidSoFar(newBid.getBidAmount());
+            if (auction.getAuctionType() == "silent") {
                 auction.setCurrentBidderId(BigDecimal.valueOf(newBid.getBidderId()));
             }
         }
-        else {
-            assert (auction.getAuctionType() == "silent");
-            if (auction.getLowestBidSoFar().equals(newBid.getBidAmount())) {
+        if (auction.getLowestBidSoFar() == null || auction.getLowestBidSoFar().compareTo(newBid.getBidAmount()) > 0) {
+            auction.setLowestBidSoFar(newBid.getBidAmount());
+            if (auction.getAuctionType() == "reverse") {
                 auction.setCurrentBidderId(BigDecimal.valueOf(newBid.getBidderId()));
             }
         }

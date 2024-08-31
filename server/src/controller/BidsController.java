@@ -49,8 +49,6 @@ public class BidsController {
             BidOnYourOwnAuctionException
     {        
         auctionManagementService.updateStatuses();
-        System.out.println(newBidRequest.getAuctionId());
-        System.out.println(newBidRequest.getBidAmount());
         String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
         String id = jwtTokenProvider.getIdFromJWT(jwtToken);
         Bid bid = new Bid();

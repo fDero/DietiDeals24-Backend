@@ -24,12 +24,10 @@ public class CategoryPackSerializer extends JsonSerializer<CategoryPack> {
         throws IOException 
     {
         Map<String, ArrayList<String>> categories = new TreeMap<String, ArrayList<String>>();
-        System.out.println(value.getCategories()); 
         for (Category category : value.getCategories()) {
             categories.putIfAbsent(category.getMacroCategory(), new ArrayList<String>());
             categories.get(category.getMacroCategory()).add(category.getItemCategory());
         }
-        System.out.println(categories);
         gen.writeStartObject();
         for (String macroCategory : categories.keySet()) {
             gen.writeArrayFieldStart(macroCategory);

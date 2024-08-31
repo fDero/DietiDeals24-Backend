@@ -13,7 +13,6 @@ public class CountriesInformationsPackSerializer extends JsonSerializer<Countrie
     public void serialize(CountriesInformationsPack value, JsonGenerator gen, SerializerProvider serializers)
         throws IOException 
     {
-        System.out.println("AQUI");
         gen.writeStartArray();
         for (GeographicalCountryDescriptor country : value.getCountries()) {
             gen.writeStartObject();

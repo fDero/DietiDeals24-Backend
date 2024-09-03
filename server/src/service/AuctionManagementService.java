@@ -52,4 +52,12 @@ public class AuctionManagementService {
         auction.setNumberOfBids(newNumberOfBids);
         auctionRepository.save(auction);
     }
+
+    public long countOnlineAuctionsByCreatorId(Integer creatorId) {
+        return auctionRepository.countOnlineAuctionsByCreatorId(creatorId);
+    }
+
+    public long countPastAuctionsByCreatorId(Integer creatorId) {
+        return auctionRepository.countPastAuctionsByCreatorId(creatorId);
+    }
 }

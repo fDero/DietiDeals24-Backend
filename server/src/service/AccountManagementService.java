@@ -4,8 +4,11 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import entity.Activity;
 import entity.Account;
 import entity.Password;
 import entity.PersonalLink;
@@ -13,11 +16,10 @@ import exceptions.AccessDeniedBadCredentialsException;
 import exceptions.AccountValidationException;
 import exceptions.NoAccountWithSuchEmailException;
 import repository.AccountRepository;
-import repository.AuctionRepository;
+import repository.ActivityRepository;
 import repository.PasswordRepository;
 import repository.PersonalLinkRepository;
-import response.AccountPrivateProfileInformations;
-import response.AccountPublicProfileInformations;
+import utils.AccountProfileInformations;
 import utils.PendingAccountRegistration;
 
 @Service
@@ -28,7 +30,8 @@ public class AccountManagementService {
     private final PasswordRepository passwordRepository;
     private final EncryptionService encryptionService;
     private final PersonalLinkRepository personalLinkRepository;
-    private final AuctionRepository auctionRepository;
+    private final BidsManagementService bidsManagementService;
+    private final ActivityRepository activityRepository;
 
     @Autowired
     public AccountManagementService(
@@ -36,15 +39,17 @@ public class AccountManagementService {
         PasswordRepository passwordRepository,
         EncryptionService encryptionService,
         PersonalLinkRepository personalLinkRepository,
-        AuctionRepository auctionRepository,
-        AuctionManagementService auctionManagementService
+        AuctionManagementService auctionManagementService,
+        BidsManagementService bidsManagementService,
+        ActivityRepository activityRepository
     ) {
         this.accountRepository = accountRepository;
         this.passwordRepository = passwordRepository;
         this.encryptionService = encryptionService;
         this.personalLinkRepository = personalLinkRepository;
-        this.auctionRepository = auctionRepository;
         this.auctionManagementService = auctionManagementService;
+        this.bidsManagementService = bidsManagementService;
+        this.activityRepository = activityRepository;
     }
 
     public Account performAccountLogin(String email, String candidatePlainTextPassword) 
@@ -66,31 +71,52 @@ public class AccountManagementService {
         return account;
     }
 
-    public AccountPublicProfileInformations fetchAccountPublicProfileInfo(Integer id) 
+    public AccountProfileInformations fetchAccountProfileInformations(Integer id) 
         throws 
             NoAccountWithSuchEmailException
     {
         Account account = accountRepository.findById(Integer.valueOf(id)).orElseThrow(() -> new NoAccountWithSuchEmailException());
         List<PersonalLink> personalLinks = personalLinkRepository.findByAccountId(account.getId());
         auctionManagementService.updateStatuses();
-        long onlineAuctionsCounter = auctionRepository.countOnlineAuctionsById(account.getId());
-        long pastDealsCounter = auctionRepository.countPastDealsById(account.getId());
-        return new AccountPublicProfileInformations(account, personalLinks, onlineAuctionsCounter, pastDealsCounter);
+        long activeAuctionsCounter = auctionManagementService.countOnlineAuctionsByCreatorId(id);
+        long pastAuctionsCounter = auctionManagementService.countPastAuctionsByCreatorId(id);
+        long pastBidsCounter = bidsManagementService.countPastBidsByBidderId(id);
+        long activeBidsCounter = bidsManagementService.countActiveBidsByBidderId(id);
+        long pastDealsCounter = pastAuctionsCounter + pastBidsCounter;
+        AccountProfileInformations accountPrivateInfos = new AccountProfileInformations();
+        accountPrivateInfos.setAccount(account);
+        accountPrivateInfos.setPersonalLinks(personalLinks);
+        accountPrivateInfos.setPastDealsCounter(pastDealsCounter);
+        accountPrivateInfos.setOnlineAuctionsCounter(activeAuctionsCounter);
+        accountPrivateInfos.setPastAuctionsCounter(pastAuctionsCounter);
+        accountPrivateInfos.setPastBidsCounter(pastBidsCounter);
+        accountPrivateInfos.setOnlineBidsCounter(activeBidsCounter);
+        return accountPrivateInfos;
     }
 
-    public AccountPrivateProfileInformations fetchAccountPrivateProfileInfo(Integer id) 
-        throws 
-            NoAccountWithSuchEmailException
+    public List<Activity> fetchAccountActivityByUserId(
+        Integer userId, 
+        long pageNumber,
+        long pageSize,
+        boolean includePastDeals, 
+        boolean includeCurrentDeals, 
+        boolean includeAuctions,
+        boolean includeBids
+    ) 
     {
-        Account account = accountRepository.findById(Integer.valueOf(id)).orElseThrow(() -> new NoAccountWithSuchEmailException());
-        List<PersonalLink> personalLinks = personalLinkRepository.findByAccountId(account.getId());
-        auctionManagementService.updateStatuses();
-        long onlineAuctionsCounter = auctionRepository.countOnlineAuctionsById(account.getId());
-        long pastDealsCounter = auctionRepository.countPastDealsById(account.getId());
-        return new AccountPrivateProfileInformations(account, personalLinks, onlineAuctionsCounter, pastDealsCounter);
-    }
+        long zeroIndexedpageNumber = pageNumber - 1;
+        Pageable pageable = PageRequest.of((int) zeroIndexedpageNumber, (int) pageSize);
+        return activityRepository.findUserActivityByUserById(
+            userId, 
+            includePastDeals, 
+            includeCurrentDeals, 
+            includeAuctions, 
+            includeBids, 
+            pageable
+        );
+    } 
 
-    public Account createAccount(PendingAccountRegistration pendingAccount){
+    public Account createAccount(PendingAccountRegistration pendingAccount) {
         Account account = accountRepository.save(new Account(pendingAccount));
         String passwordSalt = encryptionService.generateRandomSalt();
         String passwordHash = encryptionService.encryptPassword(pendingAccount.getPassword(), passwordSalt);

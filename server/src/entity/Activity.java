@@ -2,8 +2,14 @@ package entity;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import jakarta.persistence.GenerationType;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,8 +17,8 @@ import lombok.Setter;
 
 @Entity @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
-@Table(name = "Auction")
-public class Auction {
+@Table(name = "Activity")
+public class Activity {
 
     @Column(name = "maximum_bid")
     private BigDecimal maximumBid;
@@ -74,31 +80,19 @@ public class Auction {
     @Column(name = "status")
     private String status;
 
-    @Column(name = "auction_id")
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @Column(name = "bid_id")
+    private Integer bidId;
+    
+    @Column(name = "bidder_id")
+    private Integer bidderId;
 
-    public Auction(Activity activity){
-        this.maximumBid = activity.getMaximumBid();
-        this.minimumBid = activity.getMinimumBid();
-        this.numberOfBids = activity.getNumberOfBids();
-        this.lowestBidSoFar = activity.getLowestBidSoFar();
-        this.highestBidSoFar = activity.getHighestBidSoFar();
-        this.currentBidderId = activity.getCurrentBidderId();
-        this.creatorId = activity.getCreatorId();
-        this.country = activity.getCountry();
-        this.city = activity.getCity();
-        this.itemCondition = activity.getItemCondition();
-        this.itemCategory = activity.getItemCategory();
-        this.macroCategory = activity.getMacroCategory();
-        this.startTime = activity.getStartTime();
-        this.endTime = activity.getEndTime();
-        this.itemName = activity.getItemName();
-        this.description = activity.getDescription();
-        this.picturesUrls = activity.getPicturesUrls();
-        this.auctionType = activity.getAuctionType();
-        this.currency = activity.getCurrency();
-        this.status = activity.getStatus();
-        this.id = activity.getAuctionId();
-    }
+    @Column(name = "bid_amount")
+    private BigDecimal bidAmount;
+
+    @Column(name = "bid_date")
+    private Timestamp bidDate;
+
+    @Id @Column(name = "auction_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer auctionId;
 }

@@ -3,6 +3,7 @@ package response;
 import java.util.List;
 import entity.Account;
 import entity.PersonalLink;
+import utils.AccountProfileInformations;
 import utils.AccountPublicProfileInformationsSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,4 +21,11 @@ public class AccountPublicProfileInformations {
     private List<PersonalLink> personalLinks;
     private long onlineAuctionsCounter;
     private long pastDealsCounter;
+
+    public AccountPublicProfileInformations(AccountProfileInformations accountPublicProfileInformations) {
+        account = accountPublicProfileInformations.getAccount();
+        personalLinks = accountPublicProfileInformations.getPersonalLinks();
+        onlineAuctionsCounter = accountPublicProfileInformations.getOnlineAuctionsCounter();
+        pastDealsCounter = accountPublicProfileInformations.getPastDealsCounter();
+    }
 }

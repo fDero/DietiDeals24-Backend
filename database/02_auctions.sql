@@ -61,3 +61,38 @@ CREATE TABLE Bid (
     FOREIGN KEY (bidder_id) 
     REFERENCES Account(account_id)
 );
+
+CREATE VIEW Activity AS (
+    SELECT DISTINCT ON (a.auction_id)
+        b.bid_id,
+        b.bidder_id,
+        b.bid_amount,
+        b.bid_date,
+        a.maximum_bid,
+        a.minimum_bid,
+        a.lowest_bid_so_far,
+        a.highest_bid_so_far,
+        a.current_bidder_id,
+        a.number_of_bids,
+        a.creator_id,
+        a.country,
+        a.city,
+        a.item_condition,
+        a.item_category,
+        a.macro_category,
+        a.start_time,
+        a.end_time,
+        a.item_name,
+        a.description,
+        a.pictures_urls,
+        a.auction_type,
+        a.currency,
+        a.status,
+        a.auction_id
+    FROM 
+        Bid b RIGHT OUTER JOIN Auction a 
+            ON b.auction_id = a.auction_id
+    ORDER BY 
+        a.auction_id, 
+        b.bid_id DESC
+);

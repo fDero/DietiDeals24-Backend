@@ -10,4 +10,7 @@ import lombok.NoArgsConstructor;
 public class NewBidRequest {
     private Integer auctionId;
     private BigDecimal bidAmount;
+    private Integer paymentMethodId;
+    private NewPaymentMethodRequest OneTimePaymentMethod;
+    private NewPaymentMethodRequest paymentMethodToBeSaved;
 }

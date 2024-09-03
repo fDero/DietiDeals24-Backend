@@ -22,6 +22,7 @@ public class AccountPrivateProfileInformationsSerializer extends JsonSerializer<
 
         gen.writeStartObject();
         serializeLinks(value, gen, serializers);
+        serializeCounters(value, gen, serializers);
         gen.writeStringField("name", value.getAccount().getName());
         gen.writeStringField("surname", value.getAccount().getSurname());
         gen.writeStringField("birthday", birthayString);
@@ -31,8 +32,6 @@ public class AccountPrivateProfileInformationsSerializer extends JsonSerializer<
         gen.writeStringField("username", value.getAccount().getUsername());
         gen.writeStringField("bio", value.getAccount().getBio());
         gen.writeStringField("profilePictureUrl", value.getAccount().getProfilePictureUrl());
-        gen.writeNumberField("onlineAuctionsCounter", value.getOnlineAuctionsCounter());
-        gen.writeNumberField("pastDealsCounter", value.getPastDealsCounter());
         gen.writeStringField("userId", value.getAccount().getId().toString());
         gen.writeEndObject();
     }
@@ -52,5 +51,19 @@ public class AccountPrivateProfileInformationsSerializer extends JsonSerializer<
             gen.writeEndObject();
         }
         gen.writeEndArray();
+    }
+
+    private void serializeCounters(
+        AccountPrivateProfileInformations value, 
+        JsonGenerator gen, 
+        SerializerProvider serializers
+    ) 
+        throws IOException 
+    {
+        gen.writeNumberField("onlineAuctionsCounter", value.getOnlineAuctionsCounter());
+        gen.writeNumberField("onlineBidsCounter", value.getOnlineBidsCounter());
+        gen.writeNumberField("pastDealsCounter", value.getPastDealsCounter());
+        gen.writeNumberField("pastBidsCounter", value.getPastBidsCounter());
+        gen.writeNumberField("pastAuctionsCounter", value.getPastAuctionsCounter());
     }
 }

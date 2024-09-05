@@ -27,10 +27,10 @@ public class GeographicalAwarenessService {
         this.key = key;
     }
 
+    @Cacheable(value = "countries")
     public List<GeographicalCountryDescriptor> fetchEuropeanCountries() {
         try {
             String jsonString = fetchEuropeanCountriesRaw();
-            System.out.println(jsonString);
             GeographicalCountryDescriptor[] countries = gson.fromJson(jsonString, GeographicalCountryDescriptor[].class);
             List<GeographicalCountryDescriptor> europeanCountries = Arrays.asList(countries);
             return europeanCountries;
@@ -39,6 +39,7 @@ public class GeographicalAwarenessService {
         }
     }
 
+    @Cacheable(value = "cities", key = "#country_code")
     public List<GeographicalCityDescriptor> fetchCitiesFromCountry(String country_code)
         throws UnrecognizedCountryException 
     {
@@ -53,10 +54,8 @@ public class GeographicalAwarenessService {
         }
     }
 
-    @Cacheable(value = "europeanCountries")
     private String fetchEuropeanCountriesRaw() {
         try {
-            System.out.println("3");
             HttpClient httpClient = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("https://api.apilayer.com/geo/country/region/EU"))
@@ -65,14 +64,12 @@ public class GeographicalAwarenessService {
                 .build();
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             String jsonString = response.body();
-            System.out.println(jsonString);
             return jsonString;
         } catch (Exception e) {
             throw new RuntimeException("Error while fetching European countries", e);
         }
     }
 
-    @Cacheable(value = "citiesByCountry", key = "#country_code")
     private String fetchCitiesFromCountryRaw(String country_code)
         throws UnrecognizedCountryException 
     {

@@ -96,3 +96,35 @@ CREATE VIEW Activity AS (
         a.auction_id, 
         b.bid_id DESC
 );
+
+CREATE FUNCTION get_user_activities(
+    user_id INT, include_past_deals BOOLEAN, include_current_deals BOOLEAN,
+    include_auctions BOOLEAN, include_bids BOOLEAN
+)
+RETURNS SETOF Activity AS $$
+BEGIN
+    RETURN QUERY
+    SELECT a.* 
+    FROM Activity a
+    WHERE
+        (   
+            (include_current_deals AND (a.status = 'active' OR a.status = 'pending')) OR
+            (include_past_deals AND (a.status = 'closed'))
+        ) 
+        AND 
+        (
+            (include_auctions AND a.creator_id = user_id )OR 
+            (include_bids AND a.current_bidder_id = user_id) OR
+            (include_bids AND a.bidder_id = user_id AND status = 'active' AND NOT EXISTS (
+                SELECT b.bid_id 
+                FROM Bid b
+                WHERE 
+                    b.auction_id = a.auction_id AND 
+                    b.bidder_id = user_id AND 
+                    b.bid_amount > a.bid_amount
+                )
+            )
+        );
+END;
+$$
+LANGUAGE plpgsql;

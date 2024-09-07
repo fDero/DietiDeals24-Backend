@@ -11,21 +11,12 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ActivityRepository extends JpaRepository<Activity, Integer> {
 
-    static String chronologicalCheck = 
-        " ((:includeCurrentDeals = true AND (a.status = 'active' OR a.status = 'pending')) " +
-        " OR (:includePastDeals = true AND a.status != 'aborted'))";
-
-    static String domainCheck = 
-        "((:includeAuctions = true AND a.creatorId = :userId) " +
-        " OR (:includeBids = true AND a.currentBidderId = :userId))";
-
-    static String currentSilentAuctionCheck =
-        "(:includeBids = true AND a.bidderId = :userId" + 
-        " AND (a.status = 'active' OR a.status = 'pending'))"; 
-
     @Query(
-        "SELECT a FROM Activity a  WHERE " + chronologicalCheck + " AND " + 
-        "(" + domainCheck + " OR " + currentSilentAuctionCheck + ") "
+        value = 
+            "SELECT * FROM get_user_activities(:userId, :includePastDeals, " +
+            ":includeCurrentDeals, :includeAuctions, :includeBids)", 
+        nativeQuery = 
+            true
     )
     List<Activity> findUserActivityByUserById(
         Integer userId, 

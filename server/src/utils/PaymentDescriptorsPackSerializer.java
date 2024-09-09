@@ -33,12 +33,15 @@ public class PaymentDescriptorsPackSerializer extends JsonSerializer<PaymentDesc
             gen.writeNumberField("id", card.getId());
             gen.writeEndObject();
         }
+        gen.writeEndArray();
+        gen.writeArrayFieldStart("ibans");
         for (Iban iban : value.getIbans()) {
             gen.writeStartObject();
             gen.writeStringField("iban", iban.getIbanString());
             gen.writeNumberField("id", iban.getId());
             gen.writeEndObject();
         }
+        gen.writeEndArray();
         gen.writeEndObject();
     }
     

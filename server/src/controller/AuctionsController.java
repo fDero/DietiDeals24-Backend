@@ -14,7 +14,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -60,8 +59,7 @@ public class AuctionsController {
 
     @GetMapping(value = "/auctions/specific/public-view", produces = "application/json")
     public ResponseEntity<SpecificAuctionPublicInformations> sendSpecificAuctionInformations(
-        @RequestParam Integer id,
-        @RequestHeader String Authorization
+        @RequestParam Integer id
     )  
         throws 
             NoAuctionWithSuchIdException

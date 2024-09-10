@@ -11,7 +11,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 @EnableCaching
 public class CacheConfig {
 
-  @Bean
+  @Bean @SuppressWarnings("rawtypes")
   public Caffeine caffeineConfig() {
     return Caffeine.newBuilder();
   }
@@ -19,8 +19,7 @@ public class CacheConfig {
   @Bean
   public CaffeineCacheManager cacheManager() {
     CaffeineCacheManager cacheManager = new CaffeineCacheManager("countries", "cities");
-    cacheManager.setCaffeine(Caffeine.newBuilder()/* .maximumSize(16) */);
-
+    cacheManager.setCaffeine(Caffeine.newBuilder());
     return cacheManager;
   }
 }

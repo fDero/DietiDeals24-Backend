@@ -10,6 +10,6 @@ import lombok.Setter;
 public class NewCreditCreditCardRequest implements NewPaymentMethodRequest {
 
     private String type;
-    private String paymentProcessorToken;
-    private Integer last4digits;
+    private String creditCardToken;
+    private String last4digits;
 }

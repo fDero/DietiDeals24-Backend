@@ -7,6 +7,8 @@ import exceptions.NoSuchAuctionException;
 import request.NewBidRequest;
 import service.AuctionManagementService;
 import service.BidsManagementService;
+import service.PaymentProcessingService;
+
 import org.springframework.http.ResponseEntity;
 import authentication.JwtTokenManager;
 
@@ -25,16 +27,19 @@ public class BidsController {
     private final JwtTokenManager jwtTokenProvider;
     private final AuctionManagementService auctionManagementService;
     private final BidsManagementService bidsManagementService;
+    private final PaymentProcessingService paymentsService;
 
     @Autowired
     public BidsController(
         JwtTokenManager jwtTokenProvider,
         AuctionManagementService auctionManagementService,
-        BidsManagementService bidsManagementService
+        BidsManagementService bidsManagementService,
+        PaymentProcessingService paymentsService
     ){
         this.jwtTokenProvider = jwtTokenProvider;
         this.bidsManagementService = bidsManagementService;
         this.auctionManagementService = auctionManagementService;
+        this.paymentsService = paymentsService;
     }
 
     @RequireJWT
@@ -50,13 +55,14 @@ public class BidsController {
     {        
         auctionManagementService.updateStatuses();
         String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
-        String id = jwtTokenProvider.getIdFromJWT(jwtToken);
+        String bidderId = jwtTokenProvider.getIdFromJWT(jwtToken);
         Bid bid = new Bid();
-        bid.setBidderId(Integer.valueOf(id));
+        bid.setBidderId(Integer.valueOf(bidderId));
         bid.setAuctionId(newBidRequest.getAuctionId());
         bid.setBidAmount(newBidRequest.getBidAmount());
         bid.setBidDate(new java.sql.Timestamp(System.currentTimeMillis()));
         bidsManagementService.saveBid(bid);
+        paymentsService.doPayment(newBidRequest, bidderId);
         return ResponseEntity.ok().body("done");
     }
 }

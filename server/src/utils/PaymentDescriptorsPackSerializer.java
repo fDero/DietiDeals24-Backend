@@ -24,12 +24,7 @@ public class PaymentDescriptorsPackSerializer extends JsonSerializer<PaymentDesc
         gen.writeArrayFieldStart("creditCards");
         for (CreditCard card : value.getCreditCards()) {
             gen.writeStartObject();
-            gen.writeStringField("cardNumber", card.getCardNumber());
-            gen.writeStringField("expirationDate", card.getExpirationDate().toString());
-            gen.writeStringField("name", card.getName());
-            gen.writeStringField("address", card.getAddress());
-            gen.writeStringField("country", card.getCountry());
-            gen.writeStringField("zip", card.getZip());
+            gen.writeStringField("last4digits", card.getLast4digits());
             gen.writeNumberField("id", card.getId());
             gen.writeEndObject();
         }

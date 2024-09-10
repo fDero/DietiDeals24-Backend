@@ -13,12 +13,8 @@ import lombok.Setter;
 
 @JsonSerialize(using = UserPublicActivitySerializer.class)
 @Setter @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserPublicActivity {
     List<Activity> activity;
-
-    public UserPublicActivity(List<Activity> activity) {
-        System.out.println("UserPublicActivity");
-        System.out.println("Activity size: " + activity.size());
-        this.activity = activity;
-    }
 }

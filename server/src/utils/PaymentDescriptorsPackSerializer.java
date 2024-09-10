@@ -20,24 +20,22 @@ public class PaymentDescriptorsPackSerializer extends JsonSerializer<PaymentDesc
     )
         throws IOException 
     {
-        gen.writeStartObject();
-        gen.writeArrayFieldStart("creditCards");
+        gen.writeStartArray();
         for (CreditCard card : value.getCreditCards()) {
             gen.writeStartObject();
+            gen.writeStringField("type", "CREDIT_CARD");
             gen.writeStringField("last4digits", card.getLast4digits());
             gen.writeNumberField("id", card.getId());
             gen.writeEndObject();
         }
-        gen.writeEndArray();
-        gen.writeArrayFieldStart("ibans");
         for (Iban iban : value.getIbans()) {
             gen.writeStartObject();
+            gen.writeStringField("type", "IBAN");
             gen.writeStringField("iban", iban.getIbanString());
             gen.writeNumberField("id", iban.getId());
             gen.writeEndObject();
         }
         gen.writeEndArray();
-        gen.writeEndObject();
     }
     
 }

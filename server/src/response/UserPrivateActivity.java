@@ -17,4 +17,5 @@ import lombok.Setter;
 @NoArgsConstructor
 public class UserPrivateActivity {
     List<Activity> activity;
+    Integer requesterId;
 }

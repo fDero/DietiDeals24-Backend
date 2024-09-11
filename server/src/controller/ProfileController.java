@@ -122,7 +122,7 @@ public class ProfileController {
             includeAuctions,
             includeBids
         );
-        UserPrivateActivity userPublicActivity = new UserPrivateActivity(activities);
+        UserPrivateActivity userPublicActivity = new UserPrivateActivity(activities, id);
         return ResponseEntity.ok().body(userPublicActivity);
     }
 }

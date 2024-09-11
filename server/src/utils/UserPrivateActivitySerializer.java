@@ -27,7 +27,7 @@ public class UserPrivateActivitySerializer extends JsonSerializer<UserPrivateAct
             AuctionSerializerHelper.serializeBasics(gen, auction);
             AuctionSerializerHelper.serializeBidsData(gen, auction);
             AuctionSerializerHelper.serializeJustOnePictureUrl(gen, auction);
-            if (auction.getAuctionType() != "silent" || auction.getStatus() != "active") {
+            if (value.getRequesterId() != auction.getCreatorId()) {
                 gen.writeNumberField("ownBid", activity.getBidAmount());
             }
             gen.writeEndObject();

@@ -37,13 +37,13 @@ public class AuctionManagementService {
     public void updateBidsRecord(Auction auction, Bid newBid) {
         if (auction.getHighestBidSoFar() == null || auction.getHighestBidSoFar().compareTo(newBid.getBidAmount()) < 0) {
             auction.setHighestBidSoFar(newBid.getBidAmount());
-            if (auction.getAuctionType() == "silent") {
+            if (auction.getAuctionType().equals("silent")) {
                 auction.setCurrentBidderId(BigDecimal.valueOf(newBid.getBidderId()));
             }
         }
         if (auction.getLowestBidSoFar() == null || auction.getLowestBidSoFar().compareTo(newBid.getBidAmount()) > 0) {
             auction.setLowestBidSoFar(newBid.getBidAmount());
-            if (auction.getAuctionType() == "reverse") {
+            if (auction.getAuctionType().equals("reverse")) {
                 auction.setCurrentBidderId(BigDecimal.valueOf(newBid.getBidderId()));
             }
         }

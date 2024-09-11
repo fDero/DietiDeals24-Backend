@@ -62,7 +62,8 @@ public class BidsController {
         bid.setBidAmount(newBidRequest.getBidAmount());
         bid.setBidDate(new java.sql.Timestamp(System.currentTimeMillis()));
         bidsManagementService.saveBid(bid);
-        paymentsService.doPayment(newBidRequest, bidderId);
+        String paymentRefoundToken = paymentsService.doPayment(newBidRequest, bidderId);
+        bid.setBidRefoundToken(paymentRefoundToken);
         return ResponseEntity.ok().body("done");
     }
 }

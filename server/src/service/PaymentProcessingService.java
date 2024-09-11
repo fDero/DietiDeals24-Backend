@@ -56,9 +56,10 @@ public class PaymentProcessingService {
         }
     }
 
-    public void doPayment(NewBidRequest newBidRequest, String accountId) {
+    public String doPayment(NewBidRequest newBidRequest, String accountId) {
         if (newBidRequest.getPaymentMethodToBeSaved() != null) {
             savePaymentMethod(newBidRequest.getPaymentMethodToBeSaved(), accountId);
         }
+        return "dummy token";
     }
 }

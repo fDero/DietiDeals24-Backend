@@ -29,6 +29,9 @@ public class Bid {
     @Column(name = "bid_amount")
     private BigDecimal bidAmount;
 
+    @Column(name = "bid_refound_token")
+    private String bidRefoundToken;
+
     @Column(name = "bid_date")
     private Timestamp bidDate;
 

@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface NotificationRepository extends JpaRepository<Notification, Integer> {
     
-    @Query("SELECT n FROM Notification n WHERE n.accountId = :accountId AND n.eliminated = false")
+    @Query("SELECT n FROM Notification n WHERE n.accountId = :accountId AND n.eliminated = false ORDER BY n.id DESC")
     List<Notification> findByAccountId(Integer accountId, Pageable pageable);
 
     Optional<Notification> findById(Integer id);

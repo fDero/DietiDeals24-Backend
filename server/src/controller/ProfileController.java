@@ -106,7 +106,7 @@ public class ProfileController {
         @RequestHeader(name = "Authorization") String  authorizationHeader,
         @RequestParam(defaultValue = "1")      Integer pageNumber,
         @RequestParam(defaultValue = "10")     Integer pageSize,
-        @RequestParam(defaultValue = "false")  Boolean inclduePastDeals,
+        @RequestParam(defaultValue = "false")  Boolean includePastDeals,
         @RequestParam(defaultValue = "true")   Boolean includeCurrentDeals,
         @RequestParam(defaultValue = "true")   Boolean includeAuctions,
         @RequestParam(defaultValue = "false")  Boolean includeBids
@@ -117,7 +117,7 @@ public class ProfileController {
             id, 
             pageNumber,
             pageSize, 
-            inclduePastDeals,
+            includePastDeals,
             includeCurrentDeals,
             includeAuctions,
             includeBids

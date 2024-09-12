@@ -16,8 +16,8 @@ CREATE TABLE Bid (
 );
 
 CREATE FUNCTION get_user_bids(
-    id INT,
-    status VARCHAR(20)
+    bidderId INT,
+    auctionStatus VARCHAR(20)
 )
 RETURNS INT AS $$
 DECLARE
@@ -28,8 +28,8 @@ BEGIN
     FROM Bid b
     JOIN Auction a ON a.auction_id = b.auction_id
     WHERE 
-        b.bidder_id = user_id AND
-        a.status = auction_status;
+        b.bidder_id = bidderId AND
+        a.status = auctionStatus;
     RETURN total_bids;
 END;
 $$ LANGUAGE plpgsql;

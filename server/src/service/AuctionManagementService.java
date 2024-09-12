@@ -1,6 +1,8 @@
 package service;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.time.Instant;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,17 +12,21 @@ import entity.Auction;
 import entity.Bid;
 import exceptions.NoSuchAuctionException;
 import repository.AuctionRepository;
+import request.NewAuctionRequest;
 
 @Service
 public class AuctionManagementService {
     
     private final AuctionRepository auctionRepository;
+    private final GeographicalAwarenessService geographicalAwarenessService;
     
     @Autowired
     public AuctionManagementService(
-        AuctionRepository auctionRepository
+        AuctionRepository auctionRepository,
+        GeographicalAwarenessService geographicalAwarenessService
     ) {
         this.auctionRepository = auctionRepository;
+        this.geographicalAwarenessService = geographicalAwarenessService;
     }
 
     @Transactional
@@ -59,5 +65,56 @@ public class AuctionManagementService {
 
     public long countPastAuctionsByCreatorId(Integer creatorId) {
         return auctionRepository.countPastAuctionsByCreatorId(creatorId);
+    }
+
+    public void createNewAuction(Integer creatorId, NewAuctionRequest newAuctionRequest) {
+        Auction newAuction = new Auction();
+        validateNewAuction(newAuctionRequest);
+        newAuction.setMaximumBid(newAuctionRequest.getMaximumBid());
+        newAuction.setMinimumBid(newAuctionRequest.getMinimumBid());
+        newAuction.setCreatorId(creatorId);
+        newAuction.setCountry(newAuctionRequest.getCountry());
+        newAuction.setCity(newAuctionRequest.getCity());
+        newAuction.setItemCondition(newAuctionRequest.getItemCondition());
+        newAuction.setItemCategory(newAuctionRequest.getItemCategory());
+        newAuction.setMacroCategory(newAuctionRequest.getMacroCategory());
+        newAuction.setStartTime(Timestamp.from(Instant.now()));
+        newAuction.setEndTime(newAuctionRequest.getEndTime());
+        newAuction.setItemName(newAuctionRequest.getItemName());
+        newAuction.setDescription(newAuctionRequest.getDescription());
+        newAuction.setPicturesUrls(newAuctionRequest.getPicturesUrls());
+        newAuction.setAuctionType(newAuctionRequest.getAuctionType());
+        newAuction.setCurrency(newAuctionRequest.getCurrency());
+        newAuction.setStatus("active");
+        newAuction.setNumberOfBids(0);
+        auctionRepository.save(newAuction);
+    }
+
+    private void validateNewAuction(NewAuctionRequest newAuctionRequest) {
+        final BigDecimal minimumBid = newAuctionRequest.getMinimumBid();
+        final BigDecimal maximumBid = newAuctionRequest.getMaximumBid();
+        final Timestamp endTime = newAuctionRequest.getEndTime();
+        final String country = newAuctionRequest.getCountry();
+        final String city = newAuctionRequest.getCity();
+        final boolean reverse = newAuctionRequest.getAuctionType().equals("reverse");
+        final boolean silent = newAuctionRequest.getAuctionType().equals("silent");
+        if (endTime == null || endTime.before(new Timestamp(System.currentTimeMillis()))) {
+            throw new IllegalArgumentException("Auction end time must be in the future");
+        }
+        if (maximumBid != null && maximumBid.compareTo(new BigDecimal(0)) < 0) {
+            throw new IllegalArgumentException("Minimum bid must be positive");
+        }
+        if (minimumBid != null && newAuctionRequest.getMaximumBid().compareTo(new BigDecimal(0)) < 0) {
+            throw new IllegalArgumentException("Maximum bid must be positive");
+        }
+        if (minimumBid != null && maximumBid != null && minimumBid.compareTo(maximumBid) > 0) {
+            throw new IllegalArgumentException("Minimum bid must be less than maximum bid");
+        }
+        if (!geographicalAwarenessService.checkThatCityBelogsToCountry(country, city)) {
+            throw new IllegalArgumentException("City does not belong to country");
+        }
+        if (!reverse && !silent) {
+            throw new IllegalArgumentException("Invalid auction type");
+        }
     }
 }

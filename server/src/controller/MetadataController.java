@@ -9,7 +9,7 @@ import response.CategoryPack;
 import response.CitiesInformationsPack;
 import response.CountriesInformationsPack;
 import service.GeographicalAwarenessService;
-import service.MetadataGatheringService;
+import service.MetadataManagementService;
 import utils.GeographicalCityDescriptor;
 import utils.GeographicalCountryDescriptor;
 
@@ -21,12 +21,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class MetadataController {
 
-    private final MetadataGatheringService metadataGatheringService;
+    private final MetadataManagementService metadataGatheringService;
     private final GeographicalAwarenessService countryDescriptor;
 
     @Autowired
     public MetadataController(
-        MetadataGatheringService metadataGatheringService,
+        MetadataManagementService metadataGatheringService,
         GeographicalAwarenessService countryDescriptor
     ){
         this.metadataGatheringService = metadataGatheringService;

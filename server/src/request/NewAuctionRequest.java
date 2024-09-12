@@ -1,15 +1,16 @@
 package request;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter @AllArgsConstructor
 @Setter @NoArgsConstructor
+@ToString
 public class NewAuctionRequest {
     
     private BigDecimal maximumBid;
@@ -19,7 +20,7 @@ public class NewAuctionRequest {
     private String itemCondition;
     private String itemCategory;
     private String macroCategory;
-    private Timestamp endTime;
+    private String endTime;
     private String itemName;
     private String description;
     private String[] picturesUrls;

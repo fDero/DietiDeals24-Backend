@@ -19,14 +19,17 @@ public class AuctionManagementService {
     
     private final AuctionRepository auctionRepository;
     private final GeographicalAwarenessService geographicalAwarenessService;
+    private final MetadataManagementService metadataManagementService;
     
     @Autowired
     public AuctionManagementService(
         AuctionRepository auctionRepository,
-        GeographicalAwarenessService geographicalAwarenessService
+        GeographicalAwarenessService geographicalAwarenessService,
+        MetadataManagementService metadataManagementService
     ) {
         this.auctionRepository = auctionRepository;
         this.geographicalAwarenessService = geographicalAwarenessService;
+        this.metadataManagementService = metadataManagementService;
     }
 
     @Transactional
@@ -69,6 +72,7 @@ public class AuctionManagementService {
 
     public void createNewAuction(Integer creatorId, NewAuctionRequest newAuctionRequest) {
         Auction newAuction = new Auction();
+        Timestamp endTime = Timestamp.from(Instant.parse(newAuctionRequest.getEndTime()));
         validateNewAuction(newAuctionRequest);
         newAuction.setMaximumBid(newAuctionRequest.getMaximumBid());
         newAuction.setMinimumBid(newAuctionRequest.getMinimumBid());
@@ -79,7 +83,7 @@ public class AuctionManagementService {
         newAuction.setItemCategory(newAuctionRequest.getItemCategory());
         newAuction.setMacroCategory(newAuctionRequest.getMacroCategory());
         newAuction.setStartTime(Timestamp.from(Instant.now()));
-        newAuction.setEndTime(newAuctionRequest.getEndTime());
+        newAuction.setEndTime(endTime);
         newAuction.setItemName(newAuctionRequest.getItemName());
         newAuction.setDescription(newAuctionRequest.getDescription());
         newAuction.setPicturesUrls(newAuctionRequest.getPicturesUrls());
@@ -93,18 +97,20 @@ public class AuctionManagementService {
     private void validateNewAuction(NewAuctionRequest newAuctionRequest) {
         final BigDecimal minimumBid = newAuctionRequest.getMinimumBid();
         final BigDecimal maximumBid = newAuctionRequest.getMaximumBid();
-        final Timestamp endTime = newAuctionRequest.getEndTime();
+        final Timestamp endTime = Timestamp.from(Instant.parse(newAuctionRequest.getEndTime()));
         final String country = newAuctionRequest.getCountry();
         final String city = newAuctionRequest.getCity();
         final boolean reverse = newAuctionRequest.getAuctionType().equals("reverse");
         final boolean silent = newAuctionRequest.getAuctionType().equals("silent");
+        final String category = newAuctionRequest.getItemCategory();
+        final String macroCategory = newAuctionRequest.getMacroCategory();
         if (endTime == null || endTime.before(new Timestamp(System.currentTimeMillis()))) {
             throw new IllegalArgumentException("Auction end time must be in the future");
         }
         if (maximumBid != null && maximumBid.compareTo(new BigDecimal(0)) < 0) {
             throw new IllegalArgumentException("Minimum bid must be positive");
         }
-        if (minimumBid != null && newAuctionRequest.getMaximumBid().compareTo(new BigDecimal(0)) < 0) {
+        if (minimumBid != null && minimumBid.compareTo(new BigDecimal(0)) < 0) {
             throw new IllegalArgumentException("Maximum bid must be positive");
         }
         if (minimumBid != null && maximumBid != null && minimumBid.compareTo(maximumBid) > 0) {
@@ -115,6 +121,16 @@ public class AuctionManagementService {
         }
         if (!reverse && !silent) {
             throw new IllegalArgumentException("Invalid auction type");
+        }
+        if (category != null && macroCategory != null && !metadataManagementService.checkThatCategoryIsMacrocategory(category, macroCategory)) {
+            throw new IllegalArgumentException("Invalid category");
+        }
+        if (category == null) {
+            throw new IllegalArgumentException("Category must be specified");
+        }
+        if (category != null && macroCategory == null) {
+            String inferredMacroCategory = metadataManagementService.getMacroCategoryForCategory(category);
+            newAuctionRequest.setMacroCategory(inferredMacroCategory);
         }
     }
 }

@@ -46,6 +46,7 @@ INSERT INTO Category (macro_category, item_category) VALUES
     ('products', 'TV'),
     ('products', 'Videogames and consoles'),
     ('products', 'Watches'),
+    ('products', 'products'),
     ('services', 'Audio editing'),
     ('services', 'Business'),
     ('services', 'Cleaning'),
@@ -59,7 +60,8 @@ INSERT INTO Category (macro_category, item_category) VALUES
     ('services', 'Socials'),
     ('services', 'Video and animation'),
     ('services', 'Voice over'),
-    ('services', 'Writing and translation');
+    ('services', 'Writing and translation'),
+    ('services', 'services');
 
 INSERT INTO Account 
     (name, surname, birthday, country, city, email, username, account_creation, last_login, profile_picture_url, bio)

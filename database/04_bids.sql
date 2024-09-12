@@ -14,3 +14,22 @@ CREATE TABLE Bid (
     FOREIGN KEY (bidder_id) 
     REFERENCES Account(account_id)
 );
+
+CREATE FUNCTION get_user_bids(
+    id INT,
+    status VARCHAR(20)
+)
+RETURNS INT AS $$
+DECLARE
+    total_bids INT;
+BEGIN
+    SELECT COUNT(*)
+    INTO total_bids
+    FROM Bid b
+    JOIN Auction a ON a.auction_id = b.auction_id
+    WHERE 
+        b.bidder_id = user_id AND
+        a.status = auction_status;
+    RETURN total_bids;
+END;
+$$ LANGUAGE plpgsql;

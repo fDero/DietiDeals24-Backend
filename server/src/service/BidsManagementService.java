@@ -8,14 +8,12 @@ import entity.Bid;
 import exceptions.AuctionNotActiveException;
 import exceptions.BidOnYourOwnAuctionException;
 import exceptions.NoSuchAuctionException;
-import repository.AuctionRepository;
 import repository.BidRepository;
 
 @Service
 public class BidsManagementService {
     
     private final AuctionManagementService auctionManagementService;
-    private final AuctionRepository auctionRepository;
     private final BidRepository bidRepository;
     private final NotificationManagementService notificationManagementService;
 
@@ -23,13 +21,11 @@ public class BidsManagementService {
     BidsManagementService(
         AuctionManagementService auctionManagementService,
         BidRepository bidRepository,
-        NotificationManagementService notificationManagementService,
-        AuctionRepository auctionRepository
+        NotificationManagementService notificationManagementService
     ) {
         this.auctionManagementService = auctionManagementService;
         this.bidRepository = bidRepository;
         this.notificationManagementService = notificationManagementService;
-        this.auctionRepository = auctionRepository;
     }
 
     public void validateBid(Bid bid, Auction auction) 
@@ -63,10 +59,10 @@ public class BidsManagementService {
     }
 
     public long countActiveBidsByBidderId(Integer bidderId) {
-        return auctionRepository.countOnlineBidsByBidderId(bidderId);
+        return bidRepository.countOnlineBidsByBidderId(bidderId);
     }
 
     public long countPastBidsByBidderId(Integer bidderId) {
-        return auctionRepository.countPastBidsByBidderId(bidderId);
+        return bidRepository.countPastBidsByBidderId(bidderId);
     }
 }

@@ -10,10 +10,8 @@ import org.springframework.stereotype.Repository;
 public interface BidRepository extends JpaRepository<Bid, Integer> {
 
     @Query(
-        value = 
-            "SELECT * FROM get_user_bids(:bidderId, :auctionStatus)", 
-        nativeQuery = 
-            true
+        value = "SELECT * FROM get_user_bids(:bidderId, :auctionStatus)", 
+        nativeQuery = true
     )
     long countBidsByBidderIdAndAuctionStatus(Integer bidderId, String auctionStatus);
 

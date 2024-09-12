@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import entity.Category;
 import exceptions.UnrecognizedCountryException;
+import response.TrendingCategoryPack;
 import response.CategoryPack;
 import response.CitiesInformationsPack;
 import response.CountriesInformationsPack;
@@ -33,10 +34,16 @@ public class MetadataController {
         this.countryDescriptor = countryDescriptor;
     }
 
-    @GetMapping(value = "/categories", produces = "application/json")
-    public ResponseEntity<CategoryPack> sendProfileInformations() {
+    @GetMapping(value = "/categories/all", produces = "application/json")
+    public ResponseEntity<CategoryPack> sendCategories() {
         List<Category> categories = metadataGatheringService.fetchCategories();
         return ResponseEntity.ok().body(new CategoryPack(categories));
+    }
+    
+    @GetMapping(value = "/categories/trending", produces = "application/json")
+    public ResponseEntity<TrendingCategoryPack> sendTreandingCategories(@RequestParam(defaultValue = "6") Integer amount) {
+        List<Category> categories = metadataGatheringService.fetchTrendingCategories(amount);
+        return ResponseEntity.ok().body(new TrendingCategoryPack(categories));
     }
 
     @GetMapping(value = "/countries", produces = "application/json")

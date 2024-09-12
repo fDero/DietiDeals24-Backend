@@ -46,3 +46,16 @@ CREATE TABLE Auction (
     FOREIGN KEY (creator_id)
     REFERENCES Account(account_id)
 );
+
+CREATE OR REPLACE FUNCTION get_trending_categories()
+RETURNS SETOF Category AS $$
+BEGIN
+    RETURN QUERY
+    SELECT c.*
+    FROM Category c 
+    LEFT JOIN Auction a ON c.item_category = a.item_category
+    WHERE c.item_category != c.macro_category
+    GROUP BY c.category_id
+    ORDER BY COUNT(c.category_id) DESC;
+END;
+$$ LANGUAGE plpgsql;

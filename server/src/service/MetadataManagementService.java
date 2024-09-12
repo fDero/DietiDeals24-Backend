@@ -23,6 +23,10 @@ public class MetadataManagementService {
         return categoryRepository.findAll();
     }
 
+    public List<Category> fetchTrendingCategories(Integer amount) {
+        return categoryRepository.findTreanding(amount);
+    }
+
     public boolean checkThatCategoryIsMacrocategory(String category, String macroCategory) {
         return fetchCategories().stream()
             .anyMatch(

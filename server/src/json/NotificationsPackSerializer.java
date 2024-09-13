@@ -1,4 +1,4 @@
-package utils;
+package json;
 
 import java.io.IOException;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -13,7 +13,7 @@ public class NotificationsPackSerializer extends JsonSerializer<NotificationsPac
     
     @Override
     public void serialize(
-        NotificationsPack value, 
+        NotificationsPack notificationsPack, 
         JsonGenerator gen, 
         SerializerProvider serializers
     ) 
@@ -21,7 +21,7 @@ public class NotificationsPackSerializer extends JsonSerializer<NotificationsPac
     {
         gen.writeStartObject();
         gen.writeArrayFieldStart("notifications");
-        for (Notification notification : value.getNotifications()) {
+        for (Notification notification : notificationsPack.getNotifications()) {
             gen.writeStartObject();
             gen.writeNumberField("id", notification.getId());
             gen.writeStringField("notificationType", notification.getNotificationType());
@@ -35,8 +35,8 @@ public class NotificationsPackSerializer extends JsonSerializer<NotificationsPac
             gen.writeEndObject();
         }
         gen.writeEndArray();
-        long unreadNotificationsCounter = value.getUnreadNotificationsCounter();
-        long readNotificationsCounter = value.getReadNotificationsCounter();
+        long unreadNotificationsCounter = notificationsPack.getUnreadNotificationsCounter();
+        long readNotificationsCounter = notificationsPack.getReadNotificationsCounter();
         long notificationsCounter = readNotificationsCounter + unreadNotificationsCounter;
         gen.writeNumberField("unreadNotifications", unreadNotificationsCounter);
         gen.writeNumberField("readNotifications", readNotificationsCounter);

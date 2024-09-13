@@ -1,4 +1,4 @@
-package utils;
+package json;
 
 import java.io.IOException;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -12,14 +12,14 @@ public class TrendingCategoryPackSerializer extends JsonSerializer<TrendingCateg
 
     @Override
     public void serialize(
-        TrendingCategoryPack value, 
+        TrendingCategoryPack trendingCategoryPack, 
         JsonGenerator gen, 
         SerializerProvider serializers
     ) 
         throws IOException 
     {
         gen.writeStartArray();
-        for (Category category : value.getCategories()) {
+        for (Category category : trendingCategoryPack.getCategories()) {
             gen.writeString(category.getItemCategory());
         }
         gen.writeEndArray();

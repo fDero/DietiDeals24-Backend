@@ -1,4 +1,4 @@
-package utils;
+package json;
 
 import java.io.IOException;
 
@@ -14,16 +14,16 @@ public class UserPublicActivitySerializer extends JsonSerializer<UserPublicActiv
 
     @Override
     public void serialize(
-        UserPublicActivity value, 
+        UserPublicActivity userPublicActivity, 
         JsonGenerator gen, 
         SerializerProvider serializers
     )
         throws IOException 
     {
         System.out.println("UserPublicActivitySerializer");
-        System.out.println("Activity size: " + value.getActivity().size());
+        System.out.println("Activity size: " + userPublicActivity.getActivity().size());
         gen.writeStartArray();
-        for (Activity activity : value.getActivity()) {
+        for (Activity activity : userPublicActivity.getActivity()) {
             System.out.println("Activity: " + activity);
             Auction auction = new Auction(activity);
             gen.writeStartObject();

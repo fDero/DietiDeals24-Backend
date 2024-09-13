@@ -3,9 +3,8 @@ package response;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
 import lombok.Setter;
-
-import utils.SpecificAuctionPublicInformationsSerializer;
 import entity.Auction;
+import json.SpecificAuctionPublicInformationsSerializer;
 
 @JsonSerialize(using = SpecificAuctionPublicInformationsSerializer.class)
 @Setter @Getter

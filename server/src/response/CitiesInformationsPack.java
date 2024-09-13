@@ -5,11 +5,11 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import json.CitiesInformationsPackSerializer;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import utils.CitiesInformationsPackSerializer;
 import utils.GeographicalCityDescriptor;
 
 @NoArgsConstructor

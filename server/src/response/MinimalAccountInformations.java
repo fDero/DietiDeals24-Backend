@@ -3,11 +3,11 @@ package response;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import entity.Account;
+import json.MinimalAccountInformationsSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import utils.MinimalAccountInformationsSerializer;
 
 
 @JsonSerialize(using = MinimalAccountInformationsSerializer.class)

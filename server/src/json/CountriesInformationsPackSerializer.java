@@ -1,4 +1,4 @@
-package utils;
+package json;
 
 import java.io.IOException;
 
@@ -6,15 +6,20 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import response.CountriesInformationsPack;
+import utils.GeographicalCountryDescriptor;
 
 public class CountriesInformationsPackSerializer extends JsonSerializer<CountriesInformationsPack> {
 
     @Override
-    public void serialize(CountriesInformationsPack value, JsonGenerator gen, SerializerProvider serializers)
+    public void serialize(
+        CountriesInformationsPack countriesInformationsPack, 
+        JsonGenerator gen, 
+        SerializerProvider serializers
+    )
         throws IOException 
     {
         gen.writeStartArray();
-        for (GeographicalCountryDescriptor country : value.getCountries()) {
+        for (GeographicalCountryDescriptor country : countriesInformationsPack.getCountries()) {
             gen.writeStartObject();
             gen.writeStringField("name", country.getName());
             gen.writeStringField("nativeName", country.getNative_name());

@@ -1,4 +1,4 @@
-package utils;
+package json;
 
 import java.io.IOException;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -12,14 +12,14 @@ public class AuctionsPackSerializer extends JsonSerializer<AuctionsPack> {
     
     @Override
     public void serialize(
-        AuctionsPack value, 
+        AuctionsPack auctionsPack, 
         JsonGenerator gen, 
         SerializerProvider serializers
     ) 
         throws IOException  
     {
         gen.writeStartArray();
-        for (Auction auction : value.getAuctions()) {
+        for (Auction auction : auctionsPack.getAuctions()) {
             gen.writeStartObject();
             AuctionSerializerHelper.serializeBasics(gen, auction);
             AuctionSerializerHelper.serializeBidsData(gen, auction);

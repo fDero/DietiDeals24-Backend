@@ -2,8 +2,7 @@ package response;
 
 import java.util.List;
 import entity.Notification;
-import utils.NotificationsPackSerializer;
-
+import json.NotificationsPackSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

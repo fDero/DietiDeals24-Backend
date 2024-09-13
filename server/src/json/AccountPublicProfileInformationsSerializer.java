@@ -1,4 +1,4 @@
-package utils;
+package json;
 
 import java.io.IOException;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -11,32 +11,32 @@ public class AccountPublicProfileInformationsSerializer extends JsonSerializer<A
     
     @Override
     public void serialize(
-        AccountPublicProfileInformations value, 
+        AccountPublicProfileInformations infos, 
         JsonGenerator gen, 
         SerializerProvider serializers
     ) 
         throws IOException 
     {
         gen.writeStartObject();
-        serializeLinks(value, gen, serializers);
-        gen.writeStringField("username", value.getAccount().getUsername());
-        gen.writeStringField("bio", value.getAccount().getBio());
-        gen.writeStringField("profilePictureUrl", value.getAccount().getProfilePictureUrl());
-        gen.writeNumberField("onlineAuctionsCounter", value.getOnlineAuctionsCounter());
-        gen.writeNumberField("pastDealsCounter", value.getPastDealsCounter());
-        gen.writeStringField("userId", value.getAccount().getId().toString());
+        serializeLinks(infos, gen, serializers);
+        gen.writeStringField("username", infos.getAccount().getUsername());
+        gen.writeStringField("bio", infos.getAccount().getBio());
+        gen.writeStringField("profilePictureUrl", infos.getAccount().getProfilePictureUrl());
+        gen.writeNumberField("onlineAuctionsCounter", infos.getOnlineAuctionsCounter());
+        gen.writeNumberField("pastDealsCounter", infos.getPastDealsCounter());
+        gen.writeStringField("userId", infos.getAccount().getId().toString());
         gen.writeEndObject();
     }
 
     private void serializeLinks(
-        AccountPublicProfileInformations value, 
+        AccountPublicProfileInformations infos, 
         JsonGenerator gen, 
         SerializerProvider serializers
     ) 
         throws IOException 
     {    
         gen.writeArrayFieldStart("links");
-        for (PersonalLink link : value.getPersonalLinks()) {
+        for (PersonalLink link : infos.getPersonalLinks()) {
             gen.writeStartObject();
             gen.writeStringField("link", link.getLink());
             gen.writeStringField("description", link.getDescription());

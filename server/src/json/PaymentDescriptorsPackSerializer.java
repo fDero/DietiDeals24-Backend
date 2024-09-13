@@ -1,4 +1,4 @@
-package utils;
+package json;
 
 import java.io.IOException;
 
@@ -14,21 +14,21 @@ public class PaymentDescriptorsPackSerializer extends JsonSerializer<PaymentDesc
 
     @Override
     public void serialize(
-        PaymentDescriptorsPack value, 
+        PaymentDescriptorsPack paymentDescriptorsPack, 
         JsonGenerator gen, 
         SerializerProvider serializers
     )
         throws IOException 
     {
         gen.writeStartArray();
-        for (CreditCard card : value.getCreditCards()) {
+        for (CreditCard card : paymentDescriptorsPack.getCreditCards()) {
             gen.writeStartObject();
             gen.writeStringField("type", "CREDIT_CARD");
             gen.writeStringField("last4digits", card.getLast4digits());
             gen.writeNumberField("id", card.getId());
             gen.writeEndObject();
         }
-        for (Iban iban : value.getIbans()) {
+        for (Iban iban : paymentDescriptorsPack.getIbans()) {
             gen.writeStartObject();
             gen.writeStringField("type", "IBAN");
             gen.writeStringField("iban", iban.getIbanString());

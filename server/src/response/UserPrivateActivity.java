@@ -2,7 +2,7 @@ package response;
 
 import java.util.List;
 import entity.Activity;
-import utils.UserPrivateActivitySerializer;
+import json.UserPrivateActivitySerializer;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 

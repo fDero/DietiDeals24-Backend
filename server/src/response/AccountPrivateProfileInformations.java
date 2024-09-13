@@ -3,7 +3,7 @@ package response;
 import java.util.List;
 import entity.Account;
 import entity.PersonalLink;
-import utils.AccountPrivateProfileInformationsSerializer;
+import json.AccountPrivateProfileInformationsSerializer;
 import utils.AccountProfileInformations;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

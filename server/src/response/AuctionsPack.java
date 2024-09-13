@@ -2,8 +2,7 @@ package response;
 
 import java.util.List;
 import entity.Auction;
-import utils.AuctionsPackSerializer;
-
+import json.AuctionsPackSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

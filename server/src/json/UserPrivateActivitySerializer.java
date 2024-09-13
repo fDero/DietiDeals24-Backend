@@ -1,4 +1,4 @@
-package utils;
+package json;
 
 import java.io.IOException;
 
@@ -14,20 +14,20 @@ public class UserPrivateActivitySerializer extends JsonSerializer<UserPrivateAct
 
     @Override
     public void serialize(
-        UserPrivateActivity value, 
+        UserPrivateActivity userPrivateActivity, 
         JsonGenerator gen, 
         SerializerProvider serializers
     )
         throws IOException 
     {
         gen.writeStartArray();
-        for (Activity activity : value.getActivity()) {
+        for (Activity activity : userPrivateActivity.getActivity()) {
             Auction auction = new Auction(activity);
             gen.writeStartObject();
             AuctionSerializerHelper.serializeBasics(gen, auction);
             AuctionSerializerHelper.serializeBidsData(gen, auction);
             AuctionSerializerHelper.serializeJustOnePictureUrl(gen, auction);
-            if (value.getRequesterId() != auction.getCreatorId()) {
+            if (userPrivateActivity.getRequesterId() != auction.getCreatorId()) {
                 gen.writeNumberField("ownBid", activity.getBidAmount());
             }
             gen.writeEndObject();

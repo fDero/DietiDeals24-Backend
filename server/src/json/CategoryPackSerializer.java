@@ -1,4 +1,4 @@
-package utils;
+package json;
 
 import java.io.IOException;
 import java.util.Map;
@@ -17,14 +17,14 @@ public class CategoryPackSerializer extends JsonSerializer<CategoryPack> {
 
     @Override
     public void serialize(
-        CategoryPack value, 
+        CategoryPack categoryPack, 
         JsonGenerator gen, 
         SerializerProvider serializers
     ) 
         throws IOException 
     {
         Map<String, ArrayList<String>> categories = new TreeMap<String, ArrayList<String>>();
-        for (Category category : value.getCategories()) {
+        for (Category category : categoryPack.getCategories()) {
             categories.putIfAbsent(category.getMacroCategory(), new ArrayList<String>());
             categories.get(category.getMacroCategory()).add(category.getItemCategory());
         }

@@ -5,6 +5,7 @@ import exceptions.AuctionNotActiveException;
 import exceptions.BidOnYourOwnAuctionException;
 import exceptions.NoSuchAuctionException;
 import request.NewBidRequest;
+import response.BidsPack;
 import service.AuctionManagementService;
 import service.BidsManagementService;
 import service.PaymentProcessingService;
@@ -14,10 +15,14 @@ import authentication.JwtTokenManager;
 
 import authentication.RequireJWT;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Transactional
@@ -65,5 +70,22 @@ public class BidsController {
         String paymentRefoundToken = paymentsService.doPayment(newBidRequest, bidderId);
         bid.setBidRefoundToken(paymentRefoundToken);
         return ResponseEntity.ok().body("done");
+    }
+
+    @RequireJWT
+    @PostMapping(value = "/bids/own/by-auction", produces = "text/plain")
+    public ResponseEntity<BidsPack> sendOwnBidsByAuction(
+        @RequestHeader(name = "Authorization") String authorizationHeader,
+        @RequestParam Integer auctionId
+    ) 
+        throws 
+            NoSuchAuctionException
+    {        
+        String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
+        String userIdString = jwtTokenProvider.getIdFromJWT(jwtToken);
+        Integer userId = Integer.valueOf(userIdString);
+        List<Bid> bids = bidsManagementService.fetchBidsByAuctionAndUser(auctionId, userId);
+        BidsPack bidsPack = new BidsPack(bids);
+        return ResponseEntity.ok().body(bidsPack);
     }
 }

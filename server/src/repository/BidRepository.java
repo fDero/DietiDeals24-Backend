@@ -2,6 +2,9 @@
 package repository;
 
 import entity.Bid;
+
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -14,6 +17,8 @@ public interface BidRepository extends JpaRepository<Bid, Integer> {
         nativeQuery = true
     )
     long countBidsByBidderIdAndAuctionStatus(Integer bidderId, String auctionStatus);
+
+    List<Bid> findByBidderIdAndAuctionId(Integer bidderId, Integer auctionId);
 
     default long countOnlineBidsByBidderId(Integer bidderId) {
         return countBidsByBidderIdAndAuctionStatus(bidderId, "active") + 

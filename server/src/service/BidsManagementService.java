@@ -1,5 +1,7 @@
 package service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -64,5 +66,9 @@ public class BidsManagementService {
 
     public long countPastBidsByBidderId(Integer bidderId) {
         return bidRepository.countPastBidsByBidderId(bidderId);
+    }
+
+    public List<Bid> fetchBidsByAuctionAndUser(Integer auctionId, Integer bidderId) {
+        return bidRepository.findByBidderIdAndAuctionId(bidderId, auctionId);
     }
 }

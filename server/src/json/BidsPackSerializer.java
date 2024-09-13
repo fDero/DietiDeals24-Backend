@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import entity.Bid;
 import response.BidsPack;
 
-
 public class BidsPackSerializer extends JsonSerializer<BidsPack> {
     
     @Override

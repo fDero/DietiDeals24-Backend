@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -58,16 +59,16 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http = http.csrf(csrf -> csrf.disable());
-        http.exceptionHandling(customizer -> customizer.authenticationEntryPoint(
-                new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)));
+        HttpStatusEntryPoint httpStatusEntryPoint = new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED);
+        http.exceptionHandling(customizer -> customizer.authenticationEntryPoint(httpStatusEntryPoint));
         return http.cors(cors -> cors.configurationSource(corsConfigurationSource())).authorizeHttpRequests(
-                authorize -> authorize
-                        .requestMatchers(req -> !authorizationAwareEndpoints.contains(req.getServletPath()))
-                        .permitAll()
-                        .anyRequest()
-                        .authenticated())
-                .addFilterBefore(new JwtAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
-                .build();
+            authorize -> authorize
+                .requestMatchers(req -> !authorizationAwareEndpoints.contains(req.getServletPath()))
+                .permitAll()
+                .anyRequest()
+                .authenticated())
+            .addFilterBefore(new JwtAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
+            .build();
     }
 
     @Bean
@@ -75,13 +76,12 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("*"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration
-                .setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept", "Origin"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept", "Origin"));
         configuration.setAllowCredentials(false);
         configuration.setMaxAge(3600L);
-
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+
 }

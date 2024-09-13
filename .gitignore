@@ -3,3 +3,8 @@ server/target
 postgres_volume
 demo
 .vscode
+*.p12
+*.crt
+*.csr
+*.key
+ssl/*

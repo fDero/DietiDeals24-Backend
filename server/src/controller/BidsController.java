@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -73,7 +74,7 @@ public class BidsController {
     }
 
     @RequireJWT
-    @PostMapping(value = "/bids/own/by-auction", produces = "text/plain")
+    @GetMapping(value = "/bids/own/by-auction", produces = "text/plain")
     public ResponseEntity<BidsPack> sendOwnBidsByAuction(
         @RequestHeader(name = "Authorization") String authorizationHeader,
         @RequestParam Integer auctionId

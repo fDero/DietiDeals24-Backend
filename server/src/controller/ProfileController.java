@@ -3,6 +3,7 @@ package controller;
 import exceptions.NoAccountWithSuchEmailException;
 import response.AccountPrivateProfileInformations;
 import response.AccountPublicProfileInformations;
+import response.MinimalAccountInformations;
 import response.UserPublicActivity;
 import response.UserPrivateActivity;
 import service.AccountManagementService;
@@ -59,11 +60,21 @@ public class ProfileController {
         return ResponseEntity.ok().body(accountPublicProfileInformations);
     }
 
+    @GetMapping(value = "/profile/minimal-view", produces = "application/json")
+    public ResponseEntity<MinimalAccountInformations> sendMinimalProfileInformations(@RequestParam Integer id) 
+        throws 
+            NoAccountWithSuchEmailException
+    {
+        AccountProfileInformations acountProfileInformations = accountManagementService.fetchAccountProfileInformations(id);
+        MinimalAccountInformations minimalAccountInformations = new MinimalAccountInformations(acountProfileInformations.getAccount());
+        return ResponseEntity.ok().body(minimalAccountInformations);
+    }
+
     @GetMapping(value = "/profile/activity/past-deals/public-view", produces = "application/json")
     public ResponseEntity<UserPublicActivity> sendPublicPastDealsInformations(
         @RequestParam(required = true)         Integer id,
-        @RequestParam(defaultValue = "1")     Integer pageNumber,
-        @RequestParam(defaultValue = "10")    Integer pageSize
+        @RequestParam(defaultValue = "1")      Integer pageNumber,
+        @RequestParam(defaultValue = "10")     Integer pageSize
     ) {
         List<Activity> activities = accountManagementService.fetchAccountActivityByUserId(
             id, 

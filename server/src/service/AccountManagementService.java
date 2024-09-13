@@ -15,6 +15,7 @@ import entity.PersonalLink;
 import exceptions.AccessDeniedBadCredentialsException;
 import exceptions.AccountValidationException;
 import exceptions.NoAccountWithSuchEmailException;
+import exceptions.NoAccountWithSuchIdException;
 import repository.AccountRepository;
 import repository.ActivityRepository;
 import repository.PasswordRepository;
@@ -68,6 +69,16 @@ public class AccountManagementService {
         }
         account.setLastLogin(new Timestamp(System.currentTimeMillis()));
         accountRepository.save(account);
+        return account;
+    }
+
+    public Account getAccountById(Integer accountId) 
+        throws 
+            AccountValidationException,
+            NoAccountWithSuchIdException,
+            AccessDeniedBadCredentialsException
+    {
+        Account account = accountRepository.findById(accountId).orElseThrow(() -> new NoAccountWithSuchIdException());
         return account;
     }
 

@@ -74,7 +74,7 @@ public class BidsController {
     }
 
     @RequireJWT
-    @GetMapping(value = "/bids/own/by-auction", produces = "text/plain")
+    @GetMapping(value = "/bids/own/by-auction", produces = "application/json")
     public ResponseEntity<BidsPack> sendOwnBidsByAuction(
         @RequestHeader(name = "Authorization") String authorizationHeader,
         @RequestParam Integer auctionId
@@ -82,11 +82,13 @@ public class BidsController {
         throws 
             NoSuchAuctionException
     {        
+        System.out.println("auctionId: " + auctionId);
         String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
         String userIdString = jwtTokenProvider.getIdFromJWT(jwtToken);
         Integer userId = Integer.valueOf(userIdString);
         List<Bid> bids = bidsManagementService.fetchBidsByAuctionAndUser(auctionId, userId);
         BidsPack bidsPack = new BidsPack(bids);
+        System.out.println("bidsPack: " + bidsPack);
         return ResponseEntity.ok().body(bidsPack);
     }
 }

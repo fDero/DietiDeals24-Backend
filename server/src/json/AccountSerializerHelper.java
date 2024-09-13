@@ -1,6 +1,7 @@
 package json;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import com.fasterxml.jackson.core.JsonGenerator;
 import entity.Account;
@@ -23,8 +24,8 @@ public abstract class AccountSerializerHelper {
     static public void serializeFullBasics(JsonGenerator gen, Account account)
         throws IOException
     {
-        final String birthayString = 
-            account.getBirthday().toLocalDateTime().toLocalDate().toString();
+        final LocalDateTime birthayLocalDateTime = account.getBirthday().toLocalDateTime();
+        final String birthayString = birthayLocalDateTime.toLocalDate().toString();
         gen.writeStringField("name", account.getName());
         gen.writeStringField("surname", account.getSurname());
         gen.writeStringField("birthday", birthayString);

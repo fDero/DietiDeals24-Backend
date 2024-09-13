@@ -23,5 +23,4 @@ public class AccountMinimalInformationsSerializer extends JsonSerializer<Account
         AccountSerializerHelper.serializeMinimalBasics(gen, account);
         gen.writeEndObject();
     }
-    
 }

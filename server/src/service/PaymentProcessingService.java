@@ -1,5 +1,7 @@
 package service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -61,5 +63,13 @@ public class PaymentProcessingService {
             savePaymentMethod(newBidRequest.getPaymentMethodToBeSaved(), accountId);
         }
         return "dummy token";
+    }
+
+    public List<Iban> fetchIbansByAccountId(Integer accountId) {
+        return ibanRepository.findByAccountId(accountId);
+    }
+
+    public List<CreditCard> fetchCreditCardsByAccountId(Integer accountId) {
+        return creditCardRepository.findByAccountId(accountId);
     }
 }

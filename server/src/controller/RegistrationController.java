@@ -4,7 +4,7 @@ import entity.Account;
 import repository.PasswordRepository;
 import request.AccountRegistrationRequest;
 import request.RegistrationConfirmationRequest;
-import response.MinimalAccountInformations;
+import response.AccountMinimalInformations;
 import service.AccountManagementService;
 import service.AccountValidationService;
 import service.PendingAccountRegistrationCacheService;
@@ -87,7 +87,7 @@ public class RegistrationController {
     }
 
     @PostMapping(value = "/register/confirm", produces = "application/json")
-    public ResponseEntity<MinimalAccountInformations> confirmRegistration(@RequestBody @NotNull RegistrationConfirmationRequest request) 
+    public ResponseEntity<AccountMinimalInformations> confirmRegistration(@RequestBody @NotNull RegistrationConfirmationRequest request) 
         throws 
             NoPendingAccountConfirmationException, 
             WrongConfirmationCodeException, 
@@ -97,7 +97,7 @@ public class RegistrationController {
         ensureValidConfirmationCode(pendingAccount, request.getCode());
         Account account = accountManagementService.createAccount(pendingAccount);
         pendingAccountsCacheService.delete(request.getEmail());
-        MinimalAccountInformations accountView = new MinimalAccountInformations(account);
+        AccountMinimalInformations accountView = new AccountMinimalInformations(account);
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-Auth-Token", jwtTokenProvider.generateToken(account.getId().toString()));
         List<String> allowedHeaders = new ArrayList<>();

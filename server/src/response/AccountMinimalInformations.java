@@ -3,17 +3,17 @@ package response;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import entity.Account;
-import json.MinimalAccountInformationsSerializer;
+import json.AccountMinimalInformationsSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
-@JsonSerialize(using = MinimalAccountInformationsSerializer.class)
+@JsonSerialize(using = AccountMinimalInformationsSerializer.class)
 @AllArgsConstructor @Getter 
 @NoArgsConstructor @Setter
-public class MinimalAccountInformations {
+public class AccountMinimalInformations {
     
     private Account account;
 }

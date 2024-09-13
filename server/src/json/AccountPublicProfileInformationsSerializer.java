@@ -1,9 +1,13 @@
 package json;
 
 import java.io.IOException;
+import java.util.List;
+
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
+
+import entity.Account;
 import entity.PersonalLink;
 import response.AccountPublicProfileInformations;
 
@@ -17,31 +21,14 @@ public class AccountPublicProfileInformationsSerializer extends JsonSerializer<A
     ) 
         throws IOException 
     {
+        final Account account = infos.getAccount();
+        final List<PersonalLink> personalLinks = infos.getPersonalLinks();
         gen.writeStartObject();
-        serializeLinks(infos, gen, serializers);
-        gen.writeStringField("username", infos.getAccount().getUsername());
-        gen.writeStringField("bio", infos.getAccount().getBio());
-        gen.writeStringField("profilePictureUrl", infos.getAccount().getProfilePictureUrl());
-        gen.writeNumberField("onlineAuctionsCounter", infos.getOnlineAuctionsCounter());
-        gen.writeNumberField("pastDealsCounter", infos.getPastDealsCounter());
-        gen.writeStringField("userId", infos.getAccount().getId().toString());
+        AccountSerializerHelper.serializeMinimalBasics(gen, account);
+        AccountSerializerHelper.serializeFullBasics(gen, account);
+        AccountSerializerHelper.serializeBio(gen, account);
+        AccountSerializerHelper.serializeLinks(personalLinks, gen);
+        AccountSerializerHelper.serializePublicInformations(gen, infos);
         gen.writeEndObject();
-    }
-
-    private void serializeLinks(
-        AccountPublicProfileInformations infos, 
-        JsonGenerator gen, 
-        SerializerProvider serializers
-    ) 
-        throws IOException 
-    {    
-        gen.writeArrayFieldStart("links");
-        for (PersonalLink link : infos.getPersonalLinks()) {
-            gen.writeStartObject();
-            gen.writeStringField("link", link.getLink());
-            gen.writeStringField("description", link.getDescription());
-            gen.writeEndObject();
-        }
-        gen.writeEndArray();
     }
 }

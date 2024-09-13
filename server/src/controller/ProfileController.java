@@ -3,7 +3,7 @@ package controller;
 import exceptions.NoAccountWithSuchEmailException;
 import response.AccountPrivateProfileInformations;
 import response.AccountPublicProfileInformations;
-import response.MinimalAccountInformations;
+import response.AccountMinimalInformations;
 import response.UserPublicActivity;
 import response.UserPrivateActivity;
 import service.AccountManagementService;
@@ -61,12 +61,12 @@ public class ProfileController {
     }
 
     @GetMapping(value = "/profile/minimal-view", produces = "application/json")
-    public ResponseEntity<MinimalAccountInformations> sendMinimalProfileInformations(@RequestParam Integer id) 
+    public ResponseEntity<AccountMinimalInformations> sendMinimalProfileInformations(@RequestParam Integer id) 
         throws 
             NoAccountWithSuchEmailException
     {
         AccountProfileInformations acountProfileInformations = accountManagementService.fetchAccountProfileInformations(id);
-        MinimalAccountInformations minimalAccountInformations = new MinimalAccountInformations(acountProfileInformations.getAccount());
+        AccountMinimalInformations minimalAccountInformations = new AccountMinimalInformations(acountProfileInformations.getAccount());
         return ResponseEntity.ok().body(minimalAccountInformations);
     }
 

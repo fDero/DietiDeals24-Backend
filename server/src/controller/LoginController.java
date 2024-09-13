@@ -5,7 +5,7 @@ import exceptions.AccessDeniedBadCredentialsException;
 import exceptions.AccountValidationException;
 import exceptions.NoAccountWithSuchEmailException;
 import request.LoginRequest;
-import response.MinimalAccountInformations;
+import response.AccountMinimalInformations;
 import service.AccountManagementService;
 import service.AccountValidationService;
 
@@ -42,7 +42,7 @@ public class LoginController {
     }
 
     @PostMapping(value = "/login", produces = "application/json")
-    public ResponseEntity<MinimalAccountInformations> login(@RequestBody @NotNull LoginRequest request) 
+    public ResponseEntity<AccountMinimalInformations> login(@RequestBody @NotNull LoginRequest request) 
         throws 
             AccountValidationException,
             NoAccountWithSuchEmailException,
@@ -50,7 +50,7 @@ public class LoginController {
     {
         accountValidationService.validatePassword(request.getPassword());
         Account account = accountManagementService.performAccountLogin(request.getEmail(), request.getPassword());
-        MinimalAccountInformations accountView = new MinimalAccountInformations(account);
+        AccountMinimalInformations accountView = new AccountMinimalInformations(account);
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-Auth-Token", jwtTokenProvider.generateToken(account.getId().toString()));
         List<String> allowedHeaders = new ArrayList<>();

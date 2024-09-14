@@ -73,6 +73,7 @@ public abstract class AccountSerializerHelper {
             gen.writeStartObject();
             gen.writeStringField("link", link.getLink());
             gen.writeStringField("description", link.getDescription());
+            gen.writeNumberField("id", link.getId());
             gen.writeEndObject();
         }
         gen.writeEndArray();

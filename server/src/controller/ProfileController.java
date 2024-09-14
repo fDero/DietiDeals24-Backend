@@ -1,30 +1,37 @@
 package controller;
 
+import entity.Activity;
+import exceptions.LinkNotFoundException;
+import exceptions.LinkNotYoursException;
 import exceptions.NoAccountWithSuchEmailException;
+import request.NewPersonalLinkRequest;
+import response.AccountMinimalInformations;
 import response.AccountPrivateProfileInformations;
 import response.AccountPublicProfileInformations;
-import response.AccountMinimalInformations;
-import response.UserPublicActivity;
 import response.UserPrivateActivity;
+import response.UserPublicActivity;
 import service.AccountManagementService;
 import utils.AccountProfileInformations;
 
 import org.springframework.http.ResponseEntity;
-import authentication.JwtTokenManager;
-import entity.Activity;
 import java.util.List;
+import authentication.JwtTokenManager;
 
+import authentication.RequireJWT;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import authentication.RequireJWT;
 
-
+@Transactional
 @RestController
 public class ProfileController {
-    
+
     private final AccountManagementService accountManagementService;
     private final JwtTokenManager jwtTokenProvider;
 
@@ -32,12 +39,12 @@ public class ProfileController {
     public ProfileController(
         AccountManagementService accountManagementService,
         JwtTokenManager jwtTokenProvider
-    ) {
+    ){
         this.accountManagementService = accountManagementService;
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    @RequireJWT
+        @RequireJWT
     @GetMapping(value = "/profile/owner-view", produces = "application/json")
     public ResponseEntity<AccountPrivateProfileInformations> sendPrivateProfileInformations(@RequestHeader(name = "Authorization") String authorizationHeader) 
         throws 
@@ -91,7 +98,6 @@ public class ProfileController {
         return ResponseEntity.ok().body(userPublicActivity);
     }
 
-    
     @GetMapping(value = "/profile/activity/current-deals/public-view", produces = "application/json")
     public ResponseEntity<UserPublicActivity> sendPublicCurrentDealsInformations(
         @RequestParam(required = true)        Integer id,
@@ -135,5 +141,35 @@ public class ProfileController {
         );
         UserPrivateActivity userPublicActivity = new UserPrivateActivity(activities, id);
         return ResponseEntity.ok().body(userPublicActivity);
+    }
+
+    @RequireJWT
+    @PostMapping(value = "/profile/links/new", produces = "application/json")
+    public ResponseEntity<String> createPersonalLink(
+        @RequestHeader(name = "Authorization") String authorizationHeader,
+        @RequestBody NewPersonalLinkRequest link
+    ) {
+        String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
+        String accountIdString = jwtTokenProvider.getIdFromJWT(jwtToken);
+        Integer accountId = Integer.valueOf(accountIdString);
+        accountManagementService.savePersonalLink(link, accountId);
+        return ResponseEntity.ok().body("done");
+    }
+
+    @RequireJWT
+    @DeleteMapping(value = "/profile/links/delete", produces = "application/json")
+    public ResponseEntity<String> deletePersonalLink(
+        @RequestHeader(name = "Authorization") String authorizationHeader,
+        @RequestParam Integer linkId
+    ) 
+        throws 
+            LinkNotYoursException,
+            LinkNotFoundException
+    {
+        String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
+        String accountIdString = jwtTokenProvider.getIdFromJWT(jwtToken);
+        Integer accountId = Integer.valueOf(accountIdString);
+        accountManagementService.deletePersonalLink(linkId, accountId);
+        return ResponseEntity.ok().body("done");
     }
 }

@@ -14,12 +14,15 @@ import entity.Password;
 import entity.PersonalLink;
 import exceptions.AccessDeniedBadCredentialsException;
 import exceptions.AccountValidationException;
+import exceptions.LinkNotFoundException;
+import exceptions.LinkNotYoursException;
 import exceptions.NoAccountWithSuchEmailException;
 import exceptions.NoAccountWithSuchIdException;
 import repository.AccountRepository;
 import repository.ActivityRepository;
 import repository.PasswordRepository;
 import repository.PersonalLinkRepository;
+import request.NewPersonalLinkRequest;
 import utils.AccountProfileInformations;
 import utils.PendingAccountRegistration;
 
@@ -134,5 +137,26 @@ public class AccountManagementService {
         Password password = new Password(passwordSalt, passwordHash, account.getId());
         passwordRepository.save(password);
         return account;
+    }
+
+    public void savePersonalLink(NewPersonalLinkRequest link, Integer accountId) {
+        PersonalLink personalLink = new PersonalLink();
+        personalLink.setLink(link.getLink());
+        personalLink.setDescription(link.getDescription());
+        personalLink.setAccountId(accountId);
+        personalLinkRepository.save(personalLink);
+    }
+
+    public void deletePersonalLink(Integer linkId, Integer accountId) 
+        throws 
+            LinkNotFoundException, 
+            LinkNotYoursException
+    {
+        PersonalLink link = personalLinkRepository.findById(linkId).orElseThrow(
+            () -> new LinkNotFoundException());
+        if (!link.getAccountId().equals(accountId)) {
+            throw new LinkNotYoursException();
+        }
+        personalLinkRepository.deleteById(linkId);
     }
 }

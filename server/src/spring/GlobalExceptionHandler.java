@@ -92,4 +92,24 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleBidOnYourOwnAuctionException(BidOnYourOwnAuctionException ex){
         return new ResponseEntity<String>(ex.getMessage(), errorResponseHeaders, HttpStatus.UNPROCESSABLE_ENTITY);
     }
+
+    @ExceptionHandler(CreditCardNotFoundException.class)
+    public ResponseEntity<String> handleCreditCardNotFoundException(CreditCardNotFoundException ex){
+        return new ResponseEntity<String>(ex.getMessage(), errorResponseHeaders, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    @ExceptionHandler(IbanNotFoundException.class)
+    public ResponseEntity<String> handleIbanNotFoundException(IbanNotFoundException ex){
+        return new ResponseEntity<String>(ex.getMessage(), errorResponseHeaders, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    @ExceptionHandler(CreditCardNotYoursException.class)
+    public ResponseEntity<String> handleCreditCardNotYoursException(CreditCardNotYoursException ex){
+        return new ResponseEntity<String>(ex.getMessage(), errorResponseHeaders, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(IbanNotYoursException.class)
+    public ResponseEntity<String> handleIbanNotYoursException(CreditCardNotFoundException ex){
+        return new ResponseEntity<String>(ex.getMessage(), errorResponseHeaders, HttpStatus.UNAUTHORIZED);
+    }
 }

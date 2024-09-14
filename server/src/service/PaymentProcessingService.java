@@ -7,6 +7,10 @@ import org.springframework.stereotype.Service;
 
 import entity.CreditCard;
 import entity.Iban;
+import exceptions.CreditCardNotFoundException;
+import exceptions.CreditCardNotYoursException;
+import exceptions.IbanNotFoundException;
+import exceptions.IbanNotYoursException;
 import repository.CreditCardRepository;
 import repository.IbanRepository;
 import request.NewBidRequest;
@@ -71,5 +75,31 @@ public class PaymentProcessingService {
 
     public List<CreditCard> fetchCreditCardsByAccountId(Integer accountId) {
         return creditCardRepository.findByAccountId(accountId);
+    }
+
+    public void deleteIban(Integer ibanId, Integer accountId) 
+        throws 
+            IbanNotFoundException, 
+            IbanNotYoursException
+    {
+        Iban iban = ibanRepository.findById(ibanId).orElseThrow(
+            () -> new IbanNotFoundException());
+        if (!iban.getAccountId().equals(accountId)) {
+            throw new IbanNotYoursException();
+        }
+        ibanRepository.deleteById(ibanId);
+    }
+
+    public void deleteCreditCard(Integer creditCardId, Integer accountId) 
+        throws 
+            CreditCardNotFoundException, 
+            CreditCardNotYoursException
+    {
+        Iban iban = ibanRepository.findById(creditCardId).orElseThrow(
+            () -> new CreditCardNotFoundException());
+        if (!iban.getAccountId().equals(accountId)) {
+            throw new CreditCardNotYoursException();
+        }
+        creditCardRepository.deleteById(creditCardId);
     }
 }

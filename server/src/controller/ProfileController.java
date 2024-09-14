@@ -81,7 +81,9 @@ public class ProfileController {
     public ResponseEntity<UserPublicActivity> sendPublicPastDealsInformations(
         @RequestParam(required = true)         Integer id,
         @RequestParam(defaultValue = "1")      Integer pageNumber,
-        @RequestParam(defaultValue = "10")     Integer pageSize
+        @RequestParam(defaultValue = "10")     Integer pageSize,
+        @RequestParam(defaultValue = "true")   Boolean includeAuctions,
+        @RequestParam(defaultValue = "true")   Boolean includeBids
     ) {
         List<Activity> activities = accountManagementService.fetchAccountActivityByUserId(
             id, 
@@ -89,8 +91,8 @@ public class ProfileController {
             pageSize, 
             true, 
             false, 
-            true, 
-            true
+            includeAuctions, 
+            includeBids
         );
         System.out.println(activities);
         System.out.println(activities.size());

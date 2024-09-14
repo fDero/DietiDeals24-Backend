@@ -95,9 +95,9 @@ public class PaymentProcessingService {
             CreditCardNotFoundException, 
             CreditCardNotYoursException
     {
-        Iban iban = ibanRepository.findById(creditCardId).orElseThrow(
+        CreditCard creditCard = creditCardRepository.findById(creditCardId).orElseThrow(
             () -> new CreditCardNotFoundException());
-        if (!iban.getAccountId().equals(accountId)) {
+        if (!creditCard.getAccountId().equals(accountId)) {
             throw new CreditCardNotYoursException();
         }
         creditCardRepository.deleteById(creditCardId);

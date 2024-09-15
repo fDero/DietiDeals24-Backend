@@ -1,18 +1,21 @@
 package controller;
 
 import entity.Auction;
-import exceptions.AuctionFinalizationRequest;
+import exceptions.AuctionClosingRequest;
 import exceptions.AuctionNotActiveException;
+import exceptions.AuctionNotPendingException;
 import exceptions.AuctionNotYoursException;
+import exceptions.MissingPaymentMethodException;
 import exceptions.NoAuctionWithSuchIdException;
 import exceptions.NoSuchAuctionException;
+import exceptions.NoSuchPaymentMethodException;
+import exceptions.PaymentMethodNotYoursException;
 import repository.AuctionRepository;
 import request.NewAuctionRequest;
 import response.AuctionsPack;
 import response.SpecificAuctionPublicInformations;
 import service.AuctionFilteredSearchService;
 import service.AuctionManagementService;
-import service.InvalidAuctionFinalizationChoiceException;
 import authentication.JwtTokenManager;
 import org.springframework.http.ResponseEntity;
 import java.util.List;
@@ -20,6 +23,7 @@ import java.util.List;
 import authentication.RequireJWT;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -98,20 +102,56 @@ public class AuctionsController {
     }
 
     @RequireJWT
-    @PostMapping(value = "/auctions/finalize", produces = "text/plain")
+    @PostMapping(value = "/auctions/close", produces = "text/plain")
     public ResponseEntity<String> finalizeAuction(
         @RequestHeader(name = "Authorization") String authorizationHeader,
-        @RequestBody AuctionFinalizationRequest auctionFinalizationRequest
+        @RequestBody AuctionClosingRequest auctionFinalizationRequest
     )  
         throws  
             NoSuchAuctionException,
             AuctionNotYoursException,
-            AuctionNotActiveException,
-            InvalidAuctionFinalizationChoiceException 
+            AuctionNotPendingException, 
+            NoSuchPaymentMethodException, 
+            PaymentMethodNotYoursException, 
+            MissingPaymentMethodException 
     {
         String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
         Integer creatorId = Integer.valueOf(jwtTokenProvider.getIdFromJWT(jwtToken));
-        auctionManagementService.finalizeAuction(creatorId, auctionFinalizationRequest);
+        auctionManagementService.closeAuction(creatorId, auctionFinalizationRequest);
+        return ResponseEntity.ok().body("done");
+    }
+
+    @RequireJWT
+    @DeleteMapping(value = "/auctions/abort", produces = "text/plain")
+    public ResponseEntity<String> abortAuction(
+        @RequestHeader(name = "Authorization") String authorizationHeader,
+        @RequestParam Integer auctionId
+    )  
+        throws  
+            NoSuchAuctionException,
+            AuctionNotYoursException,
+            AuctionNotActiveException
+    {
+        String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
+        Integer creatorId = Integer.valueOf(jwtTokenProvider.getIdFromJWT(jwtToken));
+        auctionManagementService.abortAuction(creatorId, auctionId);
+        return ResponseEntity.ok().body("done");
+    }
+    
+    @RequireJWT
+    @DeleteMapping(value = "/auctions/reject", produces = "text/plain")
+    public ResponseEntity<String> rejectAuction(
+        @RequestHeader(name = "Authorization") String authorizationHeader,
+        @RequestParam Integer auctionId
+    )  
+        throws  
+            NoSuchAuctionException,
+            AuctionNotYoursException,
+            AuctionNotPendingException
+    {
+        String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
+        Integer creatorId = Integer.valueOf(jwtTokenProvider.getIdFromJWT(jwtToken));
+        auctionManagementService.rejectAuction(creatorId, auctionId);
         return ResponseEntity.ok().body("done");
     }
 }

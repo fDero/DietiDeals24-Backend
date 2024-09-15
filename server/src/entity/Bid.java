@@ -8,6 +8,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,13 +30,14 @@ public class Bid {
     @Column(name = "bid_amount")
     private BigDecimal bidAmount;
 
-    @Column(name = "bid_refound_token")
-    private String bidRefoundToken;
+    @Column(name = "payment_informations")
+    private String paymentInformations;
 
     @Column(name = "bid_date")
     private Timestamp bidDate;
 
     @Id @Column(name = "bid_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "payment_methods_seq")
+    @SequenceGenerator(name = "payment_methods_seq", sequenceName = "payment_methods_ids", allocationSize = 50, initialValue = 1)
     private Integer id;
 }

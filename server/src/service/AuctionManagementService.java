@@ -10,10 +10,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import entity.Auction;
 import entity.Bid;
-import exceptions.AuctionFinalizationRequest;
+import exceptions.AuctionClosingRequest;
 import exceptions.AuctionNotActiveException;
+import exceptions.AuctionNotPendingException;
 import exceptions.AuctionNotYoursException;
+import exceptions.MissingPaymentMethodException;
 import exceptions.NoSuchAuctionException;
+import exceptions.NoSuchPaymentMethodException;
+import exceptions.PaymentMethodNotYoursException;
 import repository.AuctionRepository;
 import request.NewAuctionRequest;
 
@@ -23,16 +27,19 @@ public class AuctionManagementService {
     private final AuctionRepository auctionRepository;
     private final GeographicalAwarenessService geographicalAwarenessService;
     private final MetadataManagementService metadataManagementService;
-    
+    private final PaymentProcessingService paymentProcessingService;
+
     @Autowired
     public AuctionManagementService(
         AuctionRepository auctionRepository,
         GeographicalAwarenessService geographicalAwarenessService,
-        MetadataManagementService metadataManagementService
+        MetadataManagementService metadataManagementService,
+        PaymentProcessingService paymentProcessingService
     ) {
         this.auctionRepository = auctionRepository;
         this.geographicalAwarenessService = geographicalAwarenessService;
         this.metadataManagementService = metadataManagementService;
+        this.paymentProcessingService = paymentProcessingService;
     }
 
     @Transactional
@@ -137,29 +144,64 @@ public class AuctionManagementService {
         }
     }
 
-    public void finalizeAuction(
+    public <UnexpectedStateException extends Exception> 
+    Auction finalizeAuctionPreliminaryChecks(
         Integer creatorId, 
-        AuctionFinalizationRequest auctionFinalizationRequest
+        Integer auctionId, 
+        String expectedState, 
+        UnexpectedStateException error
     ) 
         throws 
-            NoSuchAuctionException,
-            AuctionNotYoursException,
-            AuctionNotActiveException,
-            InvalidAuctionFinalizationChoiceException 
+            NoSuchAuctionException, 
+            AuctionNotYoursException, 
+            UnexpectedStateException
     {
-        Auction auction = auctionRepository.findById(auctionFinalizationRequest.getAuctionId())
+        Auction auction = auctionRepository.findById(auctionId)
             .orElseThrow(() -> new NoSuchAuctionException());
-        if (auction.getCreatorId() != creatorId) {
+        if (!auction.getCreatorId().equals(creatorId)) {
             throw new AuctionNotYoursException();
         }
-        if (!auction.getStatus().equals("active")) {
-            throw new AuctionNotActiveException();
+        if (expectedState != null && !auction.getStatus().equals(expectedState)) {
+            throw error;
         }
-        if (auctionFinalizationRequest.getChoice().equals("closed") ||
-            auctionFinalizationRequest.getChoice().equals("aborted")) {
-            auction.setStatus(auctionFinalizationRequest.getChoice());
-        } else {
-            throw new InvalidAuctionFinalizationChoiceException();
-        }
+        return auction;
+    }
+
+    public void abortAuction(Integer creatorId, Integer auctionId) 
+        throws 
+            NoSuchAuctionException, 
+            AuctionNotYoursException,
+            AuctionNotActiveException 
+    {
+        Auction auction = finalizeAuctionPreliminaryChecks(creatorId, auctionId, "active", new AuctionNotActiveException());
+        auction.setStatus("aborted");
+        auctionRepository.save(auction);
+    }
+
+    public void closeAuction(Integer creatorId, AuctionClosingRequest auctionFinalizationRequest) 
+        throws 
+            NoSuchAuctionException, 
+            AuctionNotYoursException, 
+            AuctionNotPendingException, 
+            NoSuchPaymentMethodException, 
+            PaymentMethodNotYoursException, 
+            MissingPaymentMethodException 
+    {
+        Integer auctionId = auctionFinalizationRequest.getAuctionId();
+        Auction auction = finalizeAuctionPreliminaryChecks(creatorId, auctionId, "pending", new AuctionNotPendingException());
+        paymentProcessingService.processAuctionClosingPayment(auction, auctionFinalizationRequest);
+        auction.setStatus("closed");
+        auctionRepository.save(auction);
+    }
+
+    public void rejectAuction(Integer creatorId, Integer auctionId)
+        throws 
+            NoSuchAuctionException, 
+            AuctionNotYoursException, 
+            AuctionNotPendingException 
+    {
+        Auction auction = finalizeAuctionPreliminaryChecks(creatorId, auctionId, "pending", new AuctionNotPendingException());
+        auction.setStatus("rejected");
+        auctionRepository.save(auction);
     }
 }

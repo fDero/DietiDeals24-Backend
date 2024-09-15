@@ -2,10 +2,8 @@ package controller;
 
 import entity.CreditCard;
 import entity.Iban;
-import exceptions.CreditCardNotFoundException;
-import exceptions.CreditCardNotYoursException;
-import exceptions.IbanNotFoundException;
-import exceptions.IbanNotYoursException;
+import exceptions.NoSuchPaymentMethodException;
+import exceptions.PaymentMethodNotYoursException;
 import request.NewPaymentMethodRequest;
 import response.PaymentDescriptorsPack;
 import service.PaymentProcessingService;
@@ -61,7 +59,8 @@ public class PaymentController {
         @RequestBody NewPaymentMethodRequest newPaymentMethodRequest
     ) {
         String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
-        String accountId = jwtTokenProvider.getIdFromJWT(jwtToken);
+        String accountIdStr = jwtTokenProvider.getIdFromJWT(jwtToken);
+        Integer accountId = Integer.valueOf(accountIdStr);
         paymentManagementService.savePaymentMethod(newPaymentMethodRequest, accountId);
         return ResponseEntity.ok().body("done");
     }
@@ -70,29 +69,16 @@ public class PaymentController {
     @DeleteMapping(value = "/payment-methods/delete", produces = "text/plain")
     public ResponseEntity<String> deleteIban(
         @RequestHeader(name = "Authorization") String authorizationHeader,
-        @RequestParam Integer paymentMethodId,
-        @RequestParam String type
+        @RequestParam Integer paymentMethodId
     ) 
         throws 
-            IbanNotYoursException, 
-            IbanNotFoundException,
-            CreditCardNotYoursException, 
-            CreditCardNotFoundException
+            PaymentMethodNotYoursException, 
+            NoSuchPaymentMethodException
     {
         String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
         String accountIdString = jwtTokenProvider.getIdFromJWT(jwtToken);
         Integer accountId = Integer.valueOf(accountIdString);
-        if (type.equals("CREDIT_CARD")) {
-            paymentManagementService.deleteCreditCard(paymentMethodId, accountId);
-            return ResponseEntity.ok().body("done");
-        }
-        else if (type.equals("IBAN")) {
-            paymentManagementService.deleteIban(paymentMethodId, accountId);
-            return ResponseEntity.ok().body("done");
-        }
-        else {
-            return ResponseEntity.unprocessableEntity()
-            .body("missing or misspelled 'type' request parameter");
-        }
+        paymentManagementService.deletePaymentMethod(paymentMethodId, accountId);
+        return ResponseEntity.ok().body("done");
     }
 }

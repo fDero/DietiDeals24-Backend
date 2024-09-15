@@ -93,23 +93,18 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<String>(ex.getMessage(), errorResponseHeaders, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
-    @ExceptionHandler(CreditCardNotFoundException.class)
-    public ResponseEntity<String> handleCreditCardNotFoundException(CreditCardNotFoundException ex){
+    @ExceptionHandler(NoSuchPaymentMethodException.class)
+    public ResponseEntity<String> handleIbanNotFoundException(NoSuchPaymentMethodException ex){
         return new ResponseEntity<String>(ex.getMessage(), errorResponseHeaders, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
-    @ExceptionHandler(IbanNotFoundException.class)
-    public ResponseEntity<String> handleIbanNotFoundException(IbanNotFoundException ex){
+    @ExceptionHandler(PaymentMethodNotYoursException.class)
+    public ResponseEntity<String> handleIbanNotYoursException(PaymentMethodNotYoursException ex){
+        return new ResponseEntity<String>(ex.getMessage(), errorResponseHeaders, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(MissingPaymentMethodException.class)
+    public ResponseEntity<String> handleMissingPaymentMethodException(MissingPaymentMethodException ex){
         return new ResponseEntity<String>(ex.getMessage(), errorResponseHeaders, HttpStatus.UNPROCESSABLE_ENTITY);
-    }
-
-    @ExceptionHandler(CreditCardNotYoursException.class)
-    public ResponseEntity<String> handleCreditCardNotYoursException(CreditCardNotYoursException ex){
-        return new ResponseEntity<String>(ex.getMessage(), errorResponseHeaders, HttpStatus.UNAUTHORIZED);
-    }
-
-    @ExceptionHandler(IbanNotYoursException.class)
-    public ResponseEntity<String> handleIbanNotYoursException(CreditCardNotFoundException ex){
-        return new ResponseEntity<String>(ex.getMessage(), errorResponseHeaders, HttpStatus.UNAUTHORIZED);
     }
 }

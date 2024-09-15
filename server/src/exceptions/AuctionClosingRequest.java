@@ -10,10 +10,9 @@ import request.NewPaymentMethodRequest;
 @AllArgsConstructor @Getter
 @NoArgsConstructor @Setter
 @ToString
-public class AuctionFinalizationRequest {
+public class AuctionClosingRequest {
     
     private Integer auctionId;
-    private String choice;
     private Integer paymentMethodId;
     private NewPaymentMethodRequest OneTimePaymentMethod;
     private NewPaymentMethodRequest paymentMethodToBeSaved;

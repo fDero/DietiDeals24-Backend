@@ -5,12 +5,15 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import entity.Auction;
 import entity.CreditCard;
 import entity.Iban;
-import exceptions.CreditCardNotFoundException;
-import exceptions.CreditCardNotYoursException;
-import exceptions.IbanNotFoundException;
-import exceptions.IbanNotYoursException;
+import exceptions.AuctionClosingRequest;
+import exceptions.MissingPaymentMethodException;
+import exceptions.NoSuchPaymentMethodException;
+import exceptions.PaymentMethodNotYoursException;
+import exceptions.NoAuctionWithSuchIdException;
+import repository.AuctionRepository;
 import repository.CreditCardRepository;
 import repository.IbanRepository;
 import request.NewBidRequest;
@@ -23,14 +26,17 @@ public class PaymentProcessingService {
     
     private final IbanRepository ibanRepository;
     private final CreditCardRepository creditCardRepository;
+    private final AuctionRepository auctionRepository;
 
     @Autowired
     public PaymentProcessingService(
         IbanRepository ibanRepository,
-        CreditCardRepository creditCardRepository
+        CreditCardRepository creditCardRepository,
+        AuctionRepository auctionRepository
     ) {
         this.ibanRepository = ibanRepository;
         this.creditCardRepository = creditCardRepository;
+        this.auctionRepository = auctionRepository;
     }
 
     public void saveIban(entity.Iban iban) {
@@ -49,8 +55,7 @@ public class PaymentProcessingService {
         creditCardRepository.delete(creditCard);
     }
 
-    public void savePaymentMethod(NewPaymentMethodRequest paymentMethodRequest, String accountIdStr) {
-        Integer accountId = Integer.valueOf(accountIdStr);
+    public void savePaymentMethod(NewPaymentMethodRequest paymentMethodRequest, Integer accountId) {
         if (paymentMethodRequest instanceof NewCreditCreditCardRequest creditCardRequest) {
             CreditCard creditCard = new CreditCard(creditCardRequest, accountId);
             saveCreditCard(creditCard);
@@ -62,13 +67,6 @@ public class PaymentProcessingService {
         }
     }
 
-    public String doPayment(NewBidRequest newBidRequest, String accountId) {
-        if (newBidRequest.getPaymentMethodToBeSaved() != null) {
-            savePaymentMethod(newBidRequest.getPaymentMethodToBeSaved(), accountId);
-        }
-        return "dummy token";
-    }
-
     public List<Iban> fetchIbansByAccountId(Integer accountId) {
         return ibanRepository.findByAccountId(accountId);
     }
@@ -77,29 +75,162 @@ public class PaymentProcessingService {
         return creditCardRepository.findByAccountId(accountId);
     }
 
-    public void deleteIban(Integer ibanId, Integer accountId) 
+    public String processBidPayment(NewBidRequest newBidRequest, Integer bidderId) 
         throws 
-            IbanNotFoundException, 
-            IbanNotYoursException
+            NoAuctionWithSuchIdException, 
+            NoSuchPaymentMethodException, 
+            PaymentMethodNotYoursException, 
+            MissingPaymentMethodException 
     {
-        Iban iban = ibanRepository.findById(ibanId).orElseThrow(
-            () -> new IbanNotFoundException());
-        if (!iban.getAccountId().equals(accountId)) {
-            throw new IbanNotYoursException();
+        final Auction auction = auctionRepository.findById(newBidRequest.getAuctionId())
+            .orElseThrow(() -> new NoAuctionWithSuchIdException());
+        final boolean isOneTimePaymentMethod = newBidRequest.getOneTimePaymentMethod() != null;
+        final boolean isPaymentMethodToBeSaved = newBidRequest.getPaymentMethodToBeSaved() != null;
+        final boolean isNewPaymentMethod = isOneTimePaymentMethod || isPaymentMethodToBeSaved;
+        final boolean isExistingPaymentMethod = newBidRequest.getPaymentMethodId() != null;
+        if (isExistingPaymentMethod) {
+            processBidPaymentWithExistingPaymentMethod(newBidRequest.getPaymentMethodId(), bidderId, auction);
         }
-        ibanRepository.deleteById(ibanId);
+        if(isPaymentMethodToBeSaved) {
+            savePaymentMethod(newBidRequest.getPaymentMethodToBeSaved(), bidderId);
+        }
+        if (isNewPaymentMethod) {    
+            return processBidPaymentWithNewPaymentMethod(newBidRequest, bidderId, auction);
+        }
+        throw new MissingPaymentMethodException();
     }
 
-    public void deleteCreditCard(Integer creditCardId, Integer accountId) 
+    public String processBidPaymentWithExistingPaymentMethod(Integer paymentMethodId, Integer bidderId, Auction auction) 
         throws 
-            CreditCardNotFoundException, 
-            CreditCardNotYoursException
+            NoSuchPaymentMethodException,
+            PaymentMethodNotYoursException
     {
-        CreditCard creditCard = creditCardRepository.findById(creditCardId).orElseThrow(
-            () -> new CreditCardNotFoundException());
-        if (!creditCard.getAccountId().equals(accountId)) {
-            throw new CreditCardNotYoursException();
+        final Iban iban = ibanRepository.findById(paymentMethodId).orElse(null);
+        final CreditCard creditCard = creditCardRepository.findById(paymentMethodId).orElse(null);
+        final boolean isIban = iban != null;
+        final boolean isCreditCard = creditCard != null;
+        final boolean isCorrect = isIban || isCreditCard;
+        if (!isCorrect) {
+            throw new NoSuchPaymentMethodException();
         }
-        creditCardRepository.deleteById(creditCardId);
+        if (isIban && !iban.getAccountId().equals(bidderId)) {
+            throw new PaymentMethodNotYoursException();
+        }
+        if (isCreditCard && !creditCard.getAccountId().equals(bidderId)) {
+            throw new PaymentMethodNotYoursException();
+        }
+        return isIban ? iban.getIbanString() : "<<dummy-credit-card-refound-token>>";
+    }
+
+    public String processBidPaymentWithNewPaymentMethod(NewBidRequest newBidRequest, Integer bidderId, Auction auction) 
+        throws 
+            MissingPaymentMethodException 
+    {
+        final boolean isOneTimePaymentMethod = newBidRequest.getOneTimePaymentMethod() != null;
+        final boolean isPaymentMethodToBeSaved = newBidRequest.getPaymentMethodToBeSaved() != null;
+        assert isOneTimePaymentMethod || isPaymentMethodToBeSaved;
+        NewPaymentMethodRequest paymentMethodRequest = isOneTimePaymentMethod ? 
+            newBidRequest.getOneTimePaymentMethod() : newBidRequest.getPaymentMethodToBeSaved();
+        if (paymentMethodRequest instanceof NewCreditCreditCardRequest) {
+            return "<<dummy-credit-card-refound-token>>";
+        } else if (paymentMethodRequest instanceof NewIbanRequest newIbanRequest) {
+            return newIbanRequest.getIbanString();
+        }
+        else {
+            throw new MissingPaymentMethodException();
+        }
+    }
+
+    public void processAuctionClosingPayment(Auction auction, AuctionClosingRequest auctionFinalizationRequest) 
+        throws 
+            NoSuchPaymentMethodException, 
+            PaymentMethodNotYoursException, 
+            MissingPaymentMethodException 
+    {
+        final boolean isOneTimePaymentMethod = auctionFinalizationRequest.getOneTimePaymentMethod() != null;
+        final boolean isPaymentMethodToBeSaved = auctionFinalizationRequest.getPaymentMethodToBeSaved() != null;
+        final boolean isNewPaymentMethod = isOneTimePaymentMethod || isPaymentMethodToBeSaved;
+        final boolean isExistingPaymentMethod = auctionFinalizationRequest.getPaymentMethodId() != null;
+        if (!isNewPaymentMethod && !isExistingPaymentMethod) {
+            throw new MissingPaymentMethodException();
+        }
+        if (isExistingPaymentMethod) {
+            processAuctionClosingPaymentWithExistingPaymentMethod(auctionFinalizationRequest.getPaymentMethodId(), auction);
+        }
+        if(isPaymentMethodToBeSaved) {
+            savePaymentMethod(auctionFinalizationRequest.getPaymentMethodToBeSaved(), auction.getCreatorId());
+        }
+        if (isNewPaymentMethod) {    
+            processAuctionClosingPaymentWithNewPaymentMethod(auctionFinalizationRequest, auction);
+        }
+    }
+
+    public void processAuctionClosingPaymentWithExistingPaymentMethod(Integer paymentMethodId, Auction auction) 
+        throws 
+            PaymentMethodNotYoursException, 
+            NoSuchPaymentMethodException 
+    {
+        final Iban iban = ibanRepository.findById(paymentMethodId).orElse(null);
+        final CreditCard creditCard = creditCardRepository.findById(paymentMethodId).orElse(null);
+        final boolean isIban = iban != null;
+        final boolean isCreditCard = creditCard != null;
+        final boolean isCorrect = isIban || isCreditCard;
+        if (!isCorrect) {
+            throw new NoSuchPaymentMethodException();
+        }
+        if (isIban && !iban.getAccountId().equals(auction.getCreatorId())) {
+            throw new PaymentMethodNotYoursException();
+        }
+        if (isCreditCard && !creditCard.getAccountId().equals(auction.getCreatorId())) {
+            throw new PaymentMethodNotYoursException();
+        }
+    }
+
+    public void processAuctionClosingPaymentWithNewPaymentMethod(AuctionClosingRequest auctionFinalizationRequest, Auction auction) 
+        throws 
+            NoSuchPaymentMethodException
+    {
+        final boolean isOneTimePaymentMethod = auctionFinalizationRequest.getOneTimePaymentMethod() != null;
+        final boolean isPaymentMethodToBeSaved = auctionFinalizationRequest.getPaymentMethodToBeSaved() != null;
+        assert isOneTimePaymentMethod || isPaymentMethodToBeSaved;
+        NewPaymentMethodRequest paymentMethodRequest = isOneTimePaymentMethod ? 
+            auctionFinalizationRequest.getOneTimePaymentMethod() : auctionFinalizationRequest.getPaymentMethodToBeSaved();
+        if (paymentMethodRequest instanceof NewCreditCreditCardRequest creditCardRequest) {
+            CreditCard creditCard = new CreditCard(creditCardRequest, auction.getCreatorId());
+            saveCreditCard(creditCard);
+        } else if (paymentMethodRequest instanceof NewIbanRequest newIbanRequest) {
+            Iban iban = new Iban(newIbanRequest, auction.getCreatorId());
+            saveIban(iban);
+        }
+        else {
+            throw new NoSuchPaymentMethodException();
+        }
+    }
+
+    public void deletePaymentMethod(Integer paymentMethodId, Integer accountId) 
+        throws 
+            NoSuchPaymentMethodException,
+            PaymentMethodNotYoursException 
+    {
+        final Iban iban = ibanRepository.findById(paymentMethodId).orElse(null);
+        final CreditCard creditCard = creditCardRepository.findById(paymentMethodId).orElse(null);
+        final boolean isIban = iban != null;
+        final boolean isCreditCard = creditCard != null;
+        final boolean isCorrect = isIban || isCreditCard;
+        if (!isCorrect) {
+            throw new NoSuchPaymentMethodException();
+        }
+        if (isIban && !iban.getAccountId().equals(accountId)) {
+            throw new PaymentMethodNotYoursException();
+        }
+        if (isCreditCard && !creditCard.getAccountId().equals(accountId)) {
+            throw new PaymentMethodNotYoursException();
+        }
+        if (isIban) {
+            deleteIban(iban);
+        }
+        if (isCreditCard) {
+            deleteCreditCard(creditCard);
+        }
     }
 }

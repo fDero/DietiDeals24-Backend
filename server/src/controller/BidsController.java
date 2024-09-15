@@ -3,7 +3,11 @@ package controller;
 import entity.Bid;
 import exceptions.AuctionNotActiveException;
 import exceptions.BidOnYourOwnAuctionException;
+import exceptions.MissingPaymentMethodException;
+import exceptions.NoAuctionWithSuchIdException;
 import exceptions.NoSuchAuctionException;
+import exceptions.NoSuchPaymentMethodException;
+import exceptions.PaymentMethodNotYoursException;
 import request.NewBidRequest;
 import response.BidsPack;
 import service.AuctionManagementService;
@@ -57,19 +61,24 @@ public class BidsController {
         throws 
             NoSuchAuctionException,
             AuctionNotActiveException,
-            BidOnYourOwnAuctionException
+            BidOnYourOwnAuctionException, 
+            NoAuctionWithSuchIdException, 
+            NoSuchPaymentMethodException, 
+            PaymentMethodNotYoursException, 
+            MissingPaymentMethodException
     {        
         auctionManagementService.updateStatuses();
         String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
-        String bidderId = jwtTokenProvider.getIdFromJWT(jwtToken);
+        String bidderIdStr = jwtTokenProvider.getIdFromJWT(jwtToken);
+        Integer bidderId = Integer.valueOf(bidderIdStr);
         Bid bid = new Bid();
-        bid.setBidderId(Integer.valueOf(bidderId));
+        bid.setBidderId(bidderId);
         bid.setAuctionId(newBidRequest.getAuctionId());
         bid.setBidAmount(newBidRequest.getBidAmount());
         bid.setBidDate(new java.sql.Timestamp(System.currentTimeMillis()));
         bidsManagementService.saveBid(bid);
-        String paymentRefoundToken = paymentsService.doPayment(newBidRequest, bidderId);
-        bid.setBidRefoundToken(paymentRefoundToken);
+        String paymentRefoundToken = paymentsService.processBidPayment(newBidRequest, bidderId);
+        bid.setPaymentInformations(paymentRefoundToken);
         return ResponseEntity.ok().body("done");
     }
 
@@ -81,14 +90,12 @@ public class BidsController {
     ) 
         throws 
             NoSuchAuctionException
-    {        
-        System.out.println("auctionId: " + auctionId);
+    {
         String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
         String userIdString = jwtTokenProvider.getIdFromJWT(jwtToken);
         Integer userId = Integer.valueOf(userIdString);
         List<Bid> bids = bidsManagementService.fetchBidsByAuctionAndUser(auctionId, userId);
         BidsPack bidsPack = new BidsPack(bids);
-        System.out.println("bidsPack: " + bidsPack);
         return ResponseEntity.ok().body(bidsPack);
     }
 }

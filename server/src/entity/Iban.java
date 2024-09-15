@@ -19,7 +19,8 @@ public class Iban {
     private String ibanString;
 
     @Id @Column(name = "iban_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "payment_methods_ids")
+    @SequenceGenerator(name = "payment_methods_seq", sequenceName = "payment_methods_ids", allocationSize = 50, initialValue = 1)
     private Integer id;
     
     public Iban(NewIbanRequest ibanRequest, Integer accountId) {

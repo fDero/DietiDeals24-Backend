@@ -4,9 +4,8 @@ CREATE TABLE Bid (
     bidder_id             INT NOT NULL,
     bid_amount            NUMERIC NOT NULL,
     bid_date              TIMESTAMP NOT NULL,
-    bid_iban_id           INT,
     bid_id                SERIAL PRIMARY KEY,
-    bid_refound_token     VARCHAR(50),
+    payment_informations  VARCHAR(50),
 
     FOREIGN KEY (auction_id) 
     REFERENCES Auction(auction_id),

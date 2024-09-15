@@ -10,6 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import entity.Auction;
 import entity.Bid;
+import exceptions.AuctionFinalizationRequest;
+import exceptions.AuctionNotActiveException;
+import exceptions.AuctionNotYoursException;
 import exceptions.NoSuchAuctionException;
 import repository.AuctionRepository;
 import request.NewAuctionRequest;
@@ -131,6 +134,32 @@ public class AuctionManagementService {
         if (category != null && macroCategory == null) {
             String inferredMacroCategory = metadataManagementService.getMacroCategoryForCategory(category);
             newAuctionRequest.setMacroCategory(inferredMacroCategory);
+        }
+    }
+
+    public void finalizeAuction(
+        Integer creatorId, 
+        AuctionFinalizationRequest auctionFinalizationRequest
+    ) 
+        throws 
+            NoSuchAuctionException,
+            AuctionNotYoursException,
+            AuctionNotActiveException,
+            InvalidAuctionFinalizationChoiceException 
+    {
+        Auction auction = auctionRepository.findById(auctionFinalizationRequest.getAuctionId())
+            .orElseThrow(() -> new NoSuchAuctionException());
+        if (auction.getCreatorId() != creatorId) {
+            throw new AuctionNotYoursException();
+        }
+        if (!auction.getStatus().equals("active")) {
+            throw new AuctionNotActiveException();
+        }
+        if (auctionFinalizationRequest.getChoice().equals("closed") ||
+            auctionFinalizationRequest.getChoice().equals("aborted")) {
+            auction.setStatus(auctionFinalizationRequest.getChoice());
+        } else {
+            throw new InvalidAuctionFinalizationChoiceException();
         }
     }
 }

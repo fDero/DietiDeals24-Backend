@@ -1,13 +1,18 @@
 package controller;
 
 import entity.Auction;
+import exceptions.AuctionFinalizationRequest;
+import exceptions.AuctionNotActiveException;
+import exceptions.AuctionNotYoursException;
 import exceptions.NoAuctionWithSuchIdException;
+import exceptions.NoSuchAuctionException;
 import repository.AuctionRepository;
 import request.NewAuctionRequest;
 import response.AuctionsPack;
 import response.SpecificAuctionPublicInformations;
 import service.AuctionFilteredSearchService;
 import service.AuctionManagementService;
+import service.InvalidAuctionFinalizationChoiceException;
 import authentication.JwtTokenManager;
 import org.springframework.http.ResponseEntity;
 import java.util.List;
@@ -90,5 +95,23 @@ public class AuctionsController {
         Auction auction = auctionsRepository.findById(id).orElseThrow(() -> new NoAuctionWithSuchIdException());
         SpecificAuctionPublicInformations auctionSpecificInformations = new SpecificAuctionPublicInformations(auction);
         return ResponseEntity.ok().body(auctionSpecificInformations);
+    }
+
+    @RequireJWT
+    @PostMapping(value = "/auctions/finalize", produces = "text/plain")
+    public ResponseEntity<String> finalizeAuction(
+        @RequestHeader(name = "Authorization") String authorizationHeader,
+        @RequestBody AuctionFinalizationRequest auctionFinalizationRequest
+    )  
+        throws  
+            NoSuchAuctionException,
+            AuctionNotYoursException,
+            AuctionNotActiveException,
+            InvalidAuctionFinalizationChoiceException 
+    {
+        String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
+        Integer creatorId = Integer.valueOf(jwtTokenProvider.getIdFromJWT(jwtToken));
+        auctionManagementService.finalizeAuction(creatorId, auctionFinalizationRequest);
+        return ResponseEntity.ok().body("done");
     }
 }

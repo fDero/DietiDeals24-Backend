@@ -89,7 +89,7 @@ public class PaymentProcessingService {
         final boolean isNewPaymentMethod = isOneTimePaymentMethod || isPaymentMethodToBeSaved;
         final boolean isExistingPaymentMethod = newBidRequest.getPaymentMethodId() != null;
         if (isExistingPaymentMethod) {
-            processBidPaymentWithExistingPaymentMethod(newBidRequest.getPaymentMethodId(), bidderId, auction);
+            return processBidPaymentWithExistingPaymentMethod(newBidRequest.getPaymentMethodId(), bidderId, auction);
         }
         if(isPaymentMethodToBeSaved) {
             savePaymentMethod(newBidRequest.getPaymentMethodToBeSaved(), bidderId);

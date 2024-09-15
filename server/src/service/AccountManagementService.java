@@ -92,7 +92,6 @@ public class AccountManagementService {
     {
         Account account = accountRepository.findById(Integer.valueOf(id)).orElseThrow(() -> new NoAccountWithSuchEmailException());
         List<PersonalLink> personalLinks = personalLinkRepository.findByAccountId(account.getId());
-        auctionManagementService.updateStatuses();
         long activeAuctionsCounter = auctionManagementService.countOnlineAuctionsByCreatorId(id);
         long pastAuctionsCounter = auctionManagementService.countPastAuctionsByCreatorId(id);
         long pastBidsCounter = bidsManagementService.countPastBidsByBidderId(id);

@@ -77,7 +77,6 @@ public class AuctionsController {
         @RequestParam(defaultValue = "")           String type,
         @RequestParam(defaultValue = "trending")   String policy
     )  {
-        auctionManagementService.updateStatuses();
         List<Auction> auctions = auctionFilteredSearchService
             .performPagedSearch(page, size)
             .searchingForAnAuctionOfType(type)
@@ -95,7 +94,6 @@ public class AuctionsController {
         throws 
             NoAuctionWithSuchIdException
     {
-        auctionManagementService.updateStatuses();
         Auction auction = auctionsRepository.findById(id).orElseThrow(() -> new NoAuctionWithSuchIdException());
         SpecificAuctionPublicInformations auctionSpecificInformations = new SpecificAuctionPublicInformations(auction);
         return ResponseEntity.ok().body(auctionSpecificInformations);

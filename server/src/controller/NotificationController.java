@@ -5,7 +5,6 @@ import exceptions.NoAccountWithSuchEmailException;
 import exceptions.NoSuchNotificationException;
 import exceptions.NotificationNotYoursException;
 import response.NotificationsPack;
-import service.AuctionManagementService;
 import service.NotificationManagementService;
 import org.springframework.http.ResponseEntity;
 import java.util.List;
@@ -26,19 +25,16 @@ import jakarta.transaction.Transactional;
 @RestController
 public class NotificationController {
     
-    private final AuctionManagementService auctionManagementService;
     private final NotificationManagementService notificationmanagementService;
     private final JwtTokenManager jwtTokenProvider;
 
     @Autowired
     public NotificationController(
         NotificationManagementService notificationmanagementService,
-        JwtTokenManager jwtTokenProvider,
-        AuctionManagementService auctionManagementService
+        JwtTokenManager jwtTokenProvider
     ) {
         this.notificationmanagementService = notificationmanagementService;
         this.jwtTokenProvider = jwtTokenProvider;
-        this.auctionManagementService = auctionManagementService;
     }
 
     @RequireJWT
@@ -52,7 +48,6 @@ public class NotificationController {
             NoAccountWithSuchEmailException, 
             NumberFormatException
     {
-        auctionManagementService.updateStatuses();
         int zeroIndexedPage = page - 1;
         PageRequest pageDescriptor = PageRequest.of(zeroIndexedPage, size);
         String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);

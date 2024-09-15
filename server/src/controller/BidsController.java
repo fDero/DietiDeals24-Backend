@@ -35,7 +35,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class BidsController {
 
     private final JwtTokenManager jwtTokenProvider;
-    private final AuctionManagementService auctionManagementService;
     private final BidsManagementService bidsManagementService;
     private final PaymentProcessingService paymentsService;
 
@@ -48,7 +47,6 @@ public class BidsController {
     ){
         this.jwtTokenProvider = jwtTokenProvider;
         this.bidsManagementService = bidsManagementService;
-        this.auctionManagementService = auctionManagementService;
         this.paymentsService = paymentsService;
     }
 
@@ -67,7 +65,6 @@ public class BidsController {
             PaymentMethodNotYoursException, 
             MissingPaymentMethodException
     {        
-        auctionManagementService.updateStatuses();
         String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
         String bidderIdStr = jwtTokenProvider.getIdFromJWT(jwtToken);
         Integer bidderId = Integer.valueOf(bidderIdStr);

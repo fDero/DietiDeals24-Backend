@@ -23,6 +23,7 @@ import repository.ActivityRepository;
 import repository.PasswordRepository;
 import repository.PersonalLinkRepository;
 import request.NewPersonalLinkRequest;
+import request.ProfileUpdateRequest;
 import utils.AccountProfileInformations;
 import utils.PendingAccountRegistration;
 
@@ -158,5 +159,29 @@ public class AccountManagementService {
             throw new LinkNotYoursException();
         }
         personalLinkRepository.deleteById(linkId);
+    }
+
+    public void updateProfile(ProfileUpdateRequest profileUpdateRequest, Integer accountId) 
+        throws 
+            NoAccountWithSuchIdException
+    {
+        Account account = accountRepository.findById(accountId).orElseThrow(
+            () -> new NoAccountWithSuchIdException());
+        if (profileUpdateRequest.getNewBio() != null) {
+            account.setBio(profileUpdateRequest.getNewBio());
+        }
+        if (profileUpdateRequest.getNewCountry() != null) {
+            account.setCountry(profileUpdateRequest.getNewCountry());
+        }
+        if (profileUpdateRequest.getNewCity() != null) {
+            account.setCity(profileUpdateRequest.getNewCity());
+        }
+        if (profileUpdateRequest.getNewEmail() != null) {
+            account.setEmail(profileUpdateRequest.getNewEmail());
+        }
+        if (profileUpdateRequest.getNewUsername() != null) {
+            account.setUsername(profileUpdateRequest.getNewUsername());
+        }
+        accountRepository.save(account);
     }
 }

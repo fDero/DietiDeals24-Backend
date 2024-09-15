@@ -3,9 +3,11 @@ package request;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 
-@Getter @AllArgsConstructor @NoArgsConstructor
+@Getter @AllArgsConstructor 
+@Setter @NoArgsConstructor
 public class AccountRegistrationRequest {
 
     private String name;

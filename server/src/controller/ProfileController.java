@@ -4,7 +4,9 @@ import entity.Activity;
 import exceptions.LinkNotFoundException;
 import exceptions.LinkNotYoursException;
 import exceptions.NoAccountWithSuchEmailException;
+import exceptions.NoAccountWithSuchIdException;
 import request.NewPersonalLinkRequest;
+import request.ProfileUpdateRequest;
 import response.AccountMinimalInformations;
 import response.AccountPrivateProfileInformations;
 import response.AccountPublicProfileInformations;
@@ -172,6 +174,22 @@ public class ProfileController {
         String accountIdString = jwtTokenProvider.getIdFromJWT(jwtToken);
         Integer accountId = Integer.valueOf(accountIdString);
         accountManagementService.deletePersonalLink(linkId, accountId);
+        return ResponseEntity.ok().body("done");
+    }
+
+    @RequireJWT
+    @PostMapping(value = "/profile/update", produces = "application/json")
+    public ResponseEntity<String> updateProfile(
+        @RequestHeader(name = "Authorization") String authorizationHeader,
+        @RequestBody ProfileUpdateRequest profileUpdateRequest
+    ) 
+        throws 
+            NoAccountWithSuchIdException
+    {
+        String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
+        String accountIdString = jwtTokenProvider.getIdFromJWT(jwtToken);
+        Integer accountId = Integer.valueOf(accountIdString);
+        accountManagementService.updateProfile(profileUpdateRequest, accountId);
         return ResponseEntity.ok().body("done");
     }
 }

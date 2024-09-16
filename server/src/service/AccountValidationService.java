@@ -36,7 +36,7 @@ public class AccountValidationService {
         this.geographicalAwarenessService = geographicalAwarenessService;
     }
 
-    public void validateEmail(String email, ArrayList<String> errors){
+    public void validateEmail(String email, List<String> errors){
         if (email == null){
             errors.add("email field is missing");
             return;
@@ -48,7 +48,7 @@ public class AccountValidationService {
         }
     }
 
-    public void validatePassword(String password, ArrayList<String> errors){
+    public void validatePassword(String password, List<String> errors){
         if (password == null){
             errors.add("missing password field (it must contains at least 8 characters, one special char, one lowercase and one uppercase letter)");
             return;
@@ -60,7 +60,7 @@ public class AccountValidationService {
         if (password.contains(" ")) errors.add("passwords can't contain spaces");
     }
 
-    public void validateBirthday(String birthdayString, ArrayList<String> errors){
+    public void validateBirthday(String birthdayString, List<String> errors){
         Timestamp eighteenYearsAgo = Timestamp.valueOf(LocalDate.now().atStartOfDay().minusYears(18));
         Timestamp birthday = null;
         if (birthdayString == null){
@@ -80,7 +80,7 @@ public class AccountValidationService {
         }
     }
 
-    public void validateGeographicalData(String country, String city, ArrayList<String> errors)
+    public void validateGeographicalData(String country, String city, List<String> errors)
         throws 
             UnrecognizedCityException, 
             UnrecognizedCountryException
@@ -127,7 +127,7 @@ public class AccountValidationService {
             );
         }
         
-        ArrayList<String> errors = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
         if (password.length() < 8) errors.add("password too short (must be at least 8 characters)");
         if (!password.matches(".*[A-Z].*")) errors.add("passwords must contain at least one uppercase letter");
         if (!password.matches(".*[a-z].*")) errors.add("passwords must contain at least one lowercase letter");

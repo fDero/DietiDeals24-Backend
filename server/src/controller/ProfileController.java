@@ -1,11 +1,14 @@
 package controller;
 
 import entity.Activity;
+import exceptions.AccountValidationException;
 import exceptions.LinkNotFoundException;
 import exceptions.LinkNotYoursException;
 import exceptions.NoAccountWithSuchEmailException;
 import exceptions.NoAccountWithSuchIdException;
+import exceptions.NoPasswordForThisAccountException;
 import request.NewPersonalLinkRequest;
+import request.PasswordChangeRequest;
 import request.ProfileUpdateRequest;
 import response.AccountMinimalInformations;
 import response.AccountPrivateProfileInformations;
@@ -190,6 +193,24 @@ public class ProfileController {
         String accountIdString = jwtTokenProvider.getIdFromJWT(jwtToken);
         Integer accountId = Integer.valueOf(accountIdString);
         accountManagementService.updateProfile(profileUpdateRequest, accountId);
+        return ResponseEntity.ok().body("done");
+    }
+
+    @RequireJWT
+    @PostMapping(value = "/profile/update/password", produces = "text/plain")
+    public ResponseEntity<String> updatePassword(
+        @RequestHeader(name = "Authorization") String authorizationHeader,
+        @RequestBody PasswordChangeRequest passwordChangeRequest
+    ) 
+        throws 
+            NoAccountWithSuchIdException, 
+            NoPasswordForThisAccountException, 
+            AccountValidationException
+    {
+        String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
+        String accountIdString = jwtTokenProvider.getIdFromJWT(jwtToken);
+        Integer accountId = Integer.valueOf(accountIdString);
+        accountManagementService.updatePassword(passwordChangeRequest, accountId);
         return ResponseEntity.ok().body("done");
     }
 }

@@ -1,6 +1,7 @@
 package service;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +19,13 @@ import exceptions.LinkNotFoundException;
 import exceptions.LinkNotYoursException;
 import exceptions.NoAccountWithSuchEmailException;
 import exceptions.NoAccountWithSuchIdException;
+import exceptions.NoPasswordForThisAccountException;
 import repository.AccountRepository;
 import repository.ActivityRepository;
 import repository.PasswordRepository;
 import repository.PersonalLinkRepository;
 import request.NewPersonalLinkRequest;
+import request.PasswordChangeRequest;
 import request.ProfileUpdateRequest;
 import utils.AccountProfileInformations;
 import utils.PendingAccountRegistration;
@@ -37,6 +40,7 @@ public class AccountManagementService {
     private final PersonalLinkRepository personalLinkRepository;
     private final BidsManagementService bidsManagementService;
     private final ActivityRepository activityRepository;
+    private final AccountValidationService accountValidationService;
 
     @Autowired
     public AccountManagementService(
@@ -46,7 +50,8 @@ public class AccountManagementService {
         PersonalLinkRepository personalLinkRepository,
         AuctionManagementService auctionManagementService,
         BidsManagementService bidsManagementService,
-        ActivityRepository activityRepository
+        ActivityRepository activityRepository,
+        AccountValidationService accountValidationService
     ) {
         this.accountRepository = accountRepository;
         this.passwordRepository = passwordRepository;
@@ -55,6 +60,7 @@ public class AccountManagementService {
         this.auctionManagementService = auctionManagementService;
         this.bidsManagementService = bidsManagementService;
         this.activityRepository = activityRepository;
+        this.accountValidationService = accountValidationService;
     }
 
     public Account performAccountLogin(String email, String candidatePlainTextPassword) 
@@ -182,5 +188,24 @@ public class AccountManagementService {
             account.setUsername(profileUpdateRequest.getNewUsername());
         }
         accountRepository.save(account);
+    }
+
+    public void updatePassword(PasswordChangeRequest passwordChangeRequest, Integer accountId) 
+        throws 
+            NoPasswordForThisAccountException, 
+            AccountValidationException 
+    {
+        Password password = passwordRepository.findPasswordByAccountId(accountId).orElseThrow(
+            () -> new NoPasswordForThisAccountException());
+            List<String> errors = new ArrayList<>();
+        accountValidationService.validatePassword(passwordChangeRequest.getNewPassword(), errors);
+        if (!errors.isEmpty()) {
+            throw new AccountValidationException(String.join(", ", errors));
+        }
+        String newSalt = encryptionService.generateRandomSalt();
+        String newHash = encryptionService.encryptPassword(passwordChangeRequest.getNewPassword(), newSalt);
+        password.setPasswordHash(newHash);
+        password.setPasswordSalt(newSalt);
+        passwordRepository.save(password);
     }
 }

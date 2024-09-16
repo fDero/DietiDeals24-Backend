@@ -28,7 +28,7 @@ public class UserPublicActivitySerializer extends JsonSerializer<UserPublicActiv
             Auction auction = new Auction(activity);
             gen.writeStartObject();
             AuctionSerializerHelper.serializeBasics(gen, auction);
-            AuctionSerializerHelper.serializeBidsData(gen, auction);
+            AuctionSerializerHelper.serializeBidsData(gen, auction, false);
             AuctionSerializerHelper.serializeJustOnePictureUrl(gen, auction);
             gen.writeEndObject();
         }

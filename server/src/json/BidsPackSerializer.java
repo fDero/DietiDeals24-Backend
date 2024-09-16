@@ -18,7 +18,6 @@ public class BidsPackSerializer extends JsonSerializer<BidsPack> {
     ) 
         throws IOException  
     {
-        System.out.println("BidsPackSerializer: serialize");
         System.out.println(bidsPack);
         System.out.println(bidsPack.getBids().size());
         gen.writeStartArray();

@@ -1,6 +1,7 @@
 package controller;
 
 import entity.Auction;
+import entity.Bid;
 import exceptions.AuctionClosingRequest;
 import exceptions.AuctionNotActiveException;
 import exceptions.AuctionNotPendingException;
@@ -13,9 +14,10 @@ import exceptions.PaymentMethodNotYoursException;
 import repository.AuctionRepository;
 import request.NewAuctionRequest;
 import response.AuctionsPack;
-import response.SpecificAuctionPublicInformations;
+import response.SpecificAuctionInformations;
 import service.AuctionFilteredSearchService;
 import service.AuctionManagementService;
+import service.BidsManagementService;
 import authentication.JwtTokenManager;
 import org.springframework.http.ResponseEntity;
 import java.util.List;
@@ -38,6 +40,7 @@ public class AuctionsController {
     private final AuctionRepository auctionsRepository;
     private final AuctionFilteredSearchService auctionFilteredSearchService;
     private final AuctionManagementService auctionManagementService;
+    private final BidsManagementService bidsManagementService;
     private final JwtTokenManager jwtTokenProvider;
 
 
@@ -46,12 +49,14 @@ public class AuctionsController {
         AuctionRepository auctionsRepository,
         AuctionFilteredSearchService auctionFilteredSearchService,
         AuctionManagementService auctionManagementService,
+        BidsManagementService bidsManagementService,
         JwtTokenManager jwtTokenProvider
     ){
         this.auctionFilteredSearchService = auctionFilteredSearchService;
         this.auctionManagementService = auctionManagementService;
         this.auctionsRepository = auctionsRepository;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.bidsManagementService = bidsManagementService;
     }
 
     @RequireJWT
@@ -87,15 +92,33 @@ public class AuctionsController {
         return ResponseEntity.ok().body(auctionsPack);
     }
 
-    @GetMapping(value = "/auctions/specific/public-view", produces = "application/json")
-    public ResponseEntity<SpecificAuctionPublicInformations> sendSpecificAuctionInformations(
+    @GetMapping(value = "/auctions/specific/guest-view", produces = "application/json")
+    public ResponseEntity<SpecificAuctionInformations> sendSpecificAuctionInformationsToAnyone(
         @RequestParam Integer id
     )  
         throws 
             NoAuctionWithSuchIdException
     {
         Auction auction = auctionsRepository.findById(id).orElseThrow(() -> new NoAuctionWithSuchIdException());
-        SpecificAuctionPublicInformations auctionSpecificInformations = new SpecificAuctionPublicInformations(auction);
+        SpecificAuctionInformations auctionSpecificInformations = new SpecificAuctionInformations(auction, null, null);
+        return ResponseEntity.ok().body(auctionSpecificInformations);
+    }
+
+    @RequireJWT
+    @GetMapping(value = "/auctions/specific/authenticated-view", produces = "application/json")
+    public ResponseEntity<SpecificAuctionInformations> sendSpecificAuctionInformationsToLoggedUsers(
+        @RequestHeader(name = "Authorization") String authorizationHeader,
+        @RequestParam Integer id
+    )  
+        throws 
+            NoAuctionWithSuchIdException
+    {
+        Auction auction = auctionsRepository.findById(id).orElseThrow(() -> new NoAuctionWithSuchIdException());
+        Integer auctionId = auction.getId();
+        String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
+        Integer requesterId = Integer.valueOf(jwtTokenProvider.getIdFromJWT(jwtToken));
+        List<Bid> requesterBids = bidsManagementService.fetchBidsByAuctionAndUser(auctionId, requesterId);
+        SpecificAuctionInformations auctionSpecificInformations = new SpecificAuctionInformations(auction, requesterId, requesterBids);
         return ResponseEntity.ok().body(auctionSpecificInformations);
     }
 

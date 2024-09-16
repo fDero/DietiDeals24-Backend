@@ -24,14 +24,14 @@ public abstract class AuctionSerializerHelper {
         gen.writeStringField("currency", auction.getCurrency());
     }
 
-    static void serializeBidsData(JsonGenerator gen, Auction auction) 
+    static void serializeBidsData(JsonGenerator gen, Auction auction, boolean addOwnerInfos) 
         throws IOException
     {
         gen.writeNumberField("maximumBid", auction.getMaximumBid());
         gen.writeNumberField("minimumBid", auction.getMinimumBid());
         boolean isNotSilent = !auction.getAuctionType().equals("silent");
         boolean isNotActive = !auction.getStatus().equals("active");
-        if (isNotSilent || isNotActive) { 
+        if (isNotSilent || isNotActive || addOwnerInfos) { 
             gen.writeNumberField("highestBidSoFar", auction.getHighestBidSoFar());
             gen.writeNumberField("lowestBidSoFar", auction.getLowestBidSoFar());
             gen.writeNumberField("numberOfBids", auction.getNumberOfBids());

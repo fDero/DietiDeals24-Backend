@@ -29,7 +29,7 @@ public class NotificationsPackSerializer extends JsonSerializer<NotificationsPac
             gen.writeObjectFieldStart("auction");
             Auction auction = notification.toAuction();
             AuctionSerializerHelper.serializeBasics(gen, auction);
-            AuctionSerializerHelper.serializeBidsData(gen, auction);
+            AuctionSerializerHelper.serializeBidsData(gen, auction, false);
             AuctionSerializerHelper.serializeJustOnePictureUrl(gen, auction);
             gen.writeEndObject();
             gen.writeEndObject();

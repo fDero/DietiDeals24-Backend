@@ -22,12 +22,13 @@ public class UserPrivateActivitySerializer extends JsonSerializer<UserPrivateAct
     {
         gen.writeStartArray();
         for (Activity activity : userPrivateActivity.getActivity()) {
-            Auction auction = new Auction(activity);
+            final Auction auction = new Auction(activity);
+            final boolean isOwner = userPrivateActivity.getRequesterId() == auction.getCreatorId();
             gen.writeStartObject();
             AuctionSerializerHelper.serializeBasics(gen, auction);
-            AuctionSerializerHelper.serializeBidsData(gen, auction);
+            AuctionSerializerHelper.serializeBidsData(gen, auction, isOwner);
             AuctionSerializerHelper.serializeJustOnePictureUrl(gen, auction);
-            if (userPrivateActivity.getRequesterId() != auction.getCreatorId()) {
+            if (!isOwner) {
                 gen.writeNumberField("ownBid", activity.getBidAmount());
             }
             gen.writeEndObject();

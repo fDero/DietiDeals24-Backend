@@ -193,19 +193,25 @@ public class AccountManagementService {
     public void updatePassword(PasswordChangeRequest passwordChangeRequest, Integer accountId) 
         throws 
             NoPasswordForThisAccountException, 
-            AccountValidationException 
+            AccountValidationException, AccessDeniedBadCredentialsException 
     {
-        Password password = passwordRepository.findPasswordByAccountId(accountId).orElseThrow(
+        Password dbPassword = passwordRepository.findPasswordByAccountId(accountId).orElseThrow(
             () -> new NoPasswordForThisAccountException());
             List<String> errors = new ArrayList<>();
         accountValidationService.validatePassword(passwordChangeRequest.getNewPassword(), errors);
         if (!errors.isEmpty()) {
             throw new AccountValidationException(String.join(", ", errors));
         }
+        String userProvidedOldPassword = passwordChangeRequest.getOldPassword();
+        String oldPasswordSalt = dbPassword.getPasswordSalt();
+        String userProvidedoldPasswordHash = encryptionService.encryptPassword(userProvidedOldPassword, oldPasswordSalt); 
+        if (!userProvidedoldPasswordHash.equals(dbPassword.getPasswordHash())) {
+            throw new AccessDeniedBadCredentialsException();
+        }
         String newSalt = encryptionService.generateRandomSalt();
         String newHash = encryptionService.encryptPassword(passwordChangeRequest.getNewPassword(), newSalt);
-        password.setPasswordHash(newHash);
-        password.setPasswordSalt(newSalt);
-        passwordRepository.save(password);
+        dbPassword.setPasswordHash(newHash);
+        dbPassword.setPasswordSalt(newSalt);
+        passwordRepository.save(dbPassword);
     }
 }

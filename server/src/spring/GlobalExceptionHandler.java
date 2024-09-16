@@ -107,4 +107,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleMissingPaymentMethodException(MissingPaymentMethodException ex){
         return new ResponseEntity<String>(ex.getMessage(), errorResponseHeaders, HttpStatus.UNPROCESSABLE_ENTITY);
     }
+
+    @ExceptionHandler(NoPasswordForThisAccountException.class)
+    public ResponseEntity<String> handleNoPasswordForThisAccountException(NoPasswordForThisAccountException ex){
+        return new ResponseEntity<String>(ex.getMessage(), errorResponseHeaders, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
 }

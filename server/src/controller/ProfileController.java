@@ -1,6 +1,7 @@
 package controller;
 
 import entity.Activity;
+import exceptions.AccessDeniedBadCredentialsException;
 import exceptions.AccountValidationException;
 import exceptions.LinkNotFoundException;
 import exceptions.LinkNotYoursException;
@@ -205,7 +206,8 @@ public class ProfileController {
         throws 
             NoAccountWithSuchIdException, 
             NoPasswordForThisAccountException, 
-            AccountValidationException
+            AccountValidationException, 
+            AccessDeniedBadCredentialsException
     {
         String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
         String accountIdString = jwtTokenProvider.getIdFromJWT(jwtToken);

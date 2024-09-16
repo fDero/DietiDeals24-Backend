@@ -4,12 +4,12 @@ import entity.Auction;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.domain.Pageable;
 import java.sql.Timestamp;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 
 @Repository
 public interface AuctionRepository extends JpaRepository<Auction, Integer> {
@@ -20,35 +20,29 @@ public interface AuctionRepository extends JpaRepository<Auction, Integer> {
 
     List<Auction> findAllByEndTimeAfterOrderByEndTimeAsc(Timestamp currentTime, Pageable pageable);
 
-    List<Auction> findAllByEndTimeAfterAndItemCategoryContainingAndItemNameContainingAndMacroCategoryContainingAndAuctionTypeContainingOrderByEndTimeAsc(
-        Timestamp currentTime, String itemCategory, String itemName, 
-        String auctionType, String macroCategory, Pageable pageable
-    );
-
-    List<Auction> findAllByEndTimeAfterAndItemCategoryContainingAndItemNameContainingAndMacroCategoryContainingAndAuctionTypeContainingOrderByNumberOfBidsDesc(
-        Timestamp currentTime, String itemCategory, String itemName, 
-        String auctionType, String macroCategory, Pageable pageable
-    );
-
-    default List<Auction> findActiveAuctionsFilteredExpiration(
+    @Query(
+        "SELECT a FROM Auction a WHERE a.endTime > CURRENT_TIMESTAMP AND a.itemCategory LIKE %:itemCategory% " +
+        "AND a.auctionType LIKE %:auctionType% AND a.macroCategory LIKE %:macroCategory% AND " +
+        "(UPPER(a.itemName) LIKE CONCAT('%', UPPER(:searchString), '%') OR UPPER(a.description) LIKE CONCAT('%', UPPER(:searchString), '%')) " +
+        "ORDER BY CASE WHEN UPPER(a.itemName) LIKE CONCAT('%', UPPER(:searchString), '%') THEN 0 ELSE 1 END, a.endTime ASC"
+    )
+    List<Auction> findActiveAuctionsFilteredExpiration(
         String itemCategory, String searchString, 
         String auctionType, String macroCategory, 
         Pageable pageable
-    ) {
-        return findAllByEndTimeAfterAndItemCategoryContainingAndItemNameContainingAndMacroCategoryContainingAndAuctionTypeContainingOrderByEndTimeAsc(
-                new Timestamp(System.currentTimeMillis()), itemCategory, searchString, auctionType, macroCategory, pageable
-        );
-    };
+    );
 
-    default List<Auction> findActiveAuctionsFilteredTrending(
+    @Query(
+        "SELECT a FROM Auction a WHERE a.endTime > CURRENT_TIMESTAMP AND a.itemCategory LIKE %:itemCategory% " +
+        "AND a.auctionType LIKE %:auctionType% AND a.macroCategory LIKE %:macroCategory% AND " +
+        "(UPPER(a.itemName) LIKE CONCAT('%', UPPER(:searchString), '%') OR UPPER(a.description) LIKE CONCAT('%', UPPER(:searchString), '%')) " +
+        "ORDER BY CASE WHEN UPPER(a.itemName) LIKE CONCAT('%', UPPER(:searchString), '%') THEN 0 ELSE 1 END, a.numberOfBids DESC"
+    )
+    List<Auction> findActiveAuctionsFilteredTrending(
         String itemCategory, String searchString, 
         String auctionType, String macroCategory, 
         Pageable pageable
-    ) {
-        return findAllByEndTimeAfterAndItemCategoryContainingAndItemNameContainingAndMacroCategoryContainingAndAuctionTypeContainingOrderByNumberOfBidsDesc(
-                new Timestamp(System.currentTimeMillis()), itemCategory, searchString, auctionType, macroCategory, pageable
-        );
-    };
+    );
 
     long countByStatusAndCreatorId(String status, int creatorId);
 

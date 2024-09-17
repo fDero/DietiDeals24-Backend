@@ -1,6 +1,5 @@
 package controller;
 
-import entity.Account;
 import entity.Activity;
 import exceptions.AccessDeniedBadCredentialsException;
 import exceptions.AccountValidationException;
@@ -8,9 +7,7 @@ import exceptions.LinkNotFoundException;
 import exceptions.LinkNotYoursException;
 import exceptions.NoAccountWithSuchEmailException;
 import exceptions.NoAccountWithSuchIdException;
-import exceptions.NoAccountWithSuchUsernameException;
 import exceptions.NoPasswordForThisAccountException;
-import request.ForgotPasswordInitializationRequest;
 import request.NewPersonalLinkRequest;
 import request.PasswordChangeRequest;
 import request.ProfileUpdateRequest;
@@ -20,17 +17,11 @@ import response.AccountPublicProfileInformations;
 import response.UserPrivateActivity;
 import response.UserPublicActivity;
 import service.AccountManagementService;
-import service.EmailService;
 import utils.AccountProfileInformations;
-import utils.PendingForgotPasswordReset;
-
 import org.springframework.http.ResponseEntity;
 import java.util.List;
 import authentication.JwtTokenManager;
-import service.ForgotPasswordConfirmationCache;
-import service.RandomStringGenerationService;
 
-import org.springframework.beans.factory.annotation.Value;
 import authentication.RequireJWT;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,26 +39,14 @@ public class ProfileController {
 
     private final AccountManagementService accountManagementService;
     private final JwtTokenManager jwtTokenProvider;
-    private final ForgotPasswordConfirmationCache forgotPasswordPendingConfirmationCache;
-    private final EmailService emailService;
-    private final String frontendUrl;
-    private final RandomStringGenerationService randomStringGenerationService;
 
     @Autowired
     public ProfileController(
-        @Value("${dietideals24.frontend.url}") String frontendUrl,
-        RandomStringGenerationService randomStringGenerationService,
         AccountManagementService accountManagementService,
-        JwtTokenManager jwtTokenProvider, 
-        ForgotPasswordConfirmationCache forgotPasswordPendingConfirmationCache,
-        EmailService emailService
+        JwtTokenManager jwtTokenProvider
     ){
         this.accountManagementService = accountManagementService;
         this.jwtTokenProvider = jwtTokenProvider;
-        this.forgotPasswordPendingConfirmationCache = forgotPasswordPendingConfirmationCache;
-        this.emailService = emailService;
-        this.frontendUrl = frontendUrl;
-        this.randomStringGenerationService = randomStringGenerationService;
     }
 
     @RequireJWT
@@ -234,36 +213,5 @@ public class ProfileController {
         Integer accountId = Integer.valueOf(accountIdString);
         accountManagementService.updatePassword(passwordChangeRequest, accountId);
         return ResponseEntity.ok().body("done");
-    }
-
-    @PostMapping(value = "/profile/forgot/password", produces = "text/plain")
-    public ResponseEntity<String> initializeForgotPassword(
-        @RequestBody ForgotPasswordInitializationRequest forgotPasswordInitializationRequest
-    ) 
-        throws 
-            NoAccountWithSuchEmailException,
-            NoAccountWithSuchUsernameException
-    {
-        final boolean haveUsername = forgotPasswordInitializationRequest.getUsername() != null;
-        final boolean haveEmail = forgotPasswordInitializationRequest.getEmail() != null;
-        if (!haveUsername && !haveEmail) {
-            return ResponseEntity.badRequest().body("You must provide either an email or a username");
-        }
-        if (haveUsername && haveEmail) {
-            return ResponseEntity.badRequest().body("You must provide either an email or a username, not both");
-        }
-        final Account account = haveUsername? 
-            accountManagementService.fetchAccountByUsername(forgotPasswordInitializationRequest.getUsername()) :
-            accountManagementService.fetchAccountByEmail(forgotPasswordInitializationRequest.getUsername()) ;
-        String authToken = randomStringGenerationService.generateRandomString(10);
-        PendingForgotPasswordReset pendingForgotPasswordReset = new PendingForgotPasswordReset(
-            account.getEmail(),
-            account.getUsername(),
-            account.getId(),
-            authToken
-        );
-        forgotPasswordPendingConfirmationCache.store(pendingForgotPasswordReset, 5);
-        emailService.sendForgotPasswordEmail(account, frontendUrl + "/reset-password/" + account.getId() + "/" + authToken);
-        return ResponseEntity.ok().body("an email was sennt to: " + account.getEmail());
     }
 }

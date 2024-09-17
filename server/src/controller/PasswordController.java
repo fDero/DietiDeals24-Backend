@@ -18,6 +18,11 @@ import org.springframework.http.HttpStatus;
 import authentication.JwtTokenManager;
 
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -77,8 +82,16 @@ public class PasswordController {
             authToken
         );
         forgotPasswordPendingConfirmationCache.store(pendingForgotPasswordReset, 5);
-        emailService.sendForgotPasswordEmail(account, frontendUrl + "/reset-password/" + account.getId() + "/" + authToken);
-        return ResponseEntity.ok().body("an email was sennt to: " + account.getEmail());
+
+        try{
+          String encodedAccountId = URLEncoder.encode(account.getId().toString(), StandardCharsets.UTF_8.toString());
+          String encodedAuthToken = URLEncoder.encode(authToken, StandardCharsets.UTF_8.toString());
+          emailService.sendForgotPasswordEmail(account, frontendUrl + "/reset-password/" + encodedAccountId + "/" + encodedAuthToken);
+        } catch (UnsupportedEncodingException e) {
+          e.printStackTrace();
+          throw new RuntimeException("Encoding error", e);
+        }
+        return ResponseEntity.ok().body("an email was sent to: " + account.getEmail());
     }
 
     @PostMapping(value = "/password/forgot/reset/finalize", produces = "text/plain")

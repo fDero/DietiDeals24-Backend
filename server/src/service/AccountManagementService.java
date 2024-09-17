@@ -25,6 +25,7 @@ import repository.AccountRepository;
 import repository.ActivityRepository;
 import repository.PasswordRepository;
 import repository.PersonalLinkRepository;
+import request.ForgotPasswordResetRequest;
 import request.NewPersonalLinkRequest;
 import request.PasswordChangeRequest;
 import request.ProfileUpdateRequest;
@@ -224,6 +225,25 @@ public class AccountManagementService {
         String userProvidedoldPasswordHash = encryptionService.encryptPassword(userProvidedOldPassword, oldPasswordSalt); 
         if (!userProvidedoldPasswordHash.equals(dbPassword.getPasswordHash())) {
             throw new AccessDeniedBadCredentialsException();
+        }
+        String newSalt = encryptionService.generateRandomSalt();
+        String newHash = encryptionService.encryptPassword(passwordChangeRequest.getNewPassword(), newSalt);
+        dbPassword.setPasswordHash(newHash);
+        dbPassword.setPasswordSalt(newSalt);
+        passwordRepository.save(dbPassword);
+    }
+
+    public void updatePassword(ForgotPasswordResetRequest passwordChangeRequest, Integer accountId) 
+        throws 
+            NoPasswordForThisAccountException, 
+            AccountValidationException, AccessDeniedBadCredentialsException 
+    {
+        Password dbPassword = passwordRepository.findPasswordByAccountId(accountId).orElseThrow(
+            () -> new NoPasswordForThisAccountException());
+            List<String> errors = new ArrayList<>();
+        accountValidationService.validatePassword(passwordChangeRequest.getNewPassword(), errors);
+        if (!errors.isEmpty()) {
+            throw new AccountValidationException(String.join(", ", errors));
         }
         String newSalt = encryptionService.generateRandomSalt();
         String newHash = encryptionService.encryptPassword(passwordChangeRequest.getNewPassword(), newSalt);

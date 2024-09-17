@@ -26,13 +26,13 @@ public class ForgotPasswordConfirmationCache {
     }
 
     public void store(PendingForgotPasswordReset registrationData, int expirationInMinutes) {
-        String key = cacheKeyPrefix + registrationData.getEmail();
+        String key = cacheKeyPrefix + registrationData.getAccountId();
         String json = jsonConverter.encode(registrationData);
         redis.opsForValue().set(key, json, expirationInMinutes, TimeUnit.MINUTES);
     }
 
-    public PendingForgotPasswordReset retrieve(String email) {
-        String key = cacheKeyPrefix + email;
+    public PendingForgotPasswordReset retrieve(Integer accountId) {
+        String key = cacheKeyPrefix + accountId;
         String retrieved = redis.opsForValue().get(key);
         return (retrieved != null)
             ? jsonConverter.decode(retrieved, PendingForgotPasswordReset.class)

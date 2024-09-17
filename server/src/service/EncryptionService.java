@@ -2,25 +2,24 @@ package service;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Random;
 
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
 @Service 
 public class EncryptionService {
 
+    private final RandomStringGenerationService randomStringGenerationService;
+
+    @Autowired
+    public EncryptionService(RandomStringGenerationService randomStringGenerationService) {
+        this.randomStringGenerationService = randomStringGenerationService;
+    }
+
     public String generateRandomSalt() {
-        int stringLength = 10;
-        String characterSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        Random random = new Random();
-        StringBuilder randomString = new StringBuilder(stringLength);
-        for (int i = 0; i < stringLength; i++) {
-            int randomIndex = random.nextInt(characterSet.length());
-            randomString.append(characterSet.charAt(randomIndex));
-        }
-        return randomString.toString();
+        return randomStringGenerationService.generateRandomString(10);
     }
 
     public String encryptPassword(@NotNull String plainTextPassword, @NotNull String salt) {

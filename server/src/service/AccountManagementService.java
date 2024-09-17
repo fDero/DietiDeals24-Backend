@@ -19,6 +19,7 @@ import exceptions.LinkNotFoundException;
 import exceptions.LinkNotYoursException;
 import exceptions.NoAccountWithSuchEmailException;
 import exceptions.NoAccountWithSuchIdException;
+import exceptions.NoAccountWithSuchUsernameException;
 import exceptions.NoPasswordForThisAccountException;
 import repository.AccountRepository;
 import repository.ActivityRepository;
@@ -61,6 +62,22 @@ public class AccountManagementService {
         this.bidsManagementService = bidsManagementService;
         this.activityRepository = activityRepository;
         this.accountValidationService = accountValidationService;
+    }
+
+    public Account fetchAccountByUsername(String username) 
+        throws 
+            NoAccountWithSuchUsernameException
+    {
+        return accountRepository.findAccountByUsername(username)
+            .orElseThrow(() -> new NoAccountWithSuchUsernameException());
+    }
+
+    public Account fetchAccountByEmail(String email)
+        throws 
+            NoAccountWithSuchEmailException
+    {
+        return accountRepository.findAccountByEmail(email)
+            .orElseThrow(() -> new NoAccountWithSuchEmailException());
     }
 
     public Account performAccountLogin(String email, String candidatePlainTextPassword) 

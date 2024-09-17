@@ -12,6 +12,7 @@ services:
       DIETIDEALS24_KEYSTORE_PASSWORD: ${DIETIDEALS24_KEYSTORE_PASSWORD}
       DIETIDEALS24_KEYSTORE_ALIAS: dietideals24
       DIETIDEALS24_FRONTEND_URL: "https://localhost:4200"
+      DIETIDEALS24_LOGO_URL: "https://localhost:4200/assets/logo.svg"
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "dietideals24passw"
       POSTGRES_HOST: "database"

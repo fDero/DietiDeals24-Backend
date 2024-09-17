@@ -82,7 +82,7 @@ public class RegistrationController {
         String confirmationCode = this.generateConfirmationCode();
         PendingAccountRegistration registrationData = new PendingAccountRegistration(request, confirmationCode);
         pendingAccountsCacheService.store(registrationData,10);
-        emailService.sendRegistrationConfirmEmail(request.getEmail(), confirmationCode);
+        emailService.sendRegistrationConfirmEmail(request.getEmail(), request.getUsername(), confirmationCode);
         return ResponseEntity.ok().body("an email was sent to: " + request.getEmail());
     }
 

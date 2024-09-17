@@ -92,19 +92,18 @@ public class PasswordController {
             AccountValidationException, 
             AccessDeniedBadCredentialsException
     {
-        final String email = forgotPasswordInitializationRequest.getEmail();
+        final Integer accountId = forgotPasswordInitializationRequest.getUserId();
         final String authToken = forgotPasswordInitializationRequest.getAuthToken();
-        final PendingForgotPasswordReset pendingForgotPasswordReset = forgotPasswordPendingConfirmationCache.retrieve(email);
+        final PendingForgotPasswordReset pendingForgotPasswordReset = forgotPasswordPendingConfirmationCache.retrieve(accountId);
         if (pendingForgotPasswordReset == null) {
             return ResponseEntity.badRequest().body("No pending reset password request for this email");
         }
-        if (!pendingForgotPasswordReset.getEmail().equals(email)) {
+        if (!pendingForgotPasswordReset.getAccountId().equals(accountId)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email");
         } 
         if (!pendingForgotPasswordReset.getAuthToken().equals(authToken)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid auth token");
         }
-        final Integer accountId = pendingForgotPasswordReset.getAccountId();
         accountManagementService.updatePassword(forgotPasswordInitializationRequest, accountId);
         return ResponseEntity.ok().body("done");
     }

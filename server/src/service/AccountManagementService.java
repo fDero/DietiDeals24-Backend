@@ -73,6 +73,14 @@ public class AccountManagementService {
             .orElseThrow(() -> new NoAccountWithSuchUsernameException());
     }
 
+    public Account fetchAccountById(Integer id) 
+        throws 
+            NoAccountWithSuchIdException
+    {
+        return accountRepository.findById(id)
+            .orElseThrow(() -> new NoAccountWithSuchIdException());
+    }
+
     public Account fetchAccountByEmail(String email)
         throws 
             NoAccountWithSuchEmailException

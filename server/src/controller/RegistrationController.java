@@ -33,6 +33,7 @@ import exceptions.TooManyConfirmationCodes;
 import exceptions.UnrecognizedCityException;
 import exceptions.UnrecognizedCountryException;
 import exceptions.WrongConfirmationCodeException;
+import jakarta.mail.MessagingException;
 
 @Transactional
 @RestController
@@ -76,7 +77,8 @@ public class RegistrationController {
             AccountValidationException, 
             AccountAlreadyExistsException,
             UnrecognizedCityException, 
-            UnrecognizedCountryException 
+            UnrecognizedCountryException, 
+            MessagingException 
     {
         accountValidationService.validateAccountRegistrationRequest(request);
         String confirmationCode = this.generateConfirmationCode();

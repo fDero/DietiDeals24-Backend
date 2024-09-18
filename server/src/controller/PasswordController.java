@@ -6,6 +6,7 @@ import exceptions.AccountValidationException;
 import exceptions.NoAccountWithSuchEmailException;
 import exceptions.NoAccountWithSuchUsernameException;
 import exceptions.NoPasswordForThisAccountException;
+import jakarta.mail.MessagingException;
 import request.ForgotPasswordInitializationRequest;
 import request.ForgotPasswordResetRequest;
 import service.AccountManagementService;
@@ -16,15 +17,10 @@ import utils.PendingForgotPasswordReset;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import authentication.JwtTokenManager;
+import java.io.UnsupportedEncodingException;
 
 import org.springframework.transaction.annotation.Transactional;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,12 +32,10 @@ public class PasswordController {
     private final AccountManagementService accountManagementService;
     private final ForgotPasswordConfirmationCache forgotPasswordPendingConfirmationCache;
     private final EmailService emailService;
-    private final String frontendUrl;
     private final RandomStringGenerationService randomStringGenerationService;
 
     @Autowired
     public PasswordController(
-        @Value("${dietideals24.frontend.url}") String frontendUrl,
         RandomStringGenerationService randomStringGenerationService,
         AccountManagementService accountManagementService,
         JwtTokenManager jwtTokenProvider, 
@@ -51,7 +45,6 @@ public class PasswordController {
         this.accountManagementService = accountManagementService;
         this.forgotPasswordPendingConfirmationCache = forgotPasswordPendingConfirmationCache;
         this.emailService = emailService;
-        this.frontendUrl = frontendUrl;
         this.randomStringGenerationService = randomStringGenerationService;
     }
 
@@ -61,7 +54,9 @@ public class PasswordController {
     ) 
         throws 
             NoAccountWithSuchEmailException,
-            NoAccountWithSuchUsernameException
+            NoAccountWithSuchUsernameException, 
+            UnsupportedEncodingException, 
+            MessagingException
     {
         final boolean haveUsername = forgotPasswordInitializationRequest.getUsername() != null;
         final boolean haveEmail = forgotPasswordInitializationRequest.getEmail() != null;
@@ -82,15 +77,7 @@ public class PasswordController {
             authToken
         );
         forgotPasswordPendingConfirmationCache.store(pendingForgotPasswordReset, 5);
-
-        try{
-          String encodedAccountId = URLEncoder.encode(account.getId().toString(), StandardCharsets.UTF_8.toString());
-          String encodedAuthToken = URLEncoder.encode(authToken, StandardCharsets.UTF_8.toString());
-          emailService.sendForgotPasswordEmail(account, frontendUrl + "/reset-password/" + encodedAccountId + "/" + encodedAuthToken);
-        } catch (UnsupportedEncodingException e) {
-          e.printStackTrace();
-          throw new RuntimeException("Encoding error", e);
-        }
+        emailService.sendForgotPasswordEmail(account, authToken);
         return ResponseEntity.ok().body("an email was sent to: " + account.getEmail());
     }
 

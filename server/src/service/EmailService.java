@@ -28,18 +28,21 @@ public class EmailService {
     private final TemplateEngine templateEngine;
     private final String logoUrl;
     private final String frontendUrl;
+    private final String dietideals24Email;
 
     @Autowired
     public EmailService(
         JavaMailSender mailSender, 
         TemplateEngine templateEngine,
         @Value("${dietideals24.logo.url}") String logoUrl,
-        @Value("${dietideals24.frontend.url}") String frontendUrl
+        @Value("${dietideals24.frontend.url}") String frontendUrl,
+        @Value("${dietideals24.email}") String dietideals24Email
     ) {
         this.mailSender = mailSender;
         this.templateEngine = templateEngine;
         this.logoUrl = logoUrl;
         this.frontendUrl = frontendUrl;
+        this.dietideals24Email = dietideals24Email;
     }
 
     @Async
@@ -85,6 +88,23 @@ public class EmailService {
         templateModel.put("message", message);
         templateModel.put("respondUrl", respondUrl);
         this.sendHtmlEmail(receiver.getEmail(), "You have a new message", "user-message", templateModel);
+    }
+
+    @Async
+    public void sendReportEmail(Auction auction, String message, Account reporter, Account reportee) 
+        throws 
+            MessagingException, 
+            UnsupportedEncodingException 
+    {
+        String encodedAuctionId = URLEncoder.encode(auction.getId().toString(), StandardCharsets.UTF_8.toString());
+        String respondUrl = frontendUrl + "/message/" + encodedAuctionId;
+        HashMap<String, Object> templateModel = new HashMap<>();
+        templateModel.put("sender", reporter.getUsername());
+        templateModel.put("receiver", reportee.getUsername());
+        templateModel.put("auctionTitle", auction.getItemName());
+        templateModel.put("message", message);
+        templateModel.put("respondUrl", respondUrl);
+        this.sendHtmlEmail(dietideals24Email, "An user has been reported", "user-report", templateModel);
     }
 
     private void sendHtmlEmail(

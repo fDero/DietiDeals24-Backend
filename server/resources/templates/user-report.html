@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{base}">
+<head>
+    <meta charset="UTF-8"/>
+    <title>DietiDeals24, user report</title>
+    <style>
+      @media (prefers-color-scheme: dark){
+          .message-box{
+              border: 1px solid #3f3f46 !important;
+          }
+      }
+  </style>
+</head>
+<body>
+    <div layout:fragment="content">
+        <h2>User report</h2>
+        <p>Report from: <strong th:text="${sender}">sender</strong></p>
+        <p>Reported user: <strong th:text="${receiver}">receiver</strong></p>
+        <p>Auction: <strong th:text="${title}">auction</strong></p>
+        <p>Below the message: </p>
+        <div class="message-box" style="padding: 10px; border: 1px solid #cbd5e1">
+          <p th:text="${message}">Message</p>
+        </div>
+    </div>
+</body>
+</html>

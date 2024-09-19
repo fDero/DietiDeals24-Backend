@@ -3,6 +3,7 @@ package service;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -44,11 +45,16 @@ public class AuctionManagementService {
         this.paymentProcessingService = paymentProcessingService;
     }
 
-    @Transactional @Async
+    @Async
+    @Transactional
     @Scheduled(fixedRate = 1*60000)
     public void updateStatuses() {
         System.out.println("Updating auction statuses");
+        final LocalDateTime threeDaysAgo = LocalDateTime.now().minusDays(3);
+        final Timestamp expirationTime = Timestamp.valueOf(threeDaysAgo);
         auctionRepository.markAuctionsAsPending();
+        auctionRepository.markAuctionsAsRejectedForExpiration(expirationTime);
+        auctionRepository.markAuctionsAsAbortedForMissingBids();
     }
 
     public Auction findById(Integer auctionId) 

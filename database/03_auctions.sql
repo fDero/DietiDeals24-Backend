@@ -29,7 +29,7 @@ CREATE TABLE Auction (
     start_time          TIMESTAMP NOT NULL,
     end_time            TIMESTAMP NOT NULL,
     item_name           TEXT NOT NULL,
-    description         TEXT NOT NULL,
+    description         TEXT,
     pictures_urls       TEXT[],
     auction_type        TEXT NOT NULL,
     currency            VARCHAR(3) NOT NULL,

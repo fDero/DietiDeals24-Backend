@@ -121,18 +121,8 @@ public class AccountValidationService {
         throws 
             AccountValidationException
     {
-        if (password == null){
-            throw new AccountValidationException(
-                "missing password field (it must contains at least 8 characters, one special char, one lowercase and one uppercase letter)"
-            );
-        }
-        
         List<String> errors = new ArrayList<>();
-        if (password.length() < 8) errors.add("password too short (must be at least 8 characters)");
-        if (!password.matches(".*[A-Z].*")) errors.add("passwords must contain at least one uppercase letter");
-        if (!password.matches(".*[a-z].*")) errors.add("passwords must contain at least one lowercase letter");
-        if (!password.matches(".*\\W.*"))   errors.add("passwords must contain at least one special character");
-        if (password.contains(" ")) errors.add("passwords can't contain spaces");
+        validatePassword(password, errors);
         if (!errors.isEmpty()) {
             throw new AccountValidationException(String.join(", ", errors));
         }

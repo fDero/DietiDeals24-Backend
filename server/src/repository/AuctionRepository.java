@@ -60,4 +60,12 @@ public interface AuctionRepository extends JpaRepository<Auction, Integer> {
     @Modifying
     @Query("UPDATE Auction a SET a.status = 'pending' WHERE a.status = 'active' AND a.endTime < CURRENT_TIMESTAMP")
     void markAuctionsAsPending();
+
+    @Modifying
+    @Query("UPDATE Auction a SET a.status = 'aborted' WHERE a.status = 'pending' AND a.currentBidderId is NULL")
+    void markAuctionsAsAbortedForMissingBids();
+
+    @Modifying
+    @Query("UPDATE Auction a SET a.status = 'rejected' WHERE a.status = 'pending' AND a.endTime < :expirationTime")
+    void markAuctionsAsRejectedForExpiration(Timestamp expirationTime);
 }

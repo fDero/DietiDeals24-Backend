@@ -14,9 +14,9 @@
 <body>
     <div layout:fragment="content">
         <h2>User report</h2>
-        <p>Report from: <strong th:text="${sender}">sender</strong></p>
-        <p>Reported user: <strong th:text="${receiver}">receiver</strong></p>
-        <p>Auction: <strong th:text="${title}">auction</strong></p>
+        <p>Report from: <strong th:text="${reportee}"></strong> <strong th:text="${reporteeId}"></strong></p>
+        <p>Reported user: <strong th:text="${reportedUser}"></strong> <strong th:text="${reportedUserId}"></strong></p>
+        <p>Auction: <strong th:text="${auctionTitle}"></strong> <strong th:text="${auctionId}"></strong></p>
         <p>Below the message: </p>
         <div class="message-box" style="padding: 10px; border: 1px solid #cbd5e1">
           <p th:text="${message}">Message</p>

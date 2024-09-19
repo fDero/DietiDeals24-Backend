@@ -86,7 +86,7 @@ public class EmailService {
         templateModel.put("receiver", receiver.getUsername());
         templateModel.put("auctionTitle", auction.getItemName());
         templateModel.put("message", message);
-        templateModel.put("respondUrl", respondUrl);
+        templateModel.put("replyUrl", respondUrl);
         this.sendHtmlEmail(receiver.getEmail(), "You have a new message", "user-message", templateModel);
     }
 
@@ -99,11 +99,13 @@ public class EmailService {
         String encodedAuctionId = URLEncoder.encode(auction.getId().toString(), StandardCharsets.UTF_8.toString());
         String respondUrl = frontendUrl + "/message/" + encodedAuctionId;
         HashMap<String, Object> templateModel = new HashMap<>();
-        templateModel.put("sender", reporter.getUsername());
-        templateModel.put("receiver", reportee.getUsername());
+        templateModel.put("reportee", reporter.getUsername());
+        templateModel.put("reporteeId", reporter.getId());
+        templateModel.put("reportedUser", reportee.getUsername());
+        templateModel.put("reportedUserId", reportee.getId());
         templateModel.put("auctionTitle", auction.getItemName());
+        templateModel.put("auctionId", auction.getId());
         templateModel.put("message", message);
-        templateModel.put("respondUrl", respondUrl);
         this.sendHtmlEmail(dietideals24Email, "An user has been reported", "user-report", templateModel);
     }
 

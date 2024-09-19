@@ -97,14 +97,13 @@ public class EmailService {
             UnsupportedEncodingException 
     {
         String encodedAuctionId = URLEncoder.encode(auction.getId().toString(), StandardCharsets.UTF_8.toString());
-        String respondUrl = frontendUrl + "/message/" + encodedAuctionId;
         HashMap<String, Object> templateModel = new HashMap<>();
         templateModel.put("reportee", reporter.getUsername());
         templateModel.put("reporteeId", reporter.getId());
         templateModel.put("reportedUser", reportee.getUsername());
         templateModel.put("reportedUserId", reportee.getId());
         templateModel.put("auctionTitle", auction.getItemName());
-        templateModel.put("auctionId", auction.getId());
+        templateModel.put("auctionId", encodedAuctionId);
         templateModel.put("message", message);
         this.sendHtmlEmail(dietideals24Email, "An user has been reported", "user-report", templateModel);
     }

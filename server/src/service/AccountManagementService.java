@@ -244,7 +244,8 @@ public class AccountManagementService {
     public void updatePassword(ForgotPasswordResetRequest passwordChangeRequest, Integer accountId) 
         throws 
             NoPasswordForThisAccountException, 
-            AccountValidationException, AccessDeniedBadCredentialsException 
+            AccountValidationException, 
+            AccessDeniedBadCredentialsException 
     {
         Password dbPassword = passwordRepository.findPasswordByAccountId(accountId).orElseThrow(
             () -> new NoPasswordForThisAccountException());

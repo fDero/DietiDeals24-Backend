@@ -68,7 +68,7 @@ public class PasswordController {
         }
         final Account account = haveUsername? 
             accountManagementService.fetchAccountByUsername(forgotPasswordInitializationRequest.getUsername()) :
-            accountManagementService.fetchAccountByEmail(forgotPasswordInitializationRequest.getUsername()) ;
+            accountManagementService.fetchAccountByEmail(forgotPasswordInitializationRequest.getEmail());
         String authToken = randomStringGenerationService.generateRandomString(10);
         PendingForgotPasswordReset pendingForgotPasswordReset = new PendingForgotPasswordReset(
             account.getEmail(),
@@ -86,11 +86,9 @@ public class PasswordController {
         @RequestBody ForgotPasswordResetRequest forgotPasswordInitializationRequest
     ) 
         throws 
-            NoAccountWithSuchEmailException,
-            NoAccountWithSuchUsernameException, 
             NoPasswordForThisAccountException, 
             AccountValidationException, 
-            AccessDeniedBadCredentialsException
+            AccessDeniedBadCredentialsException 
     {
         final Integer accountId = forgotPasswordInitializationRequest.getUserId();
         final String authToken = forgotPasswordInitializationRequest.getAuthToken();

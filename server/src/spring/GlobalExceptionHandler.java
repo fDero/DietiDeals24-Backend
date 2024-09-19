@@ -112,4 +112,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleNoPasswordForThisAccountException(NoPasswordForThisAccountException ex){
         return new ResponseEntity<String>(ex.getMessage(), errorResponseHeaders, HttpStatus.UNPROCESSABLE_ENTITY);
     }
+
+    @ExceptionHandler(NoAccountWithSuchUsernameException.class)
+    public ResponseEntity<String> handleNoAccountWithSuchUsernameException(NoAccountWithSuchUsernameException ex){
+        return new ResponseEntity<String>(ex.getMessage(), errorResponseHeaders, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
 }

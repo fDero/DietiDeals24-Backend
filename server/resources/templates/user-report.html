@@ -11,16 +11,16 @@
       }
   </style>
 </head>
-<body>
+  <body>
     <div layout:fragment="content">
-        <h2>User report</h2>
-        <p>Report from: <strong th:text="${reportee}"></strong> (id: <strong th:text="${reporteeId}"></strong>)</p>
-        <p>Reported user: <strong th:text="${reportedUser}"></strong> (id: <strong th:text="${reportedUserId}"></strong>)</p>
-        <p>Auction: <strong th:text="${auctionTitle}"></strong> (id: <strong th:text="${auctionId}"></strong>)</p>
-        <p>Below the message: </p>
-        <div class="message-box" style="padding: 10px; border: 1px solid #cbd5e1">
-          <p th:text="${message}">Message</p>
-        </div>
+      <h2>User report</h2>
+      <p>Report from: <strong th:text="${reportee}"></strong> (id: <strong th:text="${reporteeId}"></strong>)</p>
+      <p>Reported user: <strong th:text="${reportedUser}"></strong> (id: <strong th:text="${reportedUserId}"></strong>)</p>
+      <p>Auction: <strong th:text="${auctionTitle}"></strong> (id: <strong th:text="${auctionId}"></strong>)</p>
+      <p>Below the message: </p>
+      <div class="message-box" style="padding: 10px; border: 1px solid #cbd5e1">
+        <p th:text="${message}">Message</p>
+      </div>
     </div>
-</body>
+  </body>
 </html>

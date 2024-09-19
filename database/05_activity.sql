@@ -61,7 +61,8 @@ BEGIN
                     b.bid_amount > a.bid_amount
                 )
             )
-        );
+        )
+    ORDER BY a.end_time DESC;
 END;
 $$
 LANGUAGE plpgsql;

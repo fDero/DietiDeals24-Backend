@@ -46,7 +46,7 @@ BEGIN
     WHERE
         (   
             (include_current_deals AND (a.status = 'active' OR a.status = 'pending')) OR
-            (include_past_deals AND a.status = 'closed')
+            (include_past_deals AND (a.status = 'closed' OR a.status = 'rejected'))
         ) 
         AND 
         (

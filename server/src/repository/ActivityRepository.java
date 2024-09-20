@@ -14,7 +14,7 @@ public interface ActivityRepository extends JpaRepository<Activity, Integer> {
     @Query(
         value = 
             "SELECT * FROM get_user_activities(:userId, :includePastDeals, " +
-            ":includeCurrentDeals, :includeAuctions, :includeBids)", 
+            ":includeCurrentDeals, :includeAuctions, :includeBids) ", 
         nativeQuery = 
             true
     )

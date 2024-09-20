@@ -142,16 +142,16 @@ public class AccountManagementService {
 
     public List<Activity> fetchAccountActivityByUserId(
         Integer userId, 
-        long pageNumber,
-        long pageSize,
+        long page,
+        long size,
         boolean includePastDeals, 
         boolean includeCurrentDeals, 
         boolean includeAuctions,
         boolean includeBids
     ) 
     {
-        long zeroIndexedpageNumber = pageNumber - 1;
-        Pageable pageable = PageRequest.of((int) zeroIndexedpageNumber, (int) pageSize);
+        long zeroIndexedpageNumber = page - 1;
+        Pageable pageable = PageRequest.of((int) zeroIndexedpageNumber, (int) size);
         return activityRepository.findUserActivityByUserById(
             userId, 
             includePastDeals, 

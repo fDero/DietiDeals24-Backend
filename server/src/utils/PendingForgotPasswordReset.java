@@ -2,15 +2,17 @@ package utils;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 @Getter @AllArgsConstructor
-@Setter @ToString
+@Setter @NoArgsConstructor
+@ToString
 public class PendingForgotPasswordReset {
     
-    private final String email;
-    private final String username;
-    private final Integer accountId;
-    private final String authToken;
+    private String email;
+    private String username;
+    private Integer accountId;
+    private String authToken;
 }

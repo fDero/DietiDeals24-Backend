@@ -86,15 +86,15 @@ public class ProfileController {
     @GetMapping(value = "/profile/activity/past-deals/public-view", produces = "application/json")
     public ResponseEntity<UserPublicActivity> sendPublicPastDealsInformations(
         @RequestParam(required = true)         Integer id,
-        @RequestParam(defaultValue = "1")      Integer pageNumber,
-        @RequestParam(defaultValue = "10")     Integer pageSize,
+        @RequestParam(defaultValue = "1")      Integer page,
+        @RequestParam(defaultValue = "10")     Integer size,
         @RequestParam(defaultValue = "true")   Boolean includeAuctions,
         @RequestParam(defaultValue = "true")   Boolean includeBids
     ) {
         List<Activity> activities = accountManagementService.fetchAccountActivityByUserId(
             id, 
-            pageNumber,
-            pageSize, 
+            page,
+            size, 
             true, 
             false, 
             includeAuctions, 
@@ -109,13 +109,13 @@ public class ProfileController {
     @GetMapping(value = "/profile/activity/current-deals/public-view", produces = "application/json")
     public ResponseEntity<UserPublicActivity> sendPublicCurrentDealsInformations(
         @RequestParam(required = true)        Integer id,
-        @RequestParam(defaultValue = "1")     Integer pageNumber,
-        @RequestParam(defaultValue = "10")    Integer pageSize
+        @RequestParam(defaultValue = "1")     Integer page,
+        @RequestParam(defaultValue = "10")    Integer size
     ) {
         List<Activity> activities = accountManagementService.fetchAccountActivityByUserId(
             id, 
-            pageNumber,
-            pageSize, 
+            page,
+            size, 
             false, 
             true, 
             true, 
@@ -129,8 +129,8 @@ public class ProfileController {
     @GetMapping(value = "/profile/activity/custom/owner-view", produces = "application/json")
     public ResponseEntity<UserPrivateActivity> sendPrivateActivityInformations(
         @RequestHeader(name = "Authorization") String  authorizationHeader,
-        @RequestParam(defaultValue = "1")      Integer pageNumber,
-        @RequestParam(defaultValue = "10")     Integer pageSize,
+        @RequestParam(defaultValue = "1")      Integer page,
+        @RequestParam(defaultValue = "10")     Integer size,
         @RequestParam(defaultValue = "false")  Boolean includePastDeals,
         @RequestParam(defaultValue = "true")   Boolean includeCurrentDeals,
         @RequestParam(defaultValue = "true")   Boolean includeAuctions,
@@ -140,8 +140,8 @@ public class ProfileController {
         Integer id = Integer.valueOf(jwtTokenProvider.getIdFromJWT(jwtToken));
         List<Activity> activities = accountManagementService.fetchAccountActivityByUserId(
             id, 
-            pageNumber,
-            pageSize, 
+            page,
+            size, 
             includePastDeals,
             includeCurrentDeals,
             includeAuctions,

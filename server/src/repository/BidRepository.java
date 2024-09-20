@@ -26,6 +26,7 @@ public interface BidRepository extends JpaRepository<Bid, Integer> {
     }
 
     default long countPastBidsByBidderId(Integer bidderId) {
-        return countBidsByBidderIdAndAuctionStatus(bidderId, "closed");
+        return countBidsByBidderIdAndAuctionStatus(bidderId, "closed") +
+            countBidsByBidderIdAndAuctionStatus(bidderId, "rejected");
     }
 }

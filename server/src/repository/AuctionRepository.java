@@ -49,7 +49,8 @@ public interface AuctionRepository extends JpaRepository<Auction, Integer> {
     long countByStatusAndCurrentBidderId(String status, int currentBidderId);
 
     default long countPastAuctionsByCreatorId(Integer id) {
-        return countByStatusAndCreatorId("closed", id);
+        return countByStatusAndCreatorId("closed", id)
+            + countByStatusAndCreatorId("rejected", id);
     }
 
     default long countOnlineAuctionsByCreatorId(Integer id) {

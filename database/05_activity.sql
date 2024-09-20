@@ -50,9 +50,9 @@ BEGIN
         ) 
         AND 
         (
-            (include_auctions AND a.creator_id = user_id )OR 
+            (include_auctions AND a.creator_id = user_id ) OR 
             (include_bids AND a.current_bidder_id = user_id) OR
-            (include_bids AND a.bidder_id = user_id AND status = 'active' AND NOT EXISTS (
+            (include_bids AND a.bidder_id = user_id AND a.status = 'active' AND a.auction_type = 'silent' AND NOT EXISTS (
                 SELECT b.bid_id 
                 FROM Bid b
                 WHERE 

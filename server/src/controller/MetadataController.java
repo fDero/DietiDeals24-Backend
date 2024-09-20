@@ -1,6 +1,8 @@
 package controller;
 
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
 import entity.Category;
@@ -42,8 +44,22 @@ public class MetadataController {
     
     @GetMapping(value = "/categories/trending", produces = "application/json")
     public ResponseEntity<TrendingCategoryPack> sendTreandingCategories(@RequestParam(defaultValue = "6") Integer amount) {
-        List<Category> categories = metadataGatheringService.fetchTrendingCategories(amount);
-        return ResponseEntity.ok().body(new TrendingCategoryPack(categories));
+        List<Category> allCategories = metadataGatheringService.fetchCategories();
+        List<Category> trendingCategories = metadataGatheringService.fetchTrendingCategories(amount);
+        List<Category> selectedCategories = new ArrayList<>(trendingCategories);
+        Iterator<Category> allCategoriesIterator = allCategories.iterator();
+        System.out.println("TR categories size: " + trendingCategories.size());
+        System.out.println("All categories size: " + allCategories.size());
+        System.out.println("Amount: " + amount);
+        System.out.println("All categories iterator has next: " + allCategoriesIterator.hasNext());
+        while (selectedCategories.size() < amount && allCategoriesIterator.hasNext()) {
+            Category category = allCategoriesIterator.next();
+            if (!selectedCategories.contains(category)) {
+                selectedCategories.add(category);
+            }
+        }
+        TrendingCategoryPack trendingCategoriesPack = new TrendingCategoryPack(selectedCategories);
+        return ResponseEntity.ok().body(trendingCategoriesPack);
     }
 
     @GetMapping(value = "/countries", produces = "application/json")

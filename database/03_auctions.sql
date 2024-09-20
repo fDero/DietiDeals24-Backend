@@ -52,9 +52,9 @@ RETURNS SETOF Category AS $$
 BEGIN
     RETURN QUERY
     SELECT c.*
-    FROM Category c 
-    LEFT JOIN Auction a ON c.item_category = a.item_category
+    FROM Category c LEFT JOIN Auction a ON c.item_category = a.item_category
     WHERE c.item_category != c.macro_category
+    AND a.status = 'active'
     GROUP BY c.category_id
     ORDER BY COUNT(c.category_id) DESC;
 END;

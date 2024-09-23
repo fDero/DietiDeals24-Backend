@@ -2,9 +2,9 @@
 package repository;
 
 import entity.Resource;
-
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import org.springframework.data.jpa.repository.Modifying;
@@ -20,4 +20,6 @@ public interface ResourceRepository extends JpaRepository<Resource, Integer> {
     @Modifying
     @Query(value = "DELETE FROM Resource r WHERE r.confirmationTimestamp = NULL AND r.uploadTimestamp < :resourceExpiration")
     void deleteObsoleteResources(Timestamp resourceExpiration);
+
+    Optional<Resource> findResourceByResourceKey(String resourceKey);
 }

@@ -213,6 +213,9 @@ public class AccountManagementService {
         if (profileUpdateRequest.getNewUsername() != null) {
             account.setUsername(profileUpdateRequest.getNewUsername());
         }
+        if (profileUpdateRequest.getNewProfilePictureUrl() != null) {
+            account.setProfilePictureUrl(profileUpdateRequest.getNewProfilePictureUrl());
+        }
         accountRepository.save(account);
     }
 

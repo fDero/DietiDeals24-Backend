@@ -8,6 +8,8 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.amazonaws.HttpMethod;
 import com.amazonaws.SdkClientException;
@@ -28,17 +30,23 @@ public class UploadedResourcesManagementService {
     
     private final AmazonS3 s3client;
     private final String bucketName;
+    private final String region;
+    private final String cloudfrontDomain;
     private final ResourceRepository resourceRepository;
 
     @Autowired
     public UploadedResourcesManagementService(
         @Value("${aws.s3.bucket-name}") String bucketName,
+        @Value("${aws.s3.region}") String region,
+        @Value("${aws.cloudfront.domain}") String cloudfrontDomain,
         AmazonS3 s3Service,
         ResourceRepository resourceRepository
     ) {
         this.s3client = s3Service;
         this.bucketName = bucketName;
         this.resourceRepository = resourceRepository;
+        this.region = region;
+        this.cloudfrontDomain = cloudfrontDomain;
     }
 
     private void saveResourceCreationRecord(URL url, String key) {
@@ -60,6 +68,30 @@ public class UploadedResourcesManagementService {
         URL url = s3client.generatePresignedUrl(generatePresignedUrlRequest);
         saveResourceCreationRecord(url, key);
         return url;
+    }
+
+    @Transactional
+    public String updateUrlAndKeepResource(String resourceUrl) {
+        final Timestamp currentTimestamp = Timestamp.from(Instant.now());
+        final String pattern = "/([^/?]+)(?:\\?|$)";
+        final Pattern r = Pattern.compile(pattern);
+        final Matcher m = r.matcher(resourceUrl);
+        if (!m.find()) {
+            throw new IllegalArgumentException("ill-formed url");
+        }
+        String key = m.group(1);
+        Resource resource = resourceRepository.findResourceByResourceKey(key)
+            .orElseThrow(() -> new IllegalArgumentException("invalid url"));
+        resource.setConfirmationTimestamp(currentTimestamp);
+        resourceRepository.save(resource);
+        return cloudfrontDomain + key;
+    }
+
+    @Transactional
+    public void updateUrlsAndKeepResources(String[] resourceUrls) {
+        for (String resourceUrl : resourceUrls) {
+            resourceUrl = updateUrlAndKeepResource(resourceUrl);
+        }
     }
 
     @Async

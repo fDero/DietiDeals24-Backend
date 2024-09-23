@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import service.UploadedResourcesManagementService;
 
 @Transactional
 @RestController
@@ -41,6 +42,7 @@ public class AuctionsController {
     private final AuctionFilteredSearchService auctionFilteredSearchService;
     private final AuctionManagementService auctionManagementService;
     private final BidsManagementService bidsManagementService;
+    private final UploadedResourcesManagementService uploadedResourcesManagementService;
     private final JwtTokenManager jwtTokenProvider;
 
 
@@ -50,12 +52,14 @@ public class AuctionsController {
         AuctionFilteredSearchService auctionFilteredSearchService,
         AuctionManagementService auctionManagementService,
         BidsManagementService bidsManagementService,
+        UploadedResourcesManagementService uploadedResourcesManagementService,
         JwtTokenManager jwtTokenProvider
     ){
         this.auctionFilteredSearchService = auctionFilteredSearchService;
         this.auctionManagementService = auctionManagementService;
         this.auctionsRepository = auctionsRepository;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.uploadedResourcesManagementService = uploadedResourcesManagementService;
         this.bidsManagementService = bidsManagementService;
     }
 
@@ -68,6 +72,7 @@ public class AuctionsController {
     {
         String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
         Integer creatorId = Integer.valueOf(jwtTokenProvider.getIdFromJWT(jwtToken));
+        uploadedResourcesManagementService.updateUrlsAndKeepResources(newAuctionRequest.getPicturesUrls());
         auctionManagementService.createNewAuction(creatorId, newAuctionRequest);
         return ResponseEntity.ok().body("done");
     }

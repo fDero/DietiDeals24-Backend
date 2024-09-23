@@ -9,6 +9,7 @@ import lombok.Setter;
 @Setter @NoArgsConstructor
 public class ProfileUpdateRequest {
 
+    private String newProfilePictureUrl;
     private String newBio;
     private String newCountry;
     private String newCity;

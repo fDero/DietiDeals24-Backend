@@ -2,7 +2,7 @@ package controller;
 
 import entity.Auction;
 import entity.Bid;
-import exceptions.AuctionClosingRequest;
+import request.AuctionClosingRequest;
 import exceptions.AuctionNotActiveException;
 import exceptions.AuctionNotPendingException;
 import exceptions.AuctionNotYoursException;
@@ -129,7 +129,7 @@ public class AuctionsController {
 
     @RequireJWT
     @PostMapping(value = "/auctions/close", produces = "text/plain")
-    public ResponseEntity<String> finalizeAuction(
+    public ResponseEntity<String> closeAuction(
         @RequestHeader(name = "Authorization") String authorizationHeader,
         @RequestBody AuctionClosingRequest auctionFinalizationRequest
     )  

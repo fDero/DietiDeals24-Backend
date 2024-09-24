@@ -41,7 +41,7 @@ public class PaymentController {
 
     @RequireJWT
     @GetMapping(value = "/payment-methods/list", produces = "application/json")
-    public ResponseEntity<PaymentDescriptorsPack> sendPrivateProfileInformations(
+    public ResponseEntity<PaymentDescriptorsPack> sendPaymentMethods(
         @RequestHeader(name = "Authorization") String authorizationHeader
     ) {
         String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);

@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import entity.Auction;
 import entity.Bid;
-import exceptions.AuctionClosingRequest;
+import request.AuctionClosingRequest;
 import exceptions.AuctionNotActiveException;
 import exceptions.AuctionNotPendingException;
 import exceptions.AuctionNotYoursException;

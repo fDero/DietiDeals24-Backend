@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import entity.Auction;
 import entity.CreditCard;
 import entity.Iban;
-import exceptions.AuctionClosingRequest;
+import request.AuctionClosingRequest;
 import exceptions.MissingPaymentMethodException;
 import exceptions.NoSuchPaymentMethodException;
 import exceptions.PaymentMethodNotYoursException;

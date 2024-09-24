@@ -84,7 +84,7 @@ public class UploadedResourcesManagementService {
             .orElseThrow(() -> new IllegalArgumentException("invalid url"));
         resource.setConfirmationTimestamp(currentTimestamp);
         resourceRepository.save(resource);
-        return cloudfrontDomain + key;
+        return cloudfrontDomain + "/" + key;
     }
 
     @Transactional

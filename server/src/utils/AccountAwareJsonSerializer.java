@@ -1,18 +1,19 @@
-package json;
+package utils;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonSerializer;
 import entity.Account;
 import entity.PersonalLink;
 import response.AccountPrivateProfileInformations;
 import response.AccountPublicProfileInformations;
 
-public abstract class AccountSerializerHelper {
+public abstract class AccountAwareJsonSerializer<T> extends JsonSerializer<T> {
 
     static public void serializeMinimalBasics(JsonGenerator gen, Account account)
-        throws IOException
+            throws IOException
     {
         gen.writeStringField("username", account.getUsername());
         gen.writeStringField("userId", account.getId().toString());
@@ -22,7 +23,7 @@ public abstract class AccountSerializerHelper {
     }
 
     static public void serializeFullBasics(JsonGenerator gen, Account account)
-        throws IOException
+            throws IOException
     {
         final LocalDateTime birthayLocalDateTime = account.getBirthday().toLocalDateTime();
         final String birthayString = birthayLocalDateTime.toLocalDate().toString();
@@ -32,10 +33,10 @@ public abstract class AccountSerializerHelper {
     }
 
     static public void serializePrivateInfomations(
-        JsonGenerator gen, 
-        AccountPrivateProfileInformations infos
+            JsonGenerator gen,
+            AccountPrivateProfileInformations infos
     )
-        throws IOException
+            throws IOException
     {
         final Account account = infos.getAccount();
         gen.writeStringField("email", account.getEmail());
@@ -47,27 +48,27 @@ public abstract class AccountSerializerHelper {
     }
 
     static public void serializePublicInformations(
-        JsonGenerator gen, 
-        AccountPublicProfileInformations infos
+            JsonGenerator gen,
+            AccountPublicProfileInformations infos
     )
-        throws IOException
+            throws IOException
     {
         gen.writeNumberField("onlineAuctionsCounter", infos.getOnlineAuctionsCounter());
         gen.writeNumberField("pastDealsCounter", infos.getPastDealsCounter());
     }
 
     static public void serializeBio(JsonGenerator gen, Account account)
-        throws IOException
+            throws IOException
     {
         gen.writeStringField("bio", account.getBio());
     }
 
     public static void serializeLinks(
-        List<PersonalLink> personalLinks, 
-        JsonGenerator gen
-    ) 
-        throws IOException 
-    {    
+            List<PersonalLink> personalLinks,
+            JsonGenerator gen
+    )
+            throws IOException
+    {
         gen.writeArrayFieldStart("links");
         for (PersonalLink link : personalLinks) {
             gen.writeStartObject();

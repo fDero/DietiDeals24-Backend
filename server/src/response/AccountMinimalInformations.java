@@ -1,19 +1,37 @@
 package response;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
+import com.fasterxml.jackson.core.JsonGenerator;
+import utils.AccountAwareJsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
 import entity.Account;
-import json.AccountMinimalInformationsSerializer;
+import java.io.IOException;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
-@JsonSerialize(using = AccountMinimalInformationsSerializer.class)
+@JsonSerialize(using = AccountMinimalInformations.class)
 @AllArgsConstructor @Getter 
 @NoArgsConstructor @Setter
-public class AccountMinimalInformations {
+public class AccountMinimalInformations extends AccountAwareJsonSerializer<AccountMinimalInformations> {
     
     private Account account;
+
+    @Override
+    public void serialize(
+        AccountMinimalInformations minimalAccountInformations,
+        JsonGenerator gen,
+        SerializerProvider serializers
+    )
+        throws
+            IOException
+    {
+        final Account account = minimalAccountInformations.getAccount();
+        gen.writeStartObject();
+        serializeMinimalBasics(gen, account);
+        gen.writeEndObject();
+    }
 }

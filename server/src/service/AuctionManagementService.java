@@ -124,7 +124,7 @@ public class AuctionManagementService {
         final boolean silent = newAuctionRequest.getAuctionType().equals("silent");
         final String category = newAuctionRequest.getItemCategory();
         final String macroCategory = newAuctionRequest.getMacroCategory();
-        if (endTime == null || endTime.before(new Timestamp(System.currentTimeMillis()))) {
+        if (endTime.before(new Timestamp(System.currentTimeMillis()))) {
             throw new IllegalArgumentException("Auction end time must be in the future");
         }
         if (maximumBid != null && maximumBid.compareTo(new BigDecimal(0)) < 0) {

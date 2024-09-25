@@ -89,8 +89,8 @@ public class UploadedResourcesManagementService {
 
     @Transactional
     public void updateUrlsAndKeepResources(String[] resourceUrls) {
-        for (String resourceUrl : resourceUrls) {
-            resourceUrl = updateUrlAndKeepResource(resourceUrl);
+        for (int i = 0; i < resourceUrls.length; i++) {
+            resourceUrls[i] = updateUrlAndKeepResource(resourceUrls[i]);
         }
     }
 

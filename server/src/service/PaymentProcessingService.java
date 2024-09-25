@@ -195,14 +195,9 @@ public class PaymentProcessingService {
         assert isOneTimePaymentMethod || isPaymentMethodToBeSaved;
         NewPaymentMethodRequest paymentMethodRequest = isOneTimePaymentMethod ? 
             auctionFinalizationRequest.getOneTimePaymentMethod() : auctionFinalizationRequest.getPaymentMethodToBeSaved();
-        if (paymentMethodRequest instanceof NewCreditCreditCardRequest creditCardRequest) {
-            CreditCard creditCard = new CreditCard(creditCardRequest, auction.getCreatorId());
-            saveCreditCard(creditCard);
-        } else if (paymentMethodRequest instanceof NewIbanRequest newIbanRequest) {
-            Iban iban = new Iban(newIbanRequest, auction.getCreatorId());
-            saveIban(iban);
-        }
-        else {
+        final boolean isCreditCard = paymentMethodRequest instanceof NewCreditCreditCardRequest;
+        final boolean isIban = paymentMethodRequest instanceof NewIbanRequest;
+        if (!isCreditCard && !isIban) {
             throw new NoSuchPaymentMethodException();
         }
     }

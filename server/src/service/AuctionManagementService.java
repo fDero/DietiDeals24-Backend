@@ -136,7 +136,7 @@ public class AuctionManagementService {
         if (minimumBid != null && maximumBid != null && minimumBid.compareTo(maximumBid) > 0) {
             throw new IllegalArgumentException("Minimum bid must be less than maximum bid");
         }
-        if (!geographicalAwarenessService.checkThatCityBelogsToCountry(country, city)) {
+        if (!geographicalAwarenessService.checkThatCityBelongsToCountry(country, city)) {
             throw new IllegalArgumentException("City does not belong to country");
         }
         if (!reverse && !silent) {

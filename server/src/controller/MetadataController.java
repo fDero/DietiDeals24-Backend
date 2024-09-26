@@ -43,7 +43,7 @@ public class MetadataController {
     }
     
     @GetMapping(value = "/categories/trending", produces = "application/json")
-    public ResponseEntity<TrendingCategoryPack> sendTreandingCategories(@RequestParam(defaultValue = "6") Integer amount) {
+    public ResponseEntity<TrendingCategoryPack> sendTrendingCategories(@RequestParam(defaultValue = "6") Integer amount) {
         List<Category> allCategories = metadataGatheringService.fetchCategories();
         List<Category> trendingCategories = metadataGatheringService.fetchTrendingCategories(amount);
         List<Category> selectedCategories = new ArrayList<>(trendingCategories);

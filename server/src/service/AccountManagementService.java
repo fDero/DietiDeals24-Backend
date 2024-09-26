@@ -122,7 +122,7 @@ public class AccountManagementService {
         throws 
             NoAccountWithSuchEmailException
     {
-        Account account = accountRepository.findById(Integer.valueOf(id)).orElseThrow(() -> new NoAccountWithSuchEmailException());
+        Account account = accountRepository.findById(id).orElseThrow(() -> new NoAccountWithSuchEmailException());
         List<PersonalLink> personalLinks = personalLinkRepository.findByAccountId(account.getId());
         long activeAuctionsCounter = auctionManagementService.countOnlineAuctionsByCreatorId(id);
         long pastAuctionsCounter = auctionManagementService.countPastAuctionsByCreatorId(id);

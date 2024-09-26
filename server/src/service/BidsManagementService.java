@@ -1,6 +1,7 @@
 package service;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,7 +38,7 @@ public class BidsManagementService {
             BidOnYourOwnAuctionException
     {
         Integer userId = bid.getBidderId();
-        if (auction.getCreatorId() == userId) {
+        if (Objects.equals(auction.getCreatorId(), userId)) {
             throw new BidOnYourOwnAuctionException();
         }
         if (!auction.getStatus().equals("active")) {

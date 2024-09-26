@@ -7,6 +7,7 @@ import java.net.http.HttpResponse;
 import java.util.Arrays;
 import java.util.List;
 
+import exceptions.GeographicalAwarenessFailureException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -34,7 +35,8 @@ public class GeographicalAwarenessService {
             GeographicalCountryDescriptor[] countries = gson.fromJson(jsonString, GeographicalCountryDescriptor[].class);
             List<GeographicalCountryDescriptor> europeanCountries = Arrays.asList(countries);
             return europeanCountries;
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new RuntimeException("Error while fetching European countries", e);
         }
     }
@@ -46,15 +48,17 @@ public class GeographicalAwarenessService {
         try {
             String jsonString = fetchCitiesFromCountryRaw(country_code);
             GeographicalCityDescriptor[] countries = gson.fromJson(jsonString, GeographicalCityDescriptor[].class);
-            List<GeographicalCityDescriptor> cities = Arrays.asList(countries);
-            return cities;
+            return Arrays.asList(countries);
         }
         catch (Exception e) {
             throw new UnrecognizedCountryException();
         }
     }
 
-    private String fetchEuropeanCountriesRaw() {
+    private String fetchEuropeanCountriesRaw()
+        throws
+            GeographicalAwarenessFailureException
+    {
         try (HttpClient httpClient = HttpClient.newHttpClient()) {
             HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("https://api.apilayer.com/geo/country/region/EU"))
@@ -62,15 +66,21 @@ public class GeographicalAwarenessService {
                 .header("apikey", key)
                 .build();
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            String jsonString = response.body();
-            return jsonString;
-        } catch (Exception e) {
-            throw new RuntimeException("Error while fetching European countries", e);
+            return response.body();
+        }
+        catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new GeographicalAwarenessFailureException();
+        }
+        catch (Exception e) {
+            throw new GeographicalAwarenessFailureException();
         }
     }
 
     private String fetchCitiesFromCountryRaw(String country_code)
-        throws UnrecognizedCountryException 
+        throws
+            UnrecognizedCountryException,
+            GeographicalAwarenessFailureException
     {
         try (HttpClient httpClient = HttpClient.newHttpClient()) {
                 HttpRequest request = HttpRequest.newBuilder()
@@ -79,19 +89,22 @@ public class GeographicalAwarenessService {
                         .header("apikey", key)
                         .build();
                 HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-                String jsonString = response.body();
-                return jsonString;
+            return response.body();
+        }
+        catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new GeographicalAwarenessFailureException();
         }
         catch (Exception e) {
             throw new UnrecognizedCountryException();
         }
     }
 
-    public boolean checkThatCityBelogsToCountry(String country_code, String city_name) {
+    public boolean checkThatCityBelongsToCountry(String countryCode, String cityName) {
         try {
-            List<GeographicalCityDescriptor> cities = fetchCitiesFromCountry(country_code);
+            List<GeographicalCityDescriptor> cities = fetchCitiesFromCountry(countryCode);
             for (GeographicalCityDescriptor city : cities) {
-                if (city.getName().equals(city_name)) {
+                if (city.getName().equals(cityName)) {
                     return true;
                 }
             }

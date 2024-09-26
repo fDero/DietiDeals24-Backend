@@ -2,30 +2,28 @@ package authentication;
 
 import java.time.Instant;
 import java.util.Date;
-import java.util.Random;
+
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.servlet.http.HttpServletRequest;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import utils.RandomStringGenerator;
 
 
 @Component
 public class JwtTokenManager {
 
-    private static final String secretHS512Key = generateSecretKey();
+    private final String secretHS512Key;
+    private final RandomStringGenerator randomStringGenerationService;
 
-    public static String generateSecretKey() {
-        int keyLength = 10;
-        String characterSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        Random random = new Random();
-        StringBuilder randomString = new StringBuilder(keyLength);
-        for (int i = 0; i < keyLength; i++) {
-            int randomIndex = random.nextInt(characterSet.length());
-            randomString.append(characterSet.charAt(randomIndex));
-        }
-        return randomString.toString();
+    @Autowired
+    JwtTokenManager(RandomStringGenerator randomStringGenerationService){
+        this.randomStringGenerationService = randomStringGenerationService;
+        secretHS512Key = randomStringGenerationService.generateRandomString(10);
     }
+
 
     public String generateToken(String id) {
         Date now = Date.from(Instant.now());

@@ -6,15 +6,16 @@ import java.security.NoSuchAlgorithmException;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import utils.RandomStringGenerator;
 
 
 @Service 
 public class EncryptionService {
 
-    private final RandomStringGenerationService randomStringGenerationService;
+    private final RandomStringGenerator randomStringGenerationService;
 
     @Autowired
-    public EncryptionService(RandomStringGenerationService randomStringGenerationService) {
+    public EncryptionService(RandomStringGenerator randomStringGenerationService) {
         this.randomStringGenerationService = randomStringGenerationService;
     }
 

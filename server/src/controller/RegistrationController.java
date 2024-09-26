@@ -1,7 +1,6 @@
 package controller;
 
 import entity.Account;
-import repository.PasswordRepository;
 import request.AccountRegistrationRequest;
 import request.RegistrationConfirmationRequest;
 import response.AccountMinimalInformations;
@@ -12,7 +11,6 @@ import org.springframework.http.HttpHeaders;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +28,7 @@ import exceptions.UnrecognizedCityException;
 import exceptions.UnrecognizedCountryException;
 import exceptions.WrongConfirmationCodeException;
 import jakarta.mail.MessagingException;
+import utils.RandomStringGenerator;
 
 @Transactional
 @RestController
@@ -40,6 +39,7 @@ public class RegistrationController {
     private final EmailService emailService;
     private final PendingAccountRegistrationCacheService pendingAccountsCacheService;
     private final JwtTokenManager jwtTokenProvider;
+    private final RandomStringGenerator randomStringGenerationService;
     
     @Autowired
     public RegistrationController(
@@ -47,24 +47,20 @@ public class RegistrationController {
         AccountManagementService accountManagementService,
         AccountValidationService accountValidationService,
         PendingAccountRegistrationCacheService pendingAccountsCacheService,
-        EncryptionService encryptionService,
-        JwtTokenManager jwtTokenProvider,
-        PasswordRepository passwordRepository
+        RandomStringGenerator randomStringGenerationService,
+        JwtTokenManager jwtTokenProvider
     ) {
         this.emailService = emailService;
         this.accountManagementService = accountManagementService;
         this.accountValidationService = accountValidationService;
         this.pendingAccountsCacheService = pendingAccountsCacheService;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.randomStringGenerationService = randomStringGenerationService;
     }
 
     @NotNull
     private String generateConfirmationCode(){
-        Random random = new Random();
-        StringBuilder randomGeneratedCode = new StringBuilder();
-        for (int i = 0; i < 5; i++)
-            randomGeneratedCode.append(random.nextInt(10));
-        return randomGeneratedCode.toString();
+        return randomStringGenerationService.generateRandomNumericalString(5);
     }
 
     @PostMapping(value = "/register/init", produces = "text/plain")

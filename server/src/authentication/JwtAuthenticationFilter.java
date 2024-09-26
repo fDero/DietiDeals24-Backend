@@ -13,7 +13,7 @@ import org.springframework.lang.NonNull;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private JwtTokenManager tokenProvider;
+    private final JwtTokenManager tokenProvider;
 
     public JwtAuthenticationFilter(JwtTokenManager tokenProvider) {
         this.tokenProvider = tokenProvider;

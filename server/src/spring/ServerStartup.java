@@ -12,7 +12,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @SpringBootApplication
 @EntityScan(basePackages = {"entity"})
 @EnableJpaRepositories(basePackages = {"repository"})
-@ComponentScan(basePackages = {"spring","service","controller", "authentication"})
+@ComponentScan(basePackages = {"spring","service","controller", "authentication", "utils"})
 @EnableAsync
 public class ServerStartup {
 

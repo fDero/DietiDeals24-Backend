@@ -12,7 +12,7 @@ import request.ForgotPasswordResetRequest;
 import service.AccountManagementService;
 import service.EmailService;
 import service.ForgotPasswordConfirmationCache;
-import service.RandomStringGenerationService;
+import utils.RandomStringGenerator;
 import utils.PendingForgotPasswordReset;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
@@ -32,11 +32,11 @@ public class PasswordController {
     private final AccountManagementService accountManagementService;
     private final ForgotPasswordConfirmationCache forgotPasswordPendingConfirmationCache;
     private final EmailService emailService;
-    private final RandomStringGenerationService randomStringGenerationService;
+    private final RandomStringGenerator randomStringGenerationService;
 
     @Autowired
     public PasswordController(
-        RandomStringGenerationService randomStringGenerationService,
+        RandomStringGenerator randomStringGenerationService,
         AccountManagementService accountManagementService,
         JwtTokenManager jwtTokenProvider, 
         ForgotPasswordConfirmationCache forgotPasswordPendingConfirmationCache,

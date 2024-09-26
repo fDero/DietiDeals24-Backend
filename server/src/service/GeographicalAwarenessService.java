@@ -55,8 +55,7 @@ public class GeographicalAwarenessService {
     }
 
     private String fetchEuropeanCountriesRaw() {
-        try {
-            HttpClient httpClient = HttpClient.newHttpClient();
+        try (HttpClient httpClient = HttpClient.newHttpClient()) {
             HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("https://api.apilayer.com/geo/country/region/EU"))
                 .GET()
@@ -73,16 +72,15 @@ public class GeographicalAwarenessService {
     private String fetchCitiesFromCountryRaw(String country_code)
         throws UnrecognizedCountryException 
     {
-        try {
-            HttpClient httpClient = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://api.apilayer.com/geo/country/cities/" + country_code))
-                .GET()
-                .header("apikey", key)
-                .build();
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            String jsonString = response.body();
-            return jsonString;
+        try (HttpClient httpClient = HttpClient.newHttpClient()) {
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(URI.create("https://api.apilayer.com/geo/country/cities/" + country_code))
+                        .GET()
+                        .header("apikey", key)
+                        .build();
+                HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+                String jsonString = response.body();
+                return jsonString;
         }
         catch (Exception e) {
             throw new UnrecognizedCountryException();

@@ -16,11 +16,9 @@ import utils.RandomStringGenerator;
 public class JwtTokenManager {
 
     private final String secretHS512Key;
-    private final RandomStringGenerator randomStringGenerationService;
 
     @Autowired
     JwtTokenManager(RandomStringGenerator randomStringGenerationService){
-        this.randomStringGenerationService = randomStringGenerationService;
         secretHS512Key = randomStringGenerationService.generateRandomString(10);
     }
 

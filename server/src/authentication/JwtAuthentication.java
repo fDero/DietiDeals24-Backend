@@ -12,12 +12,13 @@ public class JwtAuthentication implements Authentication {
 
     private final String token;
     private final String id;
-    private final HttpServletRequest request;
+    private final String requestString;
+    boolean isAuthenticated = true;
     
     JwtAuthentication(String token, String id, HttpServletRequest request){
         this.token = token;
         this.id = id;
-        this.request = request;
+        this.requestString = request.toString();
     }
 
     @Override
@@ -37,7 +38,7 @@ public class JwtAuthentication implements Authentication {
 
     @Override
     public Object getDetails() {
-        return request;
+        return requestString;
     }
 
     @Override
@@ -47,10 +48,12 @@ public class JwtAuthentication implements Authentication {
 
     @Override
     public boolean isAuthenticated() {
-        return true;
+        return isAuthenticated;
     }
 
     @Override
-    public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException { }
+    public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
+        this.isAuthenticated = isAuthenticated;
+    }
     
 }

@@ -34,7 +34,7 @@ public class SpecificAuctionInformations extends AuctionAwareJsonSerializer<Spec
         throws IOException
     {
         final Auction specificAuction = specificAuctionPublicInformations.getAuction();
-        final boolean isOwner = Objects.equals(auction.getCreatorId(), specificAuctionPublicInformations.getRequesterId());
+        final boolean isOwner = Objects.equals(specificAuction.getCreatorId(), specificAuctionPublicInformations.getRequesterId());
         gen.writeStartObject();
         serializeBasics(gen, specificAuction);
         serializeBidsData(gen, specificAuction, isOwner);

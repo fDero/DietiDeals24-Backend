@@ -23,7 +23,7 @@ public class ServerStartup {
         var context = SpringApplication.run(ServerStartup.class, args);
         Integer port = context.getBean(ServerInfo.class).getPort();
         String address = context.getBean(ServerInfo.class).getAddress();
-        logger.info("\n\nServer startup success!");
+        logger.info("Server startup success!");
         logger.info("operating with ip: \"{}\"", address);
         logger.info("operating on port: \"{}\"", port);
     }

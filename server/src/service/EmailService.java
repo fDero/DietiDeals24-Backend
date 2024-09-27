@@ -50,7 +50,6 @@ public class EmailService {
         throws 
             MessagingException 
     {
-        System.out.println("Sending verification email to: " + email + " with code: " + authCode);
         HashMap<String, Object> templateModel = new HashMap<>();
         templateModel.put("username", username);
         templateModel.put("code", authCode);
@@ -63,10 +62,9 @@ public class EmailService {
             UnsupportedEncodingException, 
             MessagingException 
     {
-        String encodedAccountId = URLEncoder.encode(account.getId().toString(), StandardCharsets.UTF_8.toString());
-        String encodedAuthToken = URLEncoder.encode(authToken, StandardCharsets.UTF_8.toString());
+        String encodedAccountId = URLEncoder.encode(account.getId().toString(), StandardCharsets.UTF_8);
+        String encodedAuthToken = URLEncoder.encode(authToken, StandardCharsets.UTF_8);
         String resetLink = frontendUrl + "/reset-password/" + encodedAccountId + "/" + encodedAuthToken;
-        System.out.println("Sending email to: " + account.getEmail() + " with resetLink: " + resetLink);
         HashMap<String, Object> templateModel = new HashMap<>();
         templateModel.put("username", account.getUsername());
         templateModel.put("resetLink", resetLink);
@@ -79,7 +77,7 @@ public class EmailService {
             UnsupportedEncodingException, 
             MessagingException 
     {
-        String encodedAuctionId = URLEncoder.encode(auction.getId().toString(), StandardCharsets.UTF_8.toString());
+        String encodedAuctionId = URLEncoder.encode(auction.getId().toString(), StandardCharsets.UTF_8);
         String respondUrl = frontendUrl + "/message/" + encodedAuctionId;
         HashMap<String, Object> templateModel = new HashMap<>();
         templateModel.put("sender", sender.getUsername());

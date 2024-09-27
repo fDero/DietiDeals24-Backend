@@ -2,6 +2,7 @@ package response;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import utils.AuctionAwareJsonSerializer;
@@ -32,13 +33,13 @@ public class SpecificAuctionInformations extends AuctionAwareJsonSerializer<Spec
     )
         throws IOException
     {
-        final Auction auction = specificAuctionPublicInformations.getAuction();
-        final boolean isOwner = auction.getCreatorId() == specificAuctionPublicInformations.getRequesterId();
+        final Auction specificAuction = specificAuctionPublicInformations.getAuction();
+        final boolean isOwner = Objects.equals(auction.getCreatorId(), specificAuctionPublicInformations.getRequesterId());
         gen.writeStartObject();
-        serializeBasics(gen, auction);
-        serializeBidsData(gen, auction, isOwner);
-        serializeAllPicturesUrls(gen, auction);
-        serializeDescription(gen, auction);
+        serializeBasics(gen, specificAuction);
+        serializeBidsData(gen, specificAuction, isOwner);
+        serializeAllPicturesUrls(gen, specificAuction);
+        serializeDescription(gen, specificAuction);
         gen.writeArrayFieldStart("ownBids");
         if (specificAuctionPublicInformations.getRequesterBids() != null){
             for (Bid b : specificAuctionPublicInformations.getRequesterBids()) {

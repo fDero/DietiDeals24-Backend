@@ -37,7 +37,6 @@ public class EncryptionService {
             String passwordHash = hexString.toString();
             return passwordHash;
         } catch (NoSuchAlgorithmException encryptionError) {
-            System.out.println("error encrypting a password with SHA-256");
             throw new RuntimeException(encryptionError);
         }
     }

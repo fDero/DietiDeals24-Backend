@@ -49,7 +49,6 @@ public class AuctionManagementService {
     @Transactional
     @Scheduled(fixedRate = 1*60000)
     public void updateStatuses() {
-        System.out.println("Updating auction statuses...");
         final LocalDateTime threeDaysAgo = LocalDateTime.now().minusDays(3);
         final Timestamp expirationTime = Timestamp.valueOf(threeDaysAgo);
         auctionRepository.markAuctionsAsPending();

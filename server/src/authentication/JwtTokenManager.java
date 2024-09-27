@@ -56,7 +56,6 @@ public class JwtTokenManager {
             Jwts.parser().setSigningKey(secretHS512Key).parseClaimsJws(authToken);
             return true;
         } catch (Exception ex) {
-            System.out.println("Invalid token: " + ex.getMessage());
             return false;
         }
     }

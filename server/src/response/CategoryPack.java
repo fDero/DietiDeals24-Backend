@@ -39,9 +39,9 @@ public class CategoryPack extends JsonSerializer<CategoryPack> {
             categories.get(category.getMacroCategory()).add(category.getItemCategory());
         }
         gen.writeStartObject();
-        for (String macroCategory : categories.keySet()) {
-            gen.writeArrayFieldStart(macroCategory);
-            for (String itemCategory : categories.get(macroCategory)) {
+        for (Map.Entry<String, ArrayList<String>> macroCategory : categories.entrySet()) {
+            gen.writeArrayFieldStart(macroCategory.getKey());
+            for (String itemCategory : macroCategory.getValue()) {
                 gen.writeString(itemCategory);
             }
             gen.writeEndArray();

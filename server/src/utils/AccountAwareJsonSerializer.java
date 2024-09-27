@@ -64,8 +64,8 @@ public abstract class AccountAwareJsonSerializer<T> extends JsonSerializer<T> {
     }
 
     public static void serializeLinks(
-            List<PersonalLink> personalLinks,
-            JsonGenerator gen
+            JsonGenerator gen,
+            List<PersonalLink> personalLinks
     )
             throws IOException
     {

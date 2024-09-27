@@ -104,8 +104,6 @@ public class ProfileController {
             includeAuctions, 
             includeBids
         );
-        System.out.println(activities);
-        System.out.println(activities.size());
         UserPublicActivity userPublicActivity = new UserPublicActivity(activities);
         return ResponseEntity.ok().body(userPublicActivity);
     }

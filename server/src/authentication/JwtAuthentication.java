@@ -38,12 +38,12 @@ public class JwtAuthentication implements Authentication {
 
     @Override
     public Object getDetails() {
-        return requestString;
+        return getName();
     }
 
     @Override
     public Object getPrincipal() {
-        return id;
+        return requestString;
     }
 
     @Override

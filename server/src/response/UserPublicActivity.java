@@ -20,7 +20,7 @@ import utils.AuctionAwareJsonSerializer;
 @Getter @AllArgsConstructor
 public class UserPublicActivity extends AuctionAwareJsonSerializer<UserPublicActivity> {
 
-    private List<Activity> activity;
+    private List<Activity> activities;
 
     @Override
     public void serialize(
@@ -31,11 +31,8 @@ public class UserPublicActivity extends AuctionAwareJsonSerializer<UserPublicAct
         throws
             IOException
     {
-        System.out.println("UserPublicActivitySerializer");
-        System.out.println("Activity size: " + userPublicActivity.getActivity().size());
         gen.writeStartArray();
-        for (Activity activity : userPublicActivity.getActivity()) {
-            System.out.println("Activity: " + activity);
+        for (Activity activity : userPublicActivity.getActivities()) {
             Auction auction = new Auction(activity);
             gen.writeStartObject();
             serializeBasics(gen, auction);

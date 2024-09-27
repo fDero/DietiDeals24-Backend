@@ -50,11 +50,10 @@ public class NotificationsPack extends AuctionAwareJsonSerializer<NotificationsP
             gen.writeEndObject();
         }
         gen.writeEndArray();
-        long unreadNotificationsCounter = notificationsPack.getUnreadNotificationsCounter();
-        long readNotificationsCounter = notificationsPack.getReadNotificationsCounter();
-        long notificationsCounter = readNotificationsCounter + unreadNotificationsCounter;
-        gen.writeNumberField("unreadNotifications", unreadNotificationsCounter);
-        gen.writeNumberField("readNotifications", readNotificationsCounter);
+        long notificationsCounter = notificationsPack.getReadNotificationsCounter();
+        notificationsCounter += notificationsPack.getUnreadNotificationsCounter();
+        gen.writeNumberField("unreadNotifications", notificationsPack.getUnreadNotificationsCounter());
+        gen.writeNumberField("readNotifications", notificationsPack.getReadNotificationsCounter());
         gen.writeNumberField("notificationsCounter", notificationsCounter);
         gen.writeEndObject();
     }

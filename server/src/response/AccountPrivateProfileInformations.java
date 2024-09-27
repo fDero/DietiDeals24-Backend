@@ -49,13 +49,11 @@ public class AccountPrivateProfileInformations extends AccountAwareJsonSerialize
         throws
             IOException
     {
-        final Account account = infos.getAccount();
-        final List<PersonalLink> personalLinks = infos.getPersonalLinks();
         gen.writeStartObject();
-        serializeMinimalBasics(gen, account);
-        serializeFullBasics(gen, account);
-        serializeBio(gen, account);
-        serializeLinks(personalLinks, gen);
+        serializeMinimalBasics(gen, infos.getAccount());
+        serializeFullBasics(gen, infos.getAccount());
+        serializeBio(gen, infos.getAccount());
+        serializeLinks(gen, infos.getPersonalLinks());
         serializePrivateInfomations(gen, infos);
         gen.writeEndObject();
     }

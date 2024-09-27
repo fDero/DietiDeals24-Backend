@@ -70,8 +70,7 @@ public class UploadedResourcesManagementService {
         return url;
     }
 
-    @Transactional
-    public String updateUrlAndKeepResource(String resourceUrl) {
+    private String updateUrlAndKeepResourceInternal(String resourceUrl) {
         final Timestamp currentTimestamp = Timestamp.from(Instant.now());
         final String pattern = "/([^/?]+)(?:\\?|$)";
         final Pattern r = Pattern.compile(pattern);
@@ -88,9 +87,14 @@ public class UploadedResourcesManagementService {
     }
 
     @Transactional
+    public String updateUrlAndKeepResource(String resourceUrl) {
+        return updateUrlAndKeepResourceInternal(resourceUrl);
+    }
+
+    @Transactional
     public void updateUrlsAndKeepResources(String[] resourceUrls) {
         for (int i = 0; i < resourceUrls.length; i++) {
-            resourceUrls[i] = updateUrlAndKeepResource(resourceUrls[i]);
+            resourceUrls[i] = updateUrlAndKeepResourceInternal(resourceUrls[i]);
         }
     }
 
@@ -101,7 +105,6 @@ public class UploadedResourcesManagementService {
         final LocalDateTime threeHoursAgo = LocalDateTime.now().minusHours(3);
         final Timestamp expirationTime = Timestamp.valueOf(threeHoursAgo);
         final List<Resource> resources = resourceRepository.findObsoleteResources(expirationTime);
-        System.out.println("Deleting obsolete resources...");
         boolean failure = false;
         for (Resource resource : resources) {
             try {

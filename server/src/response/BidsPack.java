@@ -33,8 +33,6 @@ public class BidsPack extends JsonSerializer<BidsPack> {
         throws
             IOException
     {
-        System.out.println(bidsPack);
-        System.out.println(bidsPack.getBids().size());
         gen.writeStartArray();
         for (Bid b : bidsPack.getBids()) {
             gen.writeStartObject();

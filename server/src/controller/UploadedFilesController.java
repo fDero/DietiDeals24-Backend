@@ -7,7 +7,6 @@ import service.UploadedResourcesManagementService;
 import org.springframework.http.ResponseEntity;
 
 import java.net.URL;
-import authentication.JwtTokenManager;
 
 import authentication.RequireJWT;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,18 +17,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Transactional
 @RestController
-public class PicturesController {
+public class UploadedFilesController {
 
     private final UploadedResourcesManagementService picturesUrlsManagementService;
-    private final JwtTokenManager jwtTokenManager;
 
     @Autowired
-    public PicturesController(
-        UploadedResourcesManagementService picturesUrlsManagementService,
-        JwtTokenManager jwtTokenManager
-    ) {
+    public UploadedFilesController(UploadedResourcesManagementService picturesUrlsManagementService) {
         this.picturesUrlsManagementService = picturesUrlsManagementService;
-        this.jwtTokenManager = jwtTokenManager;
     }
 
     @RequireJWT

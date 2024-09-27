@@ -31,26 +31,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     {
         String token = tokenProvider.getTokenFromRequest(request);
         boolean tokenIsValid = token != null && tokenProvider.validateToken(token);
-        System.out.println("Token is valid: " + tokenIsValid);
-
         if (!tokenIsValid) {
             filterChain.doFilter(request, response);
             return;
         }
-
         String id = tokenProvider.getIdFromJWT(token);
         Authentication auth = new JwtAuthentication(token, id, request);
         SecurityContextHolder.getContext().setAuthentication(auth);
-
         long tokenUpTime = System.currentTimeMillis() - tokenProvider.getIssuedAt(token);
         long tokenFullLifeSpan = tokenProvider.getExpiration(token) - tokenProvider.getIssuedAt(token);
         String tokenWasRenewed = "No";
-
         if (tokenUpTime > tokenFullLifeSpan / 2) {
             token = tokenProvider.generateToken(id);
             tokenWasRenewed = "Yes";
         }
-
         response.addHeader("X-Auth-Token", token);
         response.addHeader("X-Token-Was-Renewed", tokenWasRenewed);
         response.addHeader("Access-Control-Expose-Headers", "X-Auth-Token, X-Token-Was-Renewed");

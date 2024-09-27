@@ -26,14 +26,12 @@ public class PendingAccountRegistrationCacheService {
     public void store(PendingAccountRegistration registrationData, int expirationInMinutes) {
         String key = cacheKeyPrefix + registrationData.getEmail();
         String json = jsonConverter.encode(registrationData);
-        System.out.println("Storing pending account registration data in cache: " + json);
         redis.opsForValue().set(key, json, expirationInMinutes, TimeUnit.MINUTES);
     }
 
     public PendingAccountRegistration retrieve(String email) {
         String key = cacheKeyPrefix + email;
         String retrieved = redis.opsForValue().get(key);
-        System.out.println("Retrieved pending account registration data from cache: " + retrieved);
         return (retrieved != null)
             ? jsonConverter.decode(retrieved, PendingAccountRegistration.class)
             : null;

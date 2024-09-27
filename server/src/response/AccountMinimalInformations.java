@@ -29,9 +29,8 @@ public class AccountMinimalInformations extends AccountAwareJsonSerializer<Accou
         throws
             IOException
     {
-        final Account account = minimalAccountInformations.getAccount();
         gen.writeStartObject();
-        serializeMinimalBasics(gen, account);
+        serializeMinimalBasics(gen, minimalAccountInformations.getAccount());
         gen.writeEndObject();
     }
 }

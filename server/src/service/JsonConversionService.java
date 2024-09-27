@@ -3,6 +3,7 @@ package service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import exceptions.JsonEncodingDecodingException;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,10 +18,7 @@ public class JsonConversionService {
         try {
             return mapper.writeValueAsString(object);
         } catch (JsonProcessingException exception) {
-            throw new RuntimeException(
-                "can't encode object because not json serializable: " +
-                "source=" + object + " error=" + exception.getMessage()
-            );
+            throw new JsonEncodingDecodingException(object, exception);
         }
     }
 
@@ -28,10 +26,7 @@ public class JsonConversionService {
         try {
             return mapper.readValue(json, type);
         } catch (JsonProcessingException exception) {
-            throw new RuntimeException(
-                "can't decode json because of a json error: " +
-                "json=" + json + " error=" + exception.getMessage()
-            );
+            throw new JsonEncodingDecodingException(json, exception);
         }
     }
 }

@@ -3,6 +3,7 @@ package service;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import exceptions.EncryptionFailureException;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,10 +35,9 @@ public class EncryptionService {
                 if (hex.length() == 1) hexString.append('0');
                 hexString.append(hex);
             }
-            String passwordHash = hexString.toString();
-            return passwordHash;
+            return hexString.toString();
         } catch (NoSuchAlgorithmException encryptionError) {
-            throw new RuntimeException(encryptionError);
+            throw new EncryptionFailureException();
         }
     }
 }

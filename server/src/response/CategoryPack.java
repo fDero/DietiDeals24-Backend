@@ -33,15 +33,15 @@ public class CategoryPack extends JsonSerializer<CategoryPack> {
         throws
             IOException
     {
-        Map<String, ArrayList<String>> categories = new TreeMap<String, ArrayList<String>>();
+        Map<String, ArrayList<String>> categoriesByMacrocategories = new TreeMap<>();
         for (Category category : categoryPack.getCategories()) {
-            categories.putIfAbsent(category.getMacroCategory(), new ArrayList<String>());
-            categories.get(category.getMacroCategory()).add(category.getItemCategory());
+            categoriesByMacrocategories.putIfAbsent(category.getMacroCategory(), new ArrayList<>());
+            categoriesByMacrocategories.get(category.getMacroCategory()).add(category.getItemCategory());
         }
         gen.writeStartObject();
-        for (Map.Entry<String, ArrayList<String>> macroCategory : categories.entrySet()) {
-            gen.writeArrayFieldStart(macroCategory.getKey());
-            for (String itemCategory : macroCategory.getValue()) {
+        for (Map.Entry<String, ArrayList<String>> categoryByMacrocategories : categoriesByMacrocategories.entrySet()) {
+            gen.writeArrayFieldStart(categoryByMacrocategories.getKey());
+            for (String itemCategory : categoryByMacrocategories.getValue()) {
                 gen.writeString(itemCategory);
             }
             gen.writeEndArray();

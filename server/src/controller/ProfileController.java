@@ -208,8 +208,7 @@ public class ProfileController {
         @RequestHeader(name = "Authorization") String authorizationHeader,
         @RequestBody PasswordChangeRequest passwordChangeRequest
     ) 
-        throws 
-            NoAccountWithSuchIdException, 
+        throws
             NoPasswordForThisAccountException, 
             AccountValidationException, 
             AccessDeniedBadCredentialsException

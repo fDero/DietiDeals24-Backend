@@ -47,7 +47,7 @@ public class AuctionManagementService {
 
     @Async
     @Transactional
-    @Scheduled(fixedRate = 1*60000)
+    @Scheduled(fixedRate = 60000)
     public void updateStatuses() {
         final LocalDateTime threeDaysAgo = LocalDateTime.now().minusDays(3);
         final Timestamp expirationTime = Timestamp.valueOf(threeDaysAgo);
@@ -59,7 +59,7 @@ public class AuctionManagementService {
     public Auction findById(Integer auctionId) 
         throws NoSuchAuctionException
     {
-        return auctionRepository.findById(auctionId).orElseThrow(() -> new NoSuchAuctionException());
+        return auctionRepository.findById(auctionId).orElseThrow(NoSuchAuctionException::new);
     }
 
     public void updateBidsRecord(Auction auction, Bid newBid) {
@@ -147,7 +147,7 @@ public class AuctionManagementService {
         if (category == null) {
             throw new IllegalArgumentException("Category must be specified");
         }
-        if (category != null && macroCategory == null) {
+        if (macroCategory == null) {
             String inferredMacroCategory = metadataManagementService.getMacroCategoryForCategory(category);
             newAuctionRequest.setMacroCategory(inferredMacroCategory);
         }
@@ -166,7 +166,7 @@ public class AuctionManagementService {
             UnexpectedStateException
     {
         Auction auction = auctionRepository.findById(auctionId)
-            .orElseThrow(() -> new NoSuchAuctionException());
+            .orElseThrow(NoSuchAuctionException::new);
         if (!auction.getCreatorId().equals(creatorId)) {
             throw new AuctionNotYoursException();
         }

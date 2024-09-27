@@ -104,7 +104,7 @@ public class AuctionsController {
         throws 
             NoAuctionWithSuchIdException
     {
-        Auction auction = auctionsRepository.findById(id).orElseThrow(() -> new NoAuctionWithSuchIdException());
+        Auction auction = auctionsRepository.findById(id).orElseThrow(NoAuctionWithSuchIdException::new);
         SpecificAuctionInformations auctionSpecificInformations = new SpecificAuctionInformations(auction, null, null);
         return ResponseEntity.ok().body(auctionSpecificInformations);
     }
@@ -118,7 +118,7 @@ public class AuctionsController {
         throws 
             NoAuctionWithSuchIdException
     {
-        Auction auction = auctionsRepository.findById(id).orElseThrow(() -> new NoAuctionWithSuchIdException());
+        Auction auction = auctionsRepository.findById(id).orElseThrow(NoAuctionWithSuchIdException::new);
         Integer auctionId = auction.getId();
         String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
         Integer requesterId = Integer.valueOf(jwtTokenProvider.getIdFromJWT(jwtToken));

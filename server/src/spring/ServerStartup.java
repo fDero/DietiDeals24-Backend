@@ -1,5 +1,7 @@
 package spring;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,12 +18,13 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableAsync
 public class ServerStartup {
 
+    private static final Logger logger = LoggerFactory.getLogger(ServerStartup.class);
     public static void main(String[] args) {
         var context = SpringApplication.run(ServerStartup.class, args);
         Integer port = context.getBean(ServerInfo.class).getPort();
         String address = context.getBean(ServerInfo.class).getAddress();
-        System.out.println("\n\nServer startup success!");
-        System.out.println("operating with ip: " + address);
-        System.out.println("operating on port: " + port);
+        logger.info("\n\nServer startup success!");
+        logger.info("operating with ip: \"{}\"", address);
+        logger.info("operating on port: \"{}\"", port);
     }
 }

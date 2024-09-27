@@ -8,15 +8,14 @@ import java.util.Arrays;
 import java.util.List;
 
 import exceptions.GeographicalAwarenessFailureException;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
-
 import com.google.gson.Gson;
-
 import exceptions.UnrecognizedCountryException;
 import utils.GeographicalCityDescriptor;
 import utils.GeographicalCountryDescriptor;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
 
 @Service
 public class GeographicalAwarenessService {
@@ -33,20 +32,19 @@ public class GeographicalAwarenessService {
         try {
             String jsonString = fetchEuropeanCountriesRaw();
             GeographicalCountryDescriptor[] countries = gson.fromJson(jsonString, GeographicalCountryDescriptor[].class);
-            List<GeographicalCountryDescriptor> europeanCountries = Arrays.asList(countries);
-            return europeanCountries;
+            return Arrays.asList(countries);
         }
         catch (Exception e) {
-            throw new RuntimeException("Error while fetching European countries", e);
+            throw new GeographicalAwarenessFailureException();
         }
     }
 
-    @Cacheable(value = "cities", key = "#country_code")
-    public List<GeographicalCityDescriptor> fetchCitiesFromCountry(String country_code)
+    @Cacheable(value = "cities", key = "#countryCode")
+    public List<GeographicalCityDescriptor> fetchCitiesFromCountry(String countryCode)
         throws UnrecognizedCountryException 
     {
         try {
-            String jsonString = fetchCitiesFromCountryRaw(country_code);
+            String jsonString = fetchCitiesFromCountryRaw(countryCode);
             GeographicalCityDescriptor[] countries = gson.fromJson(jsonString, GeographicalCityDescriptor[].class);
             return Arrays.asList(countries);
         }
@@ -55,10 +53,7 @@ public class GeographicalAwarenessService {
         }
     }
 
-    private String fetchEuropeanCountriesRaw()
-        throws
-            GeographicalAwarenessFailureException
-    {
+    private String fetchEuropeanCountriesRaw() {
         try (HttpClient httpClient = HttpClient.newHttpClient()) {
             HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("https://api.apilayer.com/geo/country/region/EU"))
@@ -77,14 +72,13 @@ public class GeographicalAwarenessService {
         }
     }
 
-    private String fetchCitiesFromCountryRaw(String country_code)
+    private String fetchCitiesFromCountryRaw(String countryCode)
         throws
-            UnrecognizedCountryException,
-            GeographicalAwarenessFailureException
+            UnrecognizedCountryException
     {
         try (HttpClient httpClient = HttpClient.newHttpClient()) {
                 HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create("https://api.apilayer.com/geo/country/cities/" + country_code))
+                        .uri(URI.create("https://api.apilayer.com/geo/country/cities/" + countryCode))
                         .GET()
                         .header("apikey", key)
                         .build();

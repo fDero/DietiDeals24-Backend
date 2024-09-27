@@ -8,7 +8,7 @@ import entity.Auction;
 
 public abstract class AuctionAwareJsonSerializer<T> extends JsonSerializer<T> {
 
-    static public void serializeBasics(JsonGenerator gen, Auction auction)
+    public static void serializeBasics(JsonGenerator gen, Auction auction)
         throws
             IOException
     {
@@ -57,7 +57,7 @@ public abstract class AuctionAwareJsonSerializer<T> extends JsonSerializer<T> {
         throws
             IOException
     {
-        String pictureUrls[] = auction.getPicturesUrls();
+        String[] pictureUrls = auction.getPicturesUrls();
         String picturesUrl = pictureUrls.length > 0 ? pictureUrls[0] : null;
         gen.writeStringField("picturesUrl", picturesUrl);
     }

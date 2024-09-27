@@ -84,10 +84,7 @@ public class BidsController {
     public ResponseEntity<BidsPack> sendOwnBidsByAuction(
         @RequestHeader(name = "Authorization") String authorizationHeader,
         @RequestParam Integer auctionId
-    ) 
-        throws 
-            NoSuchAuctionException
-    {
+    ) {
         String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
         String userIdString = jwtTokenProvider.getIdFromJWT(jwtToken);
         Integer userId = Integer.valueOf(userIdString);

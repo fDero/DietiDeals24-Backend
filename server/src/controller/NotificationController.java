@@ -1,7 +1,6 @@
 package controller;
 
 import entity.Notification;
-import exceptions.NoAccountWithSuchEmailException;
 import exceptions.NoSuchNotificationException;
 import exceptions.NotificationNotYoursException;
 import response.NotificationsPack;
@@ -44,8 +43,7 @@ public class NotificationController {
         @RequestParam(defaultValue = "1")      Integer page, 
         @RequestParam(defaultValue = "5")      Integer size
     ) 
-        throws 
-            NoAccountWithSuchEmailException, 
+        throws
             NumberFormatException
     {
         int zeroIndexedPage = page - 1;
@@ -64,12 +62,7 @@ public class NotificationController {
     @PostMapping(value = "/notifications/mark-all-as-read", produces = "text/plain")
     public ResponseEntity<String> markAllNotificationsAsRead(
         @RequestHeader(name = "Authorization") String authorizationHeader
-    ) 
-        throws
-            NoSuchNotificationException,
-            NotificationNotYoursException,
-            NoAccountWithSuchEmailException
-    {
+    ) {
         String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
         String id = jwtTokenProvider.getIdFromJWT(jwtToken);
         notificationmanagementService.markAllNotificationsAsRead(id);
@@ -81,12 +74,7 @@ public class NotificationController {
     @DeleteMapping(value = "/notifications/mark-all-as-eliminated", produces = "text/plain")
     public ResponseEntity<String> markAllNotificationsAsEliminated(
         @RequestHeader(name = "Authorization") String authorizationHeader
-    ) 
-        throws
-            NoSuchNotificationException,
-            NotificationNotYoursException,
-            NoAccountWithSuchEmailException
-    {
+    ) {
         String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
         String id = jwtTokenProvider.getIdFromJWT(jwtToken);
         notificationmanagementService.markAllNotificationsAsEliminated(id);
@@ -102,8 +90,7 @@ public class NotificationController {
     ) 
         throws
             NoSuchNotificationException,
-            NotificationNotYoursException,
-            NoAccountWithSuchEmailException
+            NotificationNotYoursException
     {
         Notification notification = notificationmanagementService.findByNotificationId(notificationId);
         ensureNotificationOwnership(notification, authorizationHeader);
@@ -121,8 +108,7 @@ public class NotificationController {
     ) 
         throws
             NoSuchNotificationException,
-            NotificationNotYoursException,
-            NoAccountWithSuchEmailException
+            NotificationNotYoursException
     {
         Notification notification = notificationmanagementService.findByNotificationId(notificationId);
         ensureNotificationOwnership(notification, authorizationHeader);
@@ -132,8 +118,7 @@ public class NotificationController {
 
     public void ensureNotificationOwnership(Notification notification, String authorizationHeader)
         throws 
-            NotificationNotYoursException,
-            NoAccountWithSuchEmailException
+            NotificationNotYoursException
     {
         String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
         String id = jwtTokenProvider.getIdFromJWT(jwtToken);

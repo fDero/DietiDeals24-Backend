@@ -80,7 +80,7 @@ public class AccountValidationService {
         }
     }
 
-    public void validateGeographicalData(String country, String city, List<String> errors)
+    public void validateGeographicalData(String country, String city)
         throws 
             UnrecognizedCityException, 
             UnrecognizedCountryException
@@ -105,7 +105,7 @@ public class AccountValidationService {
         this.validateBirthday(account.getBirthday(), errors);
         this.validateEmail(account.getEmail(), errors);
         this.validatePassword(account.getPassword(), errors);
-        this.validateGeographicalData(account.getCountry(), account.getCity(), errors);
+        this.validateGeographicalData(account.getCountry(), account.getCity());
         if (!errors.isEmpty()) {
             throw new AccountValidationException(String.join(", ", errors));
         }

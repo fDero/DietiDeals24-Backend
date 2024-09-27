@@ -12,6 +12,6 @@ public class GeographicalCountryDescriptor {
     String name;
     String alpha2code;
     String alpha3code;
-    String native_name;
+    String nativeName;
     String flag;
 }

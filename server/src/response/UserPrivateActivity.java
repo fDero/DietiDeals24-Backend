@@ -2,6 +2,7 @@ package response;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -20,7 +21,7 @@ import utils.AuctionAwareJsonSerializer;
 @Getter @AllArgsConstructor
 public class UserPrivateActivity extends AuctionAwareJsonSerializer<UserPrivateActivity> {
 
-    private List<Activity> activity;
+    private List<Activity> activities;
     private Integer requesterId;
 
     @Override
@@ -33,9 +34,9 @@ public class UserPrivateActivity extends AuctionAwareJsonSerializer<UserPrivateA
             IOException
     {
         gen.writeStartArray();
-        for (Activity activity : userPrivateActivity.getActivity()) {
+        for (Activity activity : userPrivateActivity.getActivities()) {
             final Auction auction = new Auction(activity);
-            final boolean isOwner = userPrivateActivity.getRequesterId() == auction.getCreatorId();
+            final boolean isOwner = Objects.equals(userPrivateActivity.getRequesterId(), auction.getCreatorId());
             gen.writeStartObject();
             serializeBasics(gen, auction);
             serializeBidsData(gen, auction, isOwner);

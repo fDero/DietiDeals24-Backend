@@ -1,5 +1,6 @@
 package spring;
 
+import exceptions.UnexpectedHostException;
 import org.springframework.boot.web.context.WebServerInitializedEvent;
 import org.springframework.context.ApplicationListener;
 import java.net.InetAddress;
@@ -22,8 +23,7 @@ public class ServerInfo implements ApplicationListener<WebServerInitializedEvent
             this.address = InetAddress.getLocalHost().getHostAddress();
         }
         catch (UnknownHostException unknownHostException) {
-            System.out.println("Server critical failure: unknown host");
-            throw new RuntimeException(unknownHostException);
+            throw new UnexpectedHostException();
         }
     }
 }

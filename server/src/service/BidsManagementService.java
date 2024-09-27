@@ -33,7 +33,6 @@ public class BidsManagementService {
 
     public void validateBid(Bid bid, Auction auction) 
         throws
-            NoSuchAuctionException,
             AuctionNotActiveException,
             BidOnYourOwnAuctionException
     {
@@ -56,9 +55,9 @@ public class BidsManagementService {
         Auction auction = auctionManagementService.findById(auctionId);   
         validateBid(bid, auction);
         bidRepository.save(bid);
-        notificationManagementService.notifyOldBidderOfBeingOutbid(bid, auction);
+        notificationManagementService.notifyOldBidderOfBeingOutbid(auction);
         auctionManagementService.updateBidsRecord(auction, bid);
-        notificationManagementService.notifyAuctionCreatorOfNewBid(bid, auction);
+        notificationManagementService.notifyAuctionCreatorOfNewBid(auction);
     }
 
     public long countActiveBidsByBidderId(Integer bidderId) {

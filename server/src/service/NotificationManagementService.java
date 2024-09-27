@@ -39,7 +39,7 @@ public class NotificationManagementService {
         throws NoSuchNotificationException
     {
         return notificationRepository.findById(id)
-            .orElseThrow(() -> new NoSuchNotificationException());
+            .orElseThrow(NoSuchNotificationException::new);
     }
     
     public long countReadNotifications(String accountId) {
@@ -70,7 +70,7 @@ public class NotificationManagementService {
         notificationDataRepository.updateEliminatedByAccountId(true, id);
     }
 
-    public void notifyAuctionCreatorOfNewBid(Bid bid, Auction auction) {
+    public void notifyAuctionCreatorOfNewBid(Auction auction) {
         NotificationData notification = new NotificationData();
         notification.setAccountId(auction.getCreatorId());
         notification.setAuctionId(auction.getId());
@@ -80,9 +80,12 @@ public class NotificationManagementService {
         notificationDataRepository.save(notification);
     }
 
-    public void notifyOldBidderOfBeingOutbid(Bid bid, Auction auction) {
+    public void notifyOldBidderOfBeingOutbid(Auction auction) {
         NotificationData notification = new NotificationData();
         if (auction.getCurrentBidderId() == null) {
+            return;
+        }
+        if (auction.getAuctionType().equals("silent")) {
             return;
         }
         Integer oldBidderId = auction.getCurrentBidderId().toBigInteger().intValue();

@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import request.NewPaymentMethodRequest;
 
 @AllArgsConstructor @Getter
 @NoArgsConstructor @Setter
@@ -14,6 +13,6 @@ public class AuctionClosingRequest {
     
     private Integer auctionId;
     private Integer paymentMethodId;
-    private NewPaymentMethodRequest OneTimePaymentMethod;
+    private NewPaymentMethodRequest oneTimePaymentMethod;
     private NewPaymentMethodRequest paymentMethodToBeSaved;
 }

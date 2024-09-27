@@ -15,6 +15,7 @@ import com.amazonaws.HttpMethod;
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import entity.Resource;
+import exceptions.UserUploadedResourceManagementException;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,14 +31,12 @@ public class UploadedResourcesManagementService {
     
     private final AmazonS3 s3client;
     private final String bucketName;
-    private final String region;
     private final String cloudfrontDomain;
     private final ResourceRepository resourceRepository;
 
     @Autowired
     public UploadedResourcesManagementService(
         @Value("${aws.s3.bucket-name}") String bucketName,
-        @Value("${aws.s3.region}") String region,
         @Value("${aws.cloudfront.domain}") String cloudfrontDomain,
         AmazonS3 s3Service,
         ResourceRepository resourceRepository
@@ -45,7 +44,6 @@ public class UploadedResourcesManagementService {
         this.s3client = s3Service;
         this.bucketName = bucketName;
         this.resourceRepository = resourceRepository;
-        this.region = region;
         this.cloudfrontDomain = cloudfrontDomain;
     }
 
@@ -61,7 +59,7 @@ public class UploadedResourcesManagementService {
     public URL generatePresignedResourceUploadUrl(String fileExtension) {
         final Duration expiration = Duration.ofMinutes(10);
         final Date expirationDate = new Date(System.currentTimeMillis() + expiration.toMillis());
-        final String key = Long.valueOf(System.currentTimeMillis()).toString() + "." + fileExtension;
+        final String key = System.currentTimeMillis() + "." + fileExtension;
         final GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(bucketName, key)
             .withMethod(HttpMethod.PUT)
             .withExpiration(expirationDate);
@@ -115,7 +113,7 @@ public class UploadedResourcesManagementService {
             }
         }
         if (failure) {
-            throw new RuntimeException("Error while deleting obsolete resources");
+            throw new UserUploadedResourceManagementException();
         }
         resourceRepository.deleteObsoleteResources(expirationTime);
     }

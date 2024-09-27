@@ -35,7 +35,7 @@ public class CountriesInformationsPack extends JsonSerializer<CountriesInformati
         for (GeographicalCountryDescriptor country : countriesInformationsPack.getCountries()) {
             gen.writeStartObject();
             gen.writeStringField("name", country.getName());
-            gen.writeStringField("nativeName", country.getNative_name());
+            gen.writeStringField("nativeName", country.getNativeName());
             gen.writeStringField("code", getCountryCode(country));
             gen.writeStringField("flag", country.getFlag());
             gen.writeEndObject();

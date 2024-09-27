@@ -70,7 +70,7 @@ public class AccountManagementService {
             NoAccountWithSuchUsernameException
     {
         return accountRepository.findAccountByUsername(username)
-            .orElseThrow(() -> new NoAccountWithSuchUsernameException());
+            .orElseThrow(NoAccountWithSuchUsernameException::new);
     }
 
     public Account fetchAccountById(Integer id) 
@@ -78,7 +78,7 @@ public class AccountManagementService {
             NoAccountWithSuchIdException
     {
         return accountRepository.findById(id)
-            .orElseThrow(() -> new NoAccountWithSuchIdException());
+            .orElseThrow(NoAccountWithSuchIdException::new);
     }
 
     public Account fetchAccountByEmail(String email)
@@ -86,17 +86,16 @@ public class AccountManagementService {
             NoAccountWithSuchEmailException
     {
         return accountRepository.findAccountByEmail(email)
-            .orElseThrow(() -> new NoAccountWithSuchEmailException());
+            .orElseThrow(NoAccountWithSuchEmailException::new);
     }
 
     public Account performAccountLogin(String email, String candidatePlainTextPassword) 
-        throws 
-            AccountValidationException,
+        throws
             NoAccountWithSuchEmailException,
             AccessDeniedBadCredentialsException
     {
-        Account account = accountRepository.findAccountByEmail(email).orElseThrow(() -> new NoAccountWithSuchEmailException());
-        Password password = passwordRepository.findPasswordByAccountId(account.getId()).orElseThrow(() -> new NoAccountWithSuchEmailException());
+        Account account = accountRepository.findAccountByEmail(email).orElseThrow(NoAccountWithSuchEmailException::new);
+        Password password = passwordRepository.findPasswordByAccountId(account.getId()).orElseThrow(NoAccountWithSuchEmailException::new);
         String realPasswordSalt = password.getPasswordSalt();
         String realPasswordHash = password.getPasswordHash();
         String candidatePasswordHash = encryptionService.encryptPassword(candidatePlainTextPassword, realPasswordSalt);
@@ -109,20 +108,17 @@ public class AccountManagementService {
     }
 
     public Account getAccountById(Integer accountId) 
-        throws 
-            AccountValidationException,
-            NoAccountWithSuchIdException,
-            AccessDeniedBadCredentialsException
+        throws
+            NoAccountWithSuchIdException
     {
-        Account account = accountRepository.findById(accountId).orElseThrow(() -> new NoAccountWithSuchIdException());
-        return account;
+        return accountRepository.findById(accountId).orElseThrow(NoAccountWithSuchIdException::new);
     }
 
     public AccountProfileInformations fetchAccountProfileInformations(Integer id) 
         throws 
             NoAccountWithSuchEmailException
     {
-        Account account = accountRepository.findById(id).orElseThrow(() -> new NoAccountWithSuchEmailException());
+        Account account = accountRepository.findById(id).orElseThrow(NoAccountWithSuchEmailException::new);
         List<PersonalLink> personalLinks = personalLinkRepository.findByAccountId(account.getId());
         long activeAuctionsCounter = auctionManagementService.countOnlineAuctionsByCreatorId(id);
         long pastAuctionsCounter = auctionManagementService.countPastAuctionsByCreatorId(id);
@@ -150,8 +146,8 @@ public class AccountManagementService {
         boolean includeBids
     ) 
     {
-        long zeroIndexedpageNumber = page - 1;
-        Pageable pageable = PageRequest.of((int) zeroIndexedpageNumber, (int) size);
+        long zeroIndexedPageNumber = page - 1;
+        Pageable pageable = PageRequest.of((int) zeroIndexedPageNumber, (int) size);
         return activityRepository.findUserActivityByUserById(
             userId, 
             includePastDeals, 
@@ -185,7 +181,7 @@ public class AccountManagementService {
             LinkNotYoursException
     {
         PersonalLink link = personalLinkRepository.findById(linkId).orElseThrow(
-            () -> new LinkNotFoundException());
+                LinkNotFoundException::new);
         if (!link.getAccountId().equals(accountId)) {
             throw new LinkNotYoursException();
         }
@@ -197,7 +193,7 @@ public class AccountManagementService {
             NoAccountWithSuchIdException
     {
         Account account = accountRepository.findById(accountId).orElseThrow(
-            () -> new NoAccountWithSuchIdException());
+                NoAccountWithSuchIdException::new);
         if (profileUpdateRequest.getNewBio() != null) {
             account.setBio(profileUpdateRequest.getNewBio());
         }
@@ -225,7 +221,7 @@ public class AccountManagementService {
             AccountValidationException, AccessDeniedBadCredentialsException 
     {
         Password dbPassword = passwordRepository.findPasswordByAccountId(accountId).orElseThrow(
-            () -> new NoPasswordForThisAccountException());
+                NoPasswordForThisAccountException::new);
             List<String> errors = new ArrayList<>();
         accountValidationService.validatePassword(passwordChangeRequest.getNewPassword(), errors);
         if (!errors.isEmpty()) {
@@ -251,7 +247,7 @@ public class AccountManagementService {
             AccessDeniedBadCredentialsException 
     {
         Password dbPassword = passwordRepository.findPasswordByAccountId(accountId).orElseThrow(
-            () -> new NoPasswordForThisAccountException());
+                NoPasswordForThisAccountException::new);
             List<String> errors = new ArrayList<>();
         accountValidationService.validatePassword(passwordChangeRequest.getNewPassword(), errors);
         if (!errors.isEmpty()) {

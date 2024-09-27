@@ -12,7 +12,7 @@ import response.AccountPublicProfileInformations;
 
 public abstract class AccountAwareJsonSerializer<T> extends JsonSerializer<T> {
 
-    static public void serializeMinimalBasics(JsonGenerator gen, Account account)
+    public static void serializeMinimalBasics(JsonGenerator gen, Account account)
             throws IOException
     {
         gen.writeStringField("username", account.getUsername());
@@ -22,7 +22,7 @@ public abstract class AccountAwareJsonSerializer<T> extends JsonSerializer<T> {
         gen.writeStringField("city", account.getCity());
     }
 
-    static public void serializeFullBasics(JsonGenerator gen, Account account)
+    public static void serializeFullBasics(JsonGenerator gen, Account account)
             throws IOException
     {
         final LocalDateTime birthayLocalDateTime = account.getBirthday().toLocalDateTime();
@@ -32,7 +32,7 @@ public abstract class AccountAwareJsonSerializer<T> extends JsonSerializer<T> {
         gen.writeStringField("birthday", birthayString);
     }
 
-    static public void serializePrivateInfomations(
+    public static void serializePrivateInfomations(
             JsonGenerator gen,
             AccountPrivateProfileInformations infos
     )
@@ -47,7 +47,7 @@ public abstract class AccountAwareJsonSerializer<T> extends JsonSerializer<T> {
         gen.writeNumberField("pastAuctionsCounter", infos.getPastAuctionsCounter());
     }
 
-    static public void serializePublicInformations(
+    public static void serializePublicInformations(
             JsonGenerator gen,
             AccountPublicProfileInformations infos
     )
@@ -57,7 +57,7 @@ public abstract class AccountAwareJsonSerializer<T> extends JsonSerializer<T> {
         gen.writeNumberField("pastDealsCounter", infos.getPastDealsCounter());
     }
 
-    static public void serializeBio(JsonGenerator gen, Account account)
+    public static void serializeBio(JsonGenerator gen, Account account)
             throws IOException
     {
         gen.writeStringField("bio", account.getBio());

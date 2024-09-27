@@ -1,6 +1,7 @@
 package service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -82,25 +83,27 @@ public class PaymentProcessingService {
             PaymentMethodNotYoursException, 
             MissingPaymentMethodException 
     {
-        final Auction auction = auctionRepository.findById(newBidRequest.getAuctionId())
-            .orElseThrow(() -> new NoAuctionWithSuchIdException());
+        final Optional<Auction> auction = auctionRepository.findById(newBidRequest.getAuctionId());
+        if (auction.isEmpty()) {
+            throw new NoAuctionWithSuchIdException();
+        }
         final boolean isOneTimePaymentMethod = newBidRequest.getOneTimePaymentMethod() != null;
         final boolean isPaymentMethodToBeSaved = newBidRequest.getPaymentMethodToBeSaved() != null;
         final boolean isNewPaymentMethod = isOneTimePaymentMethod || isPaymentMethodToBeSaved;
         final boolean isExistingPaymentMethod = newBidRequest.getPaymentMethodId() != null;
         if (isExistingPaymentMethod) {
-            return processBidPaymentWithExistingPaymentMethod(newBidRequest.getPaymentMethodId(), bidderId, auction);
+            return processBidPaymentWithExistingPaymentMethod(newBidRequest.getPaymentMethodId(), bidderId);
         }
         if(isPaymentMethodToBeSaved) {
             savePaymentMethod(newBidRequest.getPaymentMethodToBeSaved(), bidderId);
         }
         if (isNewPaymentMethod) {    
-            return processBidPaymentWithNewPaymentMethod(newBidRequest, bidderId, auction);
+            return processBidPaymentWithNewPaymentMethod(newBidRequest);
         }
         throw new MissingPaymentMethodException();
     }
 
-    public String processBidPaymentWithExistingPaymentMethod(Integer paymentMethodId, Integer bidderId, Auction auction) 
+    public String processBidPaymentWithExistingPaymentMethod(Integer paymentMethodId, Integer bidderId)
         throws 
             NoSuchPaymentMethodException,
             PaymentMethodNotYoursException
@@ -122,7 +125,7 @@ public class PaymentProcessingService {
         return isIban ? iban.getIbanString() : "<<dummy-credit-card-refound-token>>";
     }
 
-    public String processBidPaymentWithNewPaymentMethod(NewBidRequest newBidRequest, Integer bidderId, Auction auction) 
+    public String processBidPaymentWithNewPaymentMethod(NewBidRequest newBidRequest)
         throws 
             MissingPaymentMethodException 
     {
@@ -161,7 +164,7 @@ public class PaymentProcessingService {
             savePaymentMethod(auctionFinalizationRequest.getPaymentMethodToBeSaved(), auction.getCreatorId());
         }
         if (isNewPaymentMethod) {    
-            processAuctionClosingPaymentWithNewPaymentMethod(auctionFinalizationRequest, auction);
+            processAuctionClosingPaymentWithNewPaymentMethod(auctionFinalizationRequest);
         }
     }
 
@@ -186,7 +189,7 @@ public class PaymentProcessingService {
         }
     }
 
-    public void processAuctionClosingPaymentWithNewPaymentMethod(AuctionClosingRequest auctionFinalizationRequest, Auction auction) 
+    public void processAuctionClosingPaymentWithNewPaymentMethod(AuctionClosingRequest auctionFinalizationRequest)
         throws 
             NoSuchPaymentMethodException
     {

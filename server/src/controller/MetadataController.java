@@ -38,12 +38,17 @@ public class MetadataController {
         this.countryDescriptor = countryDescriptor;
     }
 
+    @GetMapping(value = "/", produces = "text/plain")
+    public ResponseEntity<String> healthCheck() {
+        return ResponseEntity.ok().body("server is alive");
+    }
+
     @GetMapping(value = "/categories/all", produces = "application/json")
     public ResponseEntity<CategoryPack> sendCategories() {
         List<Category> categories = metadataGatheringService.fetchCategories();
         return ResponseEntity.ok().body(new CategoryPack(categories));
     }
-    
+
     @GetMapping(value = "/categories/trending", produces = "application/json")
     public ResponseEntity<TrendingCategoryPack> sendTrendingCategories(@RequestParam(defaultValue = "6") Integer amount) {
         List<Category> allCategories = metadataGatheringService.fetchCategories();

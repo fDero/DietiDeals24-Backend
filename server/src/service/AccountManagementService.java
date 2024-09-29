@@ -43,6 +43,7 @@ public class AccountManagementService {
     private final BidsManagementService bidsManagementService;
     private final ActivityRepository activityRepository;
     private final AccountValidationService accountValidationService;
+    private final UploadedResourcesManagementService uploadedResourcesManagementService;
 
     @Autowired
     public AccountManagementService(
@@ -53,7 +54,8 @@ public class AccountManagementService {
         AuctionManagementService auctionManagementService,
         BidsManagementService bidsManagementService,
         ActivityRepository activityRepository,
-        AccountValidationService accountValidationService
+        AccountValidationService accountValidationService,
+        UploadedResourcesManagementService uploadedResourcesManagementService
     ) {
         this.accountRepository = accountRepository;
         this.passwordRepository = passwordRepository;
@@ -63,6 +65,7 @@ public class AccountManagementService {
         this.bidsManagementService = bidsManagementService;
         this.activityRepository = activityRepository;
         this.accountValidationService = accountValidationService;
+        this.uploadedResourcesManagementService = uploadedResourcesManagementService;
     }
 
     public Account fetchAccountByUsername(String username) 
@@ -94,8 +97,10 @@ public class AccountManagementService {
             NoAccountWithSuchEmailException,
             AccessDeniedBadCredentialsException
     {
-        Account account = accountRepository.findAccountByEmail(email).orElseThrow(NoAccountWithSuchEmailException::new);
-        Password password = passwordRepository.findPasswordByAccountId(account.getId()).orElseThrow(NoAccountWithSuchEmailException::new);
+        Account account = accountRepository.findAccountByEmail(email)
+            .orElseThrow(NoAccountWithSuchEmailException::new);
+        Password password = passwordRepository.findPasswordByAccountId(account.getId())
+            .orElseThrow(NoAccountWithSuchEmailException::new);
         String realPasswordSalt = password.getPasswordSalt();
         String realPasswordHash = password.getPasswordHash();
         String candidatePasswordHash = encryptionService.encryptPassword(candidatePlainTextPassword, realPasswordSalt);
@@ -180,8 +185,8 @@ public class AccountManagementService {
             LinkNotFoundException, 
             LinkNotYoursException
     {
-        PersonalLink link = personalLinkRepository.findById(linkId).orElseThrow(
-                LinkNotFoundException::new);
+        PersonalLink link = personalLinkRepository.findById(linkId)
+            .orElseThrow(LinkNotFoundException::new);
         if (!link.getAccountId().equals(accountId)) {
             throw new LinkNotYoursException();
         }
@@ -192,8 +197,8 @@ public class AccountManagementService {
         throws 
             NoAccountWithSuchIdException
     {
-        Account account = accountRepository.findById(accountId).orElseThrow(
-                NoAccountWithSuchIdException::new);
+        Account account = accountRepository.findById(accountId)
+            .orElseThrow(NoAccountWithSuchIdException::new);
         if (profileUpdateRequest.getNewBio() != null) {
             account.setBio(profileUpdateRequest.getNewBio());
         }
@@ -210,7 +215,9 @@ public class AccountManagementService {
             account.setUsername(profileUpdateRequest.getNewUsername());
         }
         if (profileUpdateRequest.getNewProfilePictureUrl() != null) {
-            account.setProfilePictureUrl(profileUpdateRequest.getNewProfilePictureUrl());
+            String newProfilePictureUrl = uploadedResourcesManagementService
+                .updateUrlAndKeepResource(profileUpdateRequest.getNewProfilePictureUrl());
+            account.setProfilePictureUrl(newProfilePictureUrl);
         }
         accountRepository.save(account);
     }

@@ -3,7 +3,6 @@ package service;
 import java.util.List;
 import entity.Auction;
 import org.springframework.data.domain.Pageable;
-import entity.Bid;
 import entity.Notification;
 import entity.NotificationData;
 import exceptions.NoSuchNotificationException;

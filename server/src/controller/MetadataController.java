@@ -1,11 +1,9 @@
 package controller;
 
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import exceptions.GeographicalAwarenessFailureException;
 import org.springframework.http.ResponseEntity;
 import entity.Category;
 import exceptions.UnrecognizedCountryException;

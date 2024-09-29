@@ -17,7 +17,6 @@ import response.AccountPublicProfileInformations;
 import response.UserPrivateActivity;
 import response.UserPublicActivity;
 import service.AccountManagementService;
-import service.UploadedResourcesManagementService;
 import utils.AccountProfileInformations;
 import org.springframework.http.ResponseEntity;
 
@@ -40,17 +39,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProfileController {
 
     private final AccountManagementService accountManagementService;
-    private final UploadedResourcesManagementService uploadedResourcesManagementService;
     private final JwtTokenManager jwtTokenProvider;
 
     @Autowired
     public ProfileController(
         AccountManagementService accountManagementService,
-        UploadedResourcesManagementService uploadedResourcesManagementService,
         JwtTokenManager jwtTokenProvider
     ){
         this.accountManagementService = accountManagementService;
-        this.uploadedResourcesManagementService = uploadedResourcesManagementService;
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
@@ -195,9 +191,6 @@ public class ProfileController {
         String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
         String accountIdString = jwtTokenProvider.getIdFromJWT(jwtToken);
         Integer accountId = Integer.valueOf(accountIdString);
-        String newProfilePictureUrl = uploadedResourcesManagementService
-            .updateUrlAndKeepResource(profileUpdateRequest.getNewProfilePictureUrl());
-        profileUpdateRequest.setNewProfilePictureUrl(newProfilePictureUrl);
         accountManagementService.updateProfile(profileUpdateRequest, accountId);
         return ResponseEntity.ok().body("done");
     }

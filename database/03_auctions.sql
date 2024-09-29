@@ -47,7 +47,7 @@ CREATE TABLE Auction (
     REFERENCES Account(account_id)
 );
 
-CREATE OR REPLACE FUNCTION get_trending_categories()
+CREATE FUNCTION get_trending_categories()
 RETURNS SETOF Category AS $$
 BEGIN
     RETURN QUERY

@@ -21,58 +21,46 @@ public class AuctionFilteredSearchService {
 
     public class AuctionFilter {
 
-        private Integer zeroIndexedPage = 0;
-        private Integer size = 10;
-        private String type = "";
+        private PageRequest page = PageRequest.of(0, 10);
+        private String auctionType = "";
         private String macroCategory = "";
-        private String keywords = "";
-        private String category = "";
+        private String searchString = "";
+        private String itemCategory = "";
         private String policy = "";
 
         public AuctionFilter(Integer zeroIndexedPage, Integer size) {
-            this.zeroIndexedPage = zeroIndexedPage;
-            this.size = size;
+            this.page = PageRequest.of(zeroIndexedPage, size);
         }
 
         public AuctionFilter searchingForAnAuctionOfType(String type) {
-            this.type = type;
+            this.auctionType = type;
             return this;
         }
 
         public AuctionFilter searchingForAnAuctionForItem(String macroCategory, String keywords, String category) {
             this.macroCategory = macroCategory;
-            this.keywords = keywords;
-            this.category = category;
+            this.searchString = keywords;
+            this.itemCategory = category;
             return this;
         }
 
         public AuctionFilter withPolicy(String policy) {
+            if (!policy.equals("trending") && !policy.equals("expiration")) {
+                throw new IllegalArgumentException("Invalid policy");
+            }
             this.policy = policy;
             return this;
         }
 
         public List<Auction> fetchResults(){
-            if (policy.equals("expiration")) {
-                return auctionsRepository.findActiveAuctionsFilteredExpiration(
-                    category, 
-                    keywords, 
-                    macroCategory, 
-                    type,
-                    PageRequest.of(zeroIndexedPage, size)
+            assert policy.equals("trending") || policy.equals("expiration");
+            return (policy.equals("trending")) 
+                ? auctionsRepository.findActiveAuctionsFilteredAndSortedByTrending(
+                    itemCategory, auctionType, macroCategory, searchString, page
+                ) 
+                : auctionsRepository.findActiveAuctionsFilteredAndSortedByExpiration(
+                    itemCategory, auctionType, macroCategory, searchString, page
                 );
-            }
-            else if (policy.equals("trending")) {
-                return auctionsRepository.findActiveAuctionsFilteredTrending(
-                    category, 
-                    keywords, 
-                    macroCategory, 
-                    type,
-                    PageRequest.of(zeroIndexedPage, size)
-                );
-            }
-            else { 
-                throw new IllegalArgumentException("Invalid policy");
-            }
         }
     }
 

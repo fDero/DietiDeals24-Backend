@@ -20,27 +20,32 @@ public interface AuctionRepository extends JpaRepository<Auction, Integer> {
 
     List<Auction> findAllByEndTimeAfterOrderByEndTimeAsc(Timestamp currentTime, Pageable pageable);
 
-    @Query(
-        "SELECT a FROM Auction a WHERE a.status = 'active' AND a.endTime > CURRENT_TIMESTAMP AND a.itemCategory LIKE %:itemCategory% " +
-        "AND a.auctionType LIKE %:auctionType% AND a.macroCategory LIKE %:macroCategory% AND " +
-        "(UPPER(a.itemName) LIKE CONCAT('%', UPPER(:searchString), '%') OR UPPER(a.description) LIKE CONCAT('%', UPPER(:searchString), '%')) " +
-        "ORDER BY CASE WHEN UPPER(a.itemName) LIKE CONCAT('%', UPPER(:searchString), '%') THEN 0 ELSE 1 END, a.endTime ASC"
-    )
-    List<Auction> findActiveAuctionsFilteredExpiration(
-        String itemCategory, String searchString, 
-        String auctionType, String macroCategory, 
+    final static String auctionSearchQuery =
+        "SELECT a FROM Auction a WHERE a.status = 'active' AND a.endTime > CURRENT_TIMESTAMP " +
+        "AND (:itemCategory IS NULL OR :itemCategory = '' OR a.itemCategory = :itemCategory) " +
+        "AND (:auctionType IS NULL OR :auctionType = '' OR LOWER(a.auctionType) = LOWER(:auctionType)) " +
+        "AND (:macroCategory IS NULL OR :macroCategory = '' OR a.macroCategory = :macroCategory) " +
+        "AND (:searchString IS NULL OR :searchString = '' OR " +
+        "     UPPER(a.itemName) LIKE CONCAT('%', UPPER(:searchString), '%') OR " +
+        "     UPPER(a.description) LIKE CONCAT('%', UPPER(:searchString), '%')) " +
+        "ORDER BY CASE WHEN UPPER(a.itemName) LIKE CONCAT('%', UPPER(:searchString), '%') THEN 0 ELSE 1 END "; 
+
+    @Query(auctionSearchQuery + " , a.endTime ASC")
+    List<Auction> findActiveAuctionsFilteredAndSortedByExpiration(
+        String itemCategory,
+        String auctionType,
+        String macroCategory,
+        String searchString,
         Pageable pageable
     );
 
-    @Query(
-        "SELECT a FROM Auction a WHERE a.status = 'active' AND a.endTime > CURRENT_TIMESTAMP AND a.itemCategory LIKE %:itemCategory% " +
-        "AND a.auctionType LIKE %:auctionType% AND a.macroCategory LIKE %:macroCategory% AND " +
-        "(UPPER(a.itemName) LIKE CONCAT('%', UPPER(:searchString), '%') OR UPPER(a.description) LIKE CONCAT('%', UPPER(:searchString), '%')) " +
-        "ORDER BY CASE WHEN UPPER(a.itemName) LIKE CONCAT('%', UPPER(:searchString), '%') THEN 0 ELSE 1 END, a.numberOfBids DESC"
-    )
-    List<Auction> findActiveAuctionsFilteredTrending(
-        String itemCategory, String searchString, 
-        String auctionType, String macroCategory, 
+    
+    @Query(auctionSearchQuery + " , a.numberOfBids DESC")
+    List<Auction> findActiveAuctionsFilteredAndSortedByTrending(
+        String itemCategory,
+        String auctionType,
+        String macroCategory,
+        String searchString,
         Pageable pageable
     );
 

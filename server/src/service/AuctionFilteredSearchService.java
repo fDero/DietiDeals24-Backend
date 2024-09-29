@@ -21,12 +21,15 @@ public class AuctionFilteredSearchService {
 
     public class AuctionFilter {
 
+        private static final String TREANDING = "trending";
+        private static final String EXPIRATION = "expiration";
+
         private PageRequest page = PageRequest.of(0, 10);
         private String auctionType = "";
         private String macroCategory = "";
         private String searchString = "";
         private String itemCategory = "";
-        private String policy = "";
+        private String policy = TREANDING;
 
         public AuctionFilter(Integer zeroIndexedPage, Integer size) {
             this.page = PageRequest.of(zeroIndexedPage, size);
@@ -45,7 +48,7 @@ public class AuctionFilteredSearchService {
         }
 
         public AuctionFilter withPolicy(String policy) {
-            if (!policy.equals("trending") && !policy.equals("expiration")) {
+            if (!TREANDING.equals(policy) && !EXPIRATION.equals(policy)) {
                 throw new IllegalArgumentException("Invalid policy");
             }
             this.policy = policy;
@@ -53,8 +56,8 @@ public class AuctionFilteredSearchService {
         }
 
         public List<Auction> fetchResults(){
-            assert policy.equals("trending") || policy.equals("expiration");
-            return (policy.equals("trending")) 
+            assert TREANDING.equals(policy) || EXPIRATION.equals(policy);
+            return (TREANDING.equals(policy)) 
                 ? auctionsRepository.findActiveAuctionsFilteredAndSortedByTrending(
                     itemCategory, auctionType, macroCategory, searchString, page
                 ) 

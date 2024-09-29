@@ -20,7 +20,7 @@ public interface AuctionRepository extends JpaRepository<Auction, Integer> {
 
     List<Auction> findAllByEndTimeAfterOrderByEndTimeAsc(Timestamp currentTime, Pageable pageable);
 
-    final static String auctionSearchQuery =
+    static final String AUCTION_SEARCH_QUERY_PREFIX =
         "SELECT a FROM Auction a WHERE a.status = 'active' AND a.endTime > CURRENT_TIMESTAMP " +
         "AND (:itemCategory IS NULL OR :itemCategory = '' OR a.itemCategory = :itemCategory) " +
         "AND (:auctionType IS NULL OR :auctionType = '' OR LOWER(a.auctionType) = LOWER(:auctionType)) " +
@@ -30,7 +30,7 @@ public interface AuctionRepository extends JpaRepository<Auction, Integer> {
         "     UPPER(a.description) LIKE CONCAT('%', UPPER(:searchString), '%')) " +
         "ORDER BY CASE WHEN UPPER(a.itemName) LIKE CONCAT('%', UPPER(:searchString), '%') THEN 0 ELSE 1 END "; 
 
-    @Query(auctionSearchQuery + " , a.endTime ASC")
+    @Query(AUCTION_SEARCH_QUERY_PREFIX + " , a.endTime ASC")
     List<Auction> findActiveAuctionsFilteredAndSortedByExpiration(
         String itemCategory,
         String auctionType,
@@ -40,7 +40,7 @@ public interface AuctionRepository extends JpaRepository<Auction, Integer> {
     );
 
     
-    @Query(auctionSearchQuery + " , a.numberOfBids DESC")
+    @Query(AUCTION_SEARCH_QUERY_PREFIX + " , a.numberOfBids DESC")
     List<Auction> findActiveAuctionsFilteredAndSortedByTrending(
         String itemCategory,
         String auctionType,

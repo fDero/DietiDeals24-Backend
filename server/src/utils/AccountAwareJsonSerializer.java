@@ -1,7 +1,6 @@
 package utils;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.List;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -25,8 +24,9 @@ public abstract class AccountAwareJsonSerializer<T> extends JsonSerializer<T> {
     public static void serializeFullBasics(JsonGenerator gen, Account account)
             throws IOException
     {
-        final LocalDateTime birthayLocalDateTime = account.getBirthday().toLocalDateTime();
-        final String birthayString = birthayLocalDateTime.toLocalDate().toString();
+        String birthayString = TimestampFormatter.convertTimestampToISOFormatUTC(
+            account.getBirthday()
+        );
         gen.writeStringField("name", account.getName());
         gen.writeStringField("surname", account.getSurname());
         gen.writeStringField("birthday", birthayString);

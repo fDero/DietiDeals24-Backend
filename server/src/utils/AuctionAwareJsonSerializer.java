@@ -12,6 +12,9 @@ public abstract class AuctionAwareJsonSerializer<T> extends JsonSerializer<T> {
         throws
             IOException
     {
+        String endTimeString = TimestampFormatter.convertTimestampToISOFormatUTC(
+            auction.getEndTime()
+        );
         gen.writeStringField("id", auction.getId().toString());
         gen.writeStringField("title", auction.getItemName());
         gen.writeStringField("country", auction.getCountry());
@@ -21,7 +24,7 @@ public abstract class AuctionAwareJsonSerializer<T> extends JsonSerializer<T> {
         gen.writeStringField("category", auction.getItemCategory());
         gen.writeStringField("macroCategory", auction.getMacroCategory());
         gen.writeStringField("userId", auction.getCreatorId().toString());
-        gen.writeStringField("endTime", auction.getEndTime().toString());
+        gen.writeStringField("endTime", endTimeString);
         gen.writeStringField("status", auction.getStatus());
         gen.writeStringField("currency", auction.getCurrency());
     }

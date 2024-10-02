@@ -26,7 +26,6 @@ services:
     command: sh -c "mvn package && java -jar target/DietiDeals24-backend-0.0.1-SNAPSHOT.jar"
     ports:
       - "80:80"
-      - "80:80"
       - "8443:8443"
     volumes:
       - './server:/server'

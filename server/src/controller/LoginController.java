@@ -11,6 +11,7 @@ import service.AccountValidationService;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpHeaders;
+
 import java.util.ArrayList;
 import java.util.List;
 import authentication.JwtTokenManager;

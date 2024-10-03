@@ -1,30 +1,16 @@
 package controller;
 
-import exceptions.AccessDeniedBadCredentialsException;
-import exceptions.AccountAlreadyExistsException;
-import exceptions.AccountValidationException;
-import exceptions.NoPendingAccountConfirmationException;
-import exceptions.TooManyConfirmationCodes;
-import exceptions.UnrecognizedCityException;
-import exceptions.UnrecognizedCountryException;
-import exceptions.WrongConfirmationCodeException;
+import entity.Account;
 import request.OAuthAccountRegistrationRequest;
 import request.OAuthTokenWrapperRequest;
 import response.AccountMinimalInformations;
 import response.OAuthDebugInformations;
-import service.AccountManagementService;
-import service.AccountValidationService;
-
-import org.springframework.http.HttpHeaders;
+import service.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpHeaders;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-
-import authentication.GoogleOAuthValidator;
-import authentication.JwtTokenAwareHttpHeaders;
-import authentication.JwtTokenManager;
-import entity.Account;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +21,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 
+import authentication.GoogleOAuthValidator;
+import authentication.JwtTokenAwareHttpHeaders;
+import authentication.JwtTokenManager;
+import exceptions.AccessDeniedBadCredentialsException;
+import exceptions.AccountAlreadyExistsException;
+import exceptions.AccountValidationException;
+import exceptions.NoPendingAccountConfirmationException;
+import exceptions.TooManyConfirmationCodes;
+import exceptions.UnrecognizedCityException;
+import exceptions.UnrecognizedCountryException;
+import exceptions.WrongConfirmationCodeException;
+
 @Transactional
 @RestController
 public class GoogleOAuthController {
@@ -42,23 +40,22 @@ public class GoogleOAuthController {
     private final AccountValidationService accountValidationService;
     private final AccountManagementService accountManagementService;
     private final JwtTokenManager jwtTokenProvider;
-    private final GoogleOAuthValidator verifier;
+    private final GoogleOAuthValidator googleOAuthVerifier;
     
     @Autowired
     public GoogleOAuthController(
-        AccountValidationService accountValidationService,
         AccountManagementService accountManagementService,
-        @Value("${google.clientId}") String clientId,
+        AccountValidationService accountValidationService,
+        @Value("${google.clientId}") String googleOAuthClientId,
         JwtTokenManager jwtTokenProvider
-    ){
-        this.accountValidationService = accountValidationService;
+    ) {
         this.accountManagementService = accountManagementService;
-        this.jwtTokenProvider = jwtTokenProvider;    
-        verifier = new GoogleOAuthValidator(clientId);
-    
+        this.accountValidationService = accountValidationService;
+        this.jwtTokenProvider = jwtTokenProvider;
+        this.googleOAuthVerifier = new GoogleOAuthValidator(googleOAuthClientId);
     }
 
-    @PostMapping(value = "/oauth/google/debug", produces = "application/json")
+        @PostMapping(value = "/oauth/google/debug", produces = "application/json")
     public ResponseEntity<OAuthDebugInformations> tokenHealthCheck(
         @RequestBody OAuthTokenWrapperRequest oauthTokenWrapper
     ) 
@@ -67,7 +64,7 @@ public class GoogleOAuthController {
             IOException, 
             AccessDeniedBadCredentialsException 
     {
-        GoogleIdToken idToken = verifier.allInOneverify(oauthTokenWrapper.getOauthToken());
+        GoogleIdToken idToken = googleOAuthVerifier.allInOneverify(oauthTokenWrapper.getOauthToken());
         GoogleIdToken.Payload payload = idToken.getPayload();
         String email = payload.getEmail();
         String googleId = payload.getSubject();
@@ -82,7 +79,7 @@ public class GoogleOAuthController {
         throws 
             AccessDeniedBadCredentialsException 
     {
-        GoogleIdToken idToken = verifier.allInOneverify(oauthTokenWrapper.getOauthToken());
+        GoogleIdToken idToken = googleOAuthVerifier.allInOneverify(oauthTokenWrapper.getOauthToken());
         Account account = accountManagementService.performGoogleLogin(idToken);
         AccountMinimalInformations accountView = new AccountMinimalInformations(account);
         String jwtToken = jwtTokenProvider.generateToken(account.getId());
@@ -104,7 +101,7 @@ public class GoogleOAuthController {
             UnrecognizedCityException, 
             UnrecognizedCountryException 
     {
-        GoogleIdToken idToken = verifier.allInOneverify(accountRegistrationRequest.getOauthToken());
+        GoogleIdToken idToken = googleOAuthVerifier.allInOneverify(accountRegistrationRequest.getOauthToken());
         String email = idToken.getPayload().getEmail();
         accountValidationService.validateAccountRegistrationRequest(email, accountRegistrationRequest);
         Account account = accountManagementService.createAccountWithGoogle(idToken, accountRegistrationRequest);

@@ -2,12 +2,12 @@ package service;
 
 import repository.AccountRepository;
 import request.AccountRegistrationRequest;
+import request.OAuthAccountRegistrationRequest;
 import utils.GeographicalCityDescriptor;
+import utils.TimestampFormatter;
 
 import java.sql.Timestamp;
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -19,7 +19,6 @@ import exceptions.UnrecognizedCountryException;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 
 @Service
 public class AccountValidationService {
@@ -68,11 +67,10 @@ public class AccountValidationService {
             return;
         }
         try {
-            Instant birthdayInstant = Instant.parse(birthdayString);
-            birthday = Timestamp.from(birthdayInstant);
+            birthday = TimestampFormatter.parseFromClientRequest(birthdayString);
         }
-        catch(DateTimeParseException | NullPointerException error){
-            errors.add("birthday not correctly formatted (it must follow the ISO 8601 standard: yyyy-mm-dd)");
+        catch(Exception error){
+            errors.add("birthday not correctly formatted (it must follow the ISO 8601 standard: yyyy-MM-ddThh:mm:ssZ)");
             return;
         }
         if (birthday.after(eighteenYearsAgo)) {
@@ -125,6 +123,27 @@ public class AccountValidationService {
         validatePassword(password, errors);
         if (!errors.isEmpty()) {
             throw new AccountValidationException(String.join(", ", errors));
+        }
+    }
+
+    public void validateAccountRegistrationRequest(String email, OAuthAccountRegistrationRequest accountRegistrationRequest)
+        throws 
+            AccountValidationException, 
+            AccountAlreadyExistsException,
+            UnrecognizedCityException,
+            UnrecognizedCountryException 
+    {
+        ArrayList<String> errors = new ArrayList<>();
+        this.validateBirthday(accountRegistrationRequest.getBirthday(), errors);
+        if (accountRepository.existsAccountByEmail(email)) {
+            throw new AccountAlreadyExistsException("an account already exists with this email address");
+        }
+        this.validateGeographicalData(accountRegistrationRequest.getCountry(), accountRegistrationRequest.getCity());
+        if (!errors.isEmpty()) {
+            throw new AccountValidationException(String.join(", ", errors));
+        }
+        if (accountRepository.existsAccountByUsername(accountRegistrationRequest.getUsername())) {
+            throw new AccountAlreadyExistsException("an account already exists with this username");
         }
     }
 }

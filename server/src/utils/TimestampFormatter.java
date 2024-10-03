@@ -2,6 +2,7 @@ package utils;
 
 import java.sql.Timestamp;
 import java.time.format.DateTimeFormatter;
+import java.time.Instant;
 import java.time.ZoneId;
 
 public class TimestampFormatter {
@@ -12,5 +13,11 @@ public class TimestampFormatter {
 
     public static String convertTimestampToISOFormatUTC(Timestamp timestamp) {
         return formatter.format(timestamp.toInstant());
+    }
+
+    public static Timestamp parseFromClientRequest(String stringEncodedTimestamp) {
+        Instant instant = Instant.parse(stringEncodedTimestamp);
+        Timestamp timestamp = Timestamp.from(instant);
+        return timestamp;
     }
 }

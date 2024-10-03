@@ -23,6 +23,7 @@ import exceptions.NoSuchPaymentMethodException;
 import exceptions.PaymentMethodNotYoursException;
 import repository.AuctionRepository;
 import request.NewAuctionRequest;
+import utils.TimestampFormatter;
 
 @Service
 public class AuctionManagementService {
@@ -91,7 +92,7 @@ public class AuctionManagementService {
 
     public void createNewAuction(Integer creatorId, NewAuctionRequest newAuctionRequest) {
         Auction newAuction = new Auction();
-        Timestamp endTime = Timestamp.from(Instant.parse(newAuctionRequest.getEndTime()));
+        Timestamp endTime = TimestampFormatter.parseFromClientRequest(newAuctionRequest.getEndTime());
         validateNewAuction(newAuctionRequest);
         newAuction.setMaximumBid(newAuctionRequest.getMaximumBid());
         newAuction.setMinimumBid(newAuctionRequest.getMinimumBid());
@@ -116,7 +117,7 @@ public class AuctionManagementService {
     private void validateNewAuction(NewAuctionRequest newAuctionRequest) {
         final BigDecimal minimumBid = newAuctionRequest.getMinimumBid();
         final BigDecimal maximumBid = newAuctionRequest.getMaximumBid();
-        final Timestamp endTime = Timestamp.from(Instant.parse(newAuctionRequest.getEndTime()));
+        final Timestamp endTime = TimestampFormatter.parseFromClientRequest(newAuctionRequest.getEndTime());
         final String country = newAuctionRequest.getCountry();
         final String city = newAuctionRequest.getCity();
         final boolean reverse = newAuctionRequest.getAuctionType().equals("reverse");

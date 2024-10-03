@@ -122,4 +122,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleGeographicalAwarenessFailureException(GeographicalAwarenessFailureException ex){
         return new ResponseEntity<>(ex.getMessage(), errorResponseHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @ExceptionHandler(AccessDeniedWrongAccountProviderException.class)
+    public ResponseEntity<String> handleAccessDeniedWrongAccountProviderException(AccessDeniedWrongAccountProviderException ex){
+        return new ResponseEntity<>(ex.getMessage(), errorResponseHeaders, HttpStatus.CONFLICT);
+    }
 }

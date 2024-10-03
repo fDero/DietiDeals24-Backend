@@ -22,6 +22,9 @@ public class JwtTokenManager {
         secretHS512Key = randomStringGenerationService.generateRandomString(10);
     }
 
+    public String generateToken(Integer id) {
+        return generateToken(id.toString());
+    }
 
     public String generateToken(String id) {
         Date now = Date.from(Instant.now());

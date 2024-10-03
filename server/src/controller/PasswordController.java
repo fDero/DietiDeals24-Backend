@@ -2,6 +2,7 @@ package controller;
 
 import entity.Account;
 import exceptions.AccessDeniedBadCredentialsException;
+import exceptions.AccessDeniedWrongAccountProviderException;
 import exceptions.AccountValidationException;
 import exceptions.NoAccountWithSuchEmailException;
 import exceptions.NoAccountWithSuchUsernameException;
@@ -56,7 +57,8 @@ public class PasswordController {
             NoAccountWithSuchEmailException,
             NoAccountWithSuchUsernameException, 
             UnsupportedEncodingException, 
-            MessagingException
+            MessagingException,
+            AccessDeniedWrongAccountProviderException
     {
         final boolean haveUsername = forgotPasswordInitializationRequest.getUsername() != null;
         final boolean haveEmail = forgotPasswordInitializationRequest.getEmail() != null;
@@ -69,6 +71,9 @@ public class PasswordController {
         final Account account = haveUsername? 
             accountManagementService.fetchAccountByUsername(forgotPasswordInitializationRequest.getUsername()) :
             accountManagementService.fetchAccountByEmail(forgotPasswordInitializationRequest.getEmail());
+        if (!account.getAccountProvider().equals("DIETIDEALS24")) {
+            throw new AccessDeniedWrongAccountProviderException();
+        }
         String authToken = randomStringGenerationService.generateRandomString(10);
         PendingForgotPasswordReset pendingForgotPasswordReset = new PendingForgotPasswordReset(
             account.getEmail(),

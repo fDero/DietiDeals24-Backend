@@ -1,14 +1,15 @@
 package entity;
 
 import utils.PendingAccountRegistration;
+import utils.TimestampFormatter;
 import java.sql.Timestamp;
+import request.OAuthAccountRegistrationRequest;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 
 @Entity @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
@@ -25,6 +26,24 @@ public class Account {
         this.username = pendingAccount.getUsername();
         this.accountCreation = new Timestamp(System.currentTimeMillis());
         this.lastLogin = new Timestamp(System.currentTimeMillis());
+        this.accountProvider = "DIETIDEALS24";
+    }
+
+    public Account(
+        String accountProvider, 
+        String email, 
+        OAuthAccountRegistrationRequest accountRegistrationRequest
+    ) {
+        this.name = accountRegistrationRequest.getName();
+        this.surname = accountRegistrationRequest.getSurname();
+        this.birthday = TimestampFormatter.parseFromClientRequest(accountRegistrationRequest.getBirthday());
+        this.country = accountRegistrationRequest.getCountry();
+        this.city = accountRegistrationRequest.getCity();
+        this.email = email;
+        this.username = accountRegistrationRequest.getUsername();
+        this.accountCreation = new Timestamp(System.currentTimeMillis());
+        this.lastLogin = new Timestamp(System.currentTimeMillis());
+        this.accountProvider = accountProvider;
     }
 
     @Column(name = "name")
@@ -59,6 +78,9 @@ public class Account {
 
     @Column(name = "bio")
     private String bio;
+    
+    @Column(name = "account_provider")
+    private String accountProvider;
 
     @Id @Column(name = "account_id") 
     @GeneratedValue(strategy = GenerationType.IDENTITY)

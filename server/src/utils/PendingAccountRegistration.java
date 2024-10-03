@@ -3,7 +3,6 @@ package utils;
 import request.AccountRegistrationRequest;
 import lombok.*;
 import java.sql.Timestamp;
-import java.time.Instant;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -29,12 +28,9 @@ public class PendingAccountRegistration {
         @NotNull AccountRegistrationRequest request,
         @NotNull String confirmationCode
     ) {
-        Instant birthdayInstant = Instant.parse(request.getBirthday());
-        Timestamp birthdayTimestamp = Timestamp.from(birthdayInstant);
-        
         this.name = request.getName();
         this.surname = request.getSurname();
-        this.birthday = birthdayTimestamp;
+        this.birthday = TimestampFormatter.parseFromClientRequest(request.getBirthday());
         this.city = request.getCity();
         this.country = request.getCountry();
         this.username = request.getUsername();

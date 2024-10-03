@@ -9,11 +9,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+
 import entity.Activity;
+import entity.OAuthAccountBinding;
 import entity.Account;
 import entity.Password;
 import entity.PersonalLink;
 import exceptions.AccessDeniedBadCredentialsException;
+import exceptions.AccessDeniedWrongAccountProviderException;
 import exceptions.AccountValidationException;
 import exceptions.LinkNotFoundException;
 import exceptions.LinkNotYoursException;
@@ -23,10 +27,12 @@ import exceptions.NoAccountWithSuchUsernameException;
 import exceptions.NoPasswordForThisAccountException;
 import repository.AccountRepository;
 import repository.ActivityRepository;
+import repository.OAuthAccountBindingRepository;
 import repository.PasswordRepository;
 import repository.PersonalLinkRepository;
 import request.ForgotPasswordResetRequest;
 import request.NewPersonalLinkRequest;
+import request.OAuthAccountRegistrationRequest;
 import request.PasswordChangeRequest;
 import request.ProfileUpdateRequest;
 import utils.AccountProfileInformations;
@@ -44,6 +50,7 @@ public class AccountManagementService {
     private final ActivityRepository activityRepository;
     private final AccountValidationService accountValidationService;
     private final UploadedResourcesManagementService uploadedResourcesManagementService;
+    private final OAuthAccountBindingRepository oAuthAccountBindingRepository;
 
     @Autowired
     public AccountManagementService(
@@ -55,7 +62,8 @@ public class AccountManagementService {
         BidsManagementService bidsManagementService,
         ActivityRepository activityRepository,
         AccountValidationService accountValidationService,
-        UploadedResourcesManagementService uploadedResourcesManagementService
+        UploadedResourcesManagementService uploadedResourcesManagementService,
+        OAuthAccountBindingRepository oAuthAccountBindingRepository
     ) {
         this.accountRepository = accountRepository;
         this.passwordRepository = passwordRepository;
@@ -66,6 +74,7 @@ public class AccountManagementService {
         this.activityRepository = activityRepository;
         this.accountValidationService = accountValidationService;
         this.uploadedResourcesManagementService = uploadedResourcesManagementService;
+        this.oAuthAccountBindingRepository = oAuthAccountBindingRepository;
     }
 
     public Account fetchAccountByUsername(String username) 
@@ -95,12 +104,15 @@ public class AccountManagementService {
     public Account performAccountLogin(String email, String candidatePlainTextPassword) 
         throws
             NoAccountWithSuchEmailException,
-            AccessDeniedBadCredentialsException
+            AccessDeniedBadCredentialsException, 
+            AccessDeniedWrongAccountProviderException
     {
         Account account = accountRepository.findAccountByEmail(email)
             .orElseThrow(NoAccountWithSuchEmailException::new);
-        Password password = passwordRepository.findPasswordByAccountId(account.getId())
-            .orElseThrow(NoAccountWithSuchEmailException::new);
+        if (!account.getAccountProvider().equals("DIETIDEALS24")) {
+            throw new AccessDeniedWrongAccountProviderException();
+        }
+        Password password = passwordRepository.findPasswordByAccountId(account.getId()).get();
         String realPasswordSalt = password.getPasswordSalt();
         String realPasswordHash = password.getPasswordHash();
         String candidatePasswordHash = encryptionService.encryptPassword(candidatePlainTextPassword, realPasswordSalt);
@@ -149,8 +161,7 @@ public class AccountManagementService {
         boolean includeCurrentDeals, 
         boolean includeAuctions,
         boolean includeBids
-    ) 
-    {
+    ) {
         long zeroIndexedPageNumber = page - 1;
         Pageable pageable = PageRequest.of((int) zeroIndexedPageNumber, (int) size);
         return activityRepository.findUserActivityByUserById(
@@ -164,7 +175,8 @@ public class AccountManagementService {
     } 
 
     public Account createAccount(PendingAccountRegistration pendingAccount) {
-        Account account = accountRepository.save(new Account(pendingAccount));
+        Account account = new Account(pendingAccount);
+        account = accountRepository.save(account);
         String passwordSalt = encryptionService.generateRandomSalt();
         String passwordHash = encryptionService.encryptPassword(pendingAccount.getPassword(), passwordSalt);
         Password password = new Password(passwordSalt, passwordHash, account.getId());
@@ -225,11 +237,12 @@ public class AccountManagementService {
     public void updatePassword(PasswordChangeRequest passwordChangeRequest, Integer accountId) 
         throws 
             NoPasswordForThisAccountException, 
-            AccountValidationException, AccessDeniedBadCredentialsException 
+            AccountValidationException, 
+            AccessDeniedBadCredentialsException
     {
-        Password dbPassword = passwordRepository.findPasswordByAccountId(accountId).orElseThrow(
-                NoPasswordForThisAccountException::new);
-            List<String> errors = new ArrayList<>();
+        Password dbPassword = passwordRepository.findPasswordByAccountId(accountId)
+            .orElseThrow(NoPasswordForThisAccountException::new);
+        List<String> errors = new ArrayList<>();
         accountValidationService.validatePassword(passwordChangeRequest.getNewPassword(), errors);
         if (!errors.isEmpty()) {
             throw new AccountValidationException(String.join(", ", errors));
@@ -253,9 +266,9 @@ public class AccountManagementService {
             AccountValidationException, 
             AccessDeniedBadCredentialsException 
     {
-        Password dbPassword = passwordRepository.findPasswordByAccountId(accountId).orElseThrow(
-                NoPasswordForThisAccountException::new);
-            List<String> errors = new ArrayList<>();
+        Password dbPassword = passwordRepository.findPasswordByAccountId(accountId)
+            .orElseThrow(NoPasswordForThisAccountException::new);
+        List<String> errors = new ArrayList<>();
         accountValidationService.validatePassword(passwordChangeRequest.getNewPassword(), errors);
         if (!errors.isEmpty()) {
             throw new AccountValidationException(String.join(", ", errors));
@@ -265,5 +278,40 @@ public class AccountManagementService {
         dbPassword.setPasswordHash(newHash);
         dbPassword.setPasswordSalt(newSalt);
         passwordRepository.save(dbPassword);
+    }
+
+    public Account performGoogleLogin(GoogleIdToken idToken) 
+        throws 
+            AccessDeniedBadCredentialsException 
+    {
+        String oauthAccountId = idToken.getPayload().getSubject();
+        String oauthProvider = idToken.getPayload().getIssuer();
+        OAuthAccountBinding retrievedOAuthAccountBinding = 
+            oAuthAccountBindingRepository.findByOauthAccountIdAndOauthProvider(oauthAccountId, oauthProvider)
+                .orElseThrow(AccessDeniedBadCredentialsException::new);
+        return accountRepository.findById(retrievedOAuthAccountBinding.getInternalAccountId())
+            .orElseThrow(AccessDeniedBadCredentialsException::new);
+    }
+
+    public void updateProfilePicture(Account account, String newProfilePictureUrl) {
+        account.setProfilePictureUrl(newProfilePictureUrl);
+        accountRepository.save(account);
+    }
+
+    public Account createAccountWithGoogle(
+        GoogleIdToken idToken,
+        OAuthAccountRegistrationRequest accountRegistrationRequest
+    ) {
+        String oauthProvider = idToken.getPayload().getIssuer();
+        String oauthAccountId = idToken.getPayload().getSubject();
+        String email = idToken.getPayload().getEmail();
+        Account account = new Account(oauthProvider, email, accountRegistrationRequest);
+        account = accountRepository.save(account);
+        OAuthAccountBinding oAuthAccountBinding = new OAuthAccountBinding();
+        oAuthAccountBinding.setOauthProvider(oauthProvider);
+        oAuthAccountBinding.setOauthAccountId(oauthAccountId);
+        oAuthAccountBinding.setInternalAccountId(account.getId());
+        oAuthAccountBindingRepository.save(oAuthAccountBinding);
+        return account;
     }
 }

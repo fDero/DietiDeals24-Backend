@@ -45,6 +45,7 @@ public abstract class AccountAwareJsonSerializer<T> extends JsonSerializer<T> {
         gen.writeNumberField("pastDealsCounter", infos.getPastDealsCounter());
         gen.writeNumberField("pastBidsCounter", infos.getPastBidsCounter());
         gen.writeNumberField("pastAuctionsCounter", infos.getPastAuctionsCounter());
+        gen.writeStringField("provider", infos.getAccountProvider());
     }
 
     public static void serializePublicInformations(

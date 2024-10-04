@@ -29,6 +29,7 @@ public class AccountPrivateProfileInformations extends AccountAwareJsonSerialize
     private long pastDealsCounter;
     private long pastBidsCounter;
     private long pastAuctionsCounter;
+    private String accountProvider;
 
     public AccountPrivateProfileInformations(AccountProfileInformations accountProfileInformations) {
         account = accountProfileInformations.getAccount();
@@ -38,6 +39,7 @@ public class AccountPrivateProfileInformations extends AccountAwareJsonSerialize
         pastDealsCounter = accountProfileInformations.getPastDealsCounter();
         pastBidsCounter = accountProfileInformations.getPastBidsCounter();
         pastAuctionsCounter = accountProfileInformations.getPastAuctionsCounter();
+        accountProvider = account.getAccountProvider();
     }
 
     @Override

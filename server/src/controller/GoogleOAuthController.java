@@ -25,7 +25,6 @@ import authentication.GoogleOAuthValidator;
 import authentication.JwtTokenAwareHttpHeaders;
 import authentication.JwtTokenManager;
 import exceptions.AccessDeniedBadCredentialsException;
-import exceptions.AccessDeniedWrongAccountProviderException;
 import exceptions.AccountAlreadyExistsException;
 import exceptions.AccountValidationException;
 import exceptions.NoPendingAccountConfirmationException;
@@ -78,8 +77,7 @@ public class GoogleOAuthController {
         @RequestBody OAuthTokenWrapperRequest oauthTokenWrapper
     ) 
         throws 
-            AccessDeniedBadCredentialsException, 
-            AccessDeniedWrongAccountProviderException 
+            AccessDeniedBadCredentialsException 
     {
         GoogleIdToken idToken = googleOAuthVerifier.allInOneverify(oauthTokenWrapper.getOauthToken());
         Account account = accountManagementService.performGoogleLogin(idToken);

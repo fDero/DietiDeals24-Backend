@@ -289,7 +289,7 @@ public class AccountManagementService {
         String oauthProvider = idToken.getPayload().getIssuer();
         OAuthAccountBinding retrievedOAuthAccountBinding = 
             oAuthAccountBindingRepository.findByOauthAccountIdAndOauthProvider(oauthAccountId, oauthProvider)
-                .orElseThrow(AccessDeniedBadCredentialsException::new);
+                .orElseThrow(AccessDeniedWrongAccountProviderException::new);
         Account retrieved = accountRepository.findById(retrievedOAuthAccountBinding.getInternalAccountId())
             .orElseThrow(AccessDeniedBadCredentialsException::new);
         if (!retrieved.getAccountProvider().equals("GOOGLE")) {

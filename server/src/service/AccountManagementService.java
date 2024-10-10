@@ -282,20 +282,15 @@ public class AccountManagementService {
 
     public Account performGoogleLogin(GoogleIdToken idToken) 
         throws 
-            AccessDeniedBadCredentialsException, 
-            AccessDeniedWrongAccountProviderException 
+            AccessDeniedBadCredentialsException
     {
         String oauthAccountId = idToken.getPayload().getSubject();
         String oauthProvider = idToken.getPayload().getIssuer();
         OAuthAccountBinding retrievedOAuthAccountBinding = 
             oAuthAccountBindingRepository.findByOauthAccountIdAndOauthProvider(oauthAccountId, oauthProvider)
                 .orElseThrow(AccessDeniedBadCredentialsException::new);
-        Account retrieved = accountRepository.findById(retrievedOAuthAccountBinding.getInternalAccountId())
+        return accountRepository.findById(retrievedOAuthAccountBinding.getInternalAccountId())
             .orElseThrow(AccessDeniedBadCredentialsException::new);
-        if (!retrieved.getAccountProvider().equals("GOOGLE")) {
-            throw new AccessDeniedWrongAccountProviderException();
-        }
-        return retrieved;
     }
 
     public void updateProfilePicture(Account account, String newProfilePictureUrl) {

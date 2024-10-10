@@ -5,8 +5,10 @@ import java.time.format.DateTimeFormatter;
 import java.time.Instant;
 import java.time.ZoneId;
 
-public class TimestampFormatter {
+public final class TimestampFormatter {
     
+    private TimestampFormatter() {}
+
     private static final DateTimeFormatter formatter = 
         DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
         .withZone(ZoneId.of("UTC"));
@@ -17,7 +19,6 @@ public class TimestampFormatter {
 
     public static Timestamp parseFromClientRequest(String stringEncodedTimestamp) {
         Instant instant = Instant.parse(stringEncodedTimestamp);
-        Timestamp timestamp = Timestamp.from(instant);
-        return timestamp;
+        return Timestamp.from(instant);
     }
 }

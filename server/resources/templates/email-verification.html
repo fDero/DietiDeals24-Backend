@@ -7,7 +7,14 @@
   <body>
     <div layout:fragment="content">
       <h2>Welcome to DietiDeals24, <span th:text="${username}">user</span>!</h2>
-      <p>Use this code to verify your email address: <strong th:text="${code}"></strong></p>
+      <p>Use this code to verify your email address:</p>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="text-align: center;">
+            <strong style="font-size: 32px; font-weight: 700;" th:text="${code}"></strong>
+          </td>
+        </tr>
+      </table>
     </div>
   </body>
 </html>

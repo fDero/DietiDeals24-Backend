@@ -1,5 +1,8 @@
 package service;
 
+import exceptions.NoPendingAccountConfirmationException;
+import exceptions.TooManyConfirmationCodes;
+import exceptions.WrongConfirmationCodeException;
 import utils.PendingAccountRegistration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -39,5 +42,26 @@ public class PendingAccountRegistrationCacheService {
 
     public void delete(String key) {
         redis.delete(key);
+    }
+
+    public void ensureValidConfirmationCode(PendingAccountRegistration pendingAccount, String confirmationCode)
+            throws
+            NoPendingAccountConfirmationException,
+            WrongConfirmationCodeException,
+            TooManyConfirmationCodes
+    {
+        if (pendingAccount == null) {
+            throw new NoPendingAccountConfirmationException();
+        }
+        else if (!pendingAccount.getConfirmationCode().equals(confirmationCode) && !pendingAccount.hasTooManyErrors()) {
+            delete(pendingAccount.getEmail());
+            pendingAccount.incrementErrorsCounter();
+            store(pendingAccount, 10);
+            throw new WrongConfirmationCodeException();
+        }
+        else if (pendingAccount.hasTooManyErrors()) {
+            delete(pendingAccount.getEmail());
+            throw new TooManyConfirmationCodes();
+        }
     }
 }

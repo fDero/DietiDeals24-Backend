@@ -13,16 +13,16 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-@JsonSerialize(using = TrendingCategoryPack.class)
+@JsonSerialize(using = TrendingCategoriesPack.class)
 @Setter @NoArgsConstructor
 @Getter @AllArgsConstructor
-public class TrendingCategoryPack extends JsonSerializer<TrendingCategoryPack> {
+public class TrendingCategoriesPack extends JsonSerializer<TrendingCategoriesPack> {
     
     private List<Category> categories;
 
     @Override
     public void serialize(
-        TrendingCategoryPack trendingCategoryPack,
+        TrendingCategoriesPack trendingCategoryPack,
         JsonGenerator gen,
         SerializerProvider serializers
     )

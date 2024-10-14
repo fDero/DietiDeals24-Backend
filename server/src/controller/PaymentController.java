@@ -5,7 +5,7 @@ import entity.Iban;
 import exceptions.NoSuchPaymentMethodException;
 import exceptions.PaymentMethodNotYoursException;
 import request.NewPaymentMethodRequest;
-import response.PaymentDescriptorsPack;
+import response.PaymentMethodsPack;
 import service.PaymentProcessingService;
 
 import org.springframework.http.ResponseEntity;
@@ -41,14 +41,14 @@ public class PaymentController {
 
     @RequireJWT
     @GetMapping(value = "/payment-methods/list", produces = "application/json")
-    public ResponseEntity<PaymentDescriptorsPack> sendPaymentMethods(
+    public ResponseEntity<PaymentMethodsPack> sendPaymentMethods(
         @RequestHeader(name = "Authorization") String authorizationHeader
     ) {
         String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
         String id = jwtTokenProvider.getIdFromJWT(jwtToken);
         List<Iban> ibans = paymentManagementService.fetchIbansByAccountId(Integer.valueOf(id));
         List<CreditCard> creditCards = paymentManagementService.fetchCreditCardsByAccountId(Integer.valueOf(id));
-        PaymentDescriptorsPack paymentDescriptorsPack = new PaymentDescriptorsPack(creditCards, ibans);
+        PaymentMethodsPack paymentDescriptorsPack = new PaymentMethodsPack(creditCards, ibans);
         return ResponseEntity.ok().body(paymentDescriptorsPack);
     }
 
@@ -67,7 +67,7 @@ public class PaymentController {
 
     @RequireJWT
     @DeleteMapping(value = "/payment-methods/delete", produces = "text/plain")
-    public ResponseEntity<String> deleteIban(
+    public ResponseEntity<String> deletePaymentMethod(
         @RequestHeader(name = "Authorization") String authorizationHeader,
         @RequestParam Integer paymentMethodId
     ) 

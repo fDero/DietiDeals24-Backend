@@ -40,7 +40,7 @@ public class PaymentProcessingService {
         this.auctionRepository = auctionRepository;
     }
 
-    public void saveIban(entity.Iban iban) {
+    public void saveIban(Iban iban) {
         ibanRepository.save(iban);
     }
 
@@ -48,7 +48,7 @@ public class PaymentProcessingService {
         creditCardRepository.save(creditCard);
     }
 
-    public void deleteIban(entity.Iban iban) {
+    public void deleteIban(Iban iban) {
         ibanRepository.delete(iban);
     }
 

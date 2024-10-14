@@ -7,8 +7,8 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import entity.Category;
 import exceptions.UnrecognizedCountryException;
-import response.TrendingCategoryPack;
-import response.CategoryPack;
+import response.TrendingCategoriesPack;
+import response.CategoriesPack;
 import response.CitiesInformationsPack;
 import response.CountriesInformationsPack;
 import service.GeographicalAwarenessService;
@@ -42,13 +42,13 @@ public class MetadataController {
     }
 
     @GetMapping(value = "/categories/all", produces = "application/json")
-    public ResponseEntity<CategoryPack> sendCategories() {
+    public ResponseEntity<CategoriesPack> sendCategories() {
         List<Category> categories = metadataGatheringService.fetchCategories();
-        return ResponseEntity.ok().body(new CategoryPack(categories));
+        return ResponseEntity.ok().body(new CategoriesPack(categories));
     }
 
     @GetMapping(value = "/categories/trending", produces = "application/json")
-    public ResponseEntity<TrendingCategoryPack> sendTrendingCategories(@RequestParam(defaultValue = "6") Integer amount) {
+    public ResponseEntity<TrendingCategoriesPack> sendTrendingCategories(@RequestParam(defaultValue = "6") Integer amount) {
         List<Category> allCategories = metadataGatheringService.fetchCategories();
         List<Category> trendingCategories = metadataGatheringService.fetchTrendingCategories(amount);
         List<Category> selectedCategories = new ArrayList<>(trendingCategories);
@@ -59,7 +59,7 @@ public class MetadataController {
                 selectedCategories.add(category);
             }
         }
-        TrendingCategoryPack trendingCategoriesPack = new TrendingCategoryPack(selectedCategories);
+        TrendingCategoriesPack trendingCategoriesPack = new TrendingCategoriesPack(selectedCategories);
         return ResponseEntity.ok().body(trendingCategoriesPack);
     }
 

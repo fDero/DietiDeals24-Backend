@@ -17,16 +17,16 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-@JsonSerialize(using = CategoryPack.class)
+@JsonSerialize(using = CategoriesPack.class)
 @Setter @NoArgsConstructor
 @Getter @AllArgsConstructor
-public class CategoryPack extends JsonSerializer<CategoryPack> {
+public class CategoriesPack extends JsonSerializer<CategoriesPack> {
     
     private List<Category> categories;
 
     @Override
     public void serialize(
-        CategoryPack categoryPack,
+        CategoriesPack categoryPack,
         JsonGenerator gen,
         SerializerProvider serializers
     )

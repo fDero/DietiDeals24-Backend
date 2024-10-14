@@ -11,13 +11,10 @@ import exceptions.NoAuctionWithSuchIdException;
 import exceptions.NoSuchAuctionException;
 import exceptions.NoSuchPaymentMethodException;
 import exceptions.PaymentMethodNotYoursException;
-import repository.AuctionRepository;
-import request.NewAuctionRequest;
+import request.NewAuctionCreationRequest;
 import response.AuctionsPack;
 import response.SpecificAuctionInformations;
-import service.AuctionFilteredSearchService;
-import service.AuctionManagementService;
-import service.BidsManagementService;
+import service.*;
 import authentication.JwtTokenManager;
 import org.springframework.http.ResponseEntity;
 import java.util.List;
@@ -32,33 +29,32 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import service.UploadedResourcesManagementService;
 
 @Transactional
 @RestController
 public class AuctionsController {
 
-    private final AuctionRepository auctionsRepository;
     private final AuctionFilteredSearchService auctionFilteredSearchService;
     private final AuctionManagementService auctionManagementService;
     private final BidsManagementService bidsManagementService;
     private final UploadedResourcesManagementService uploadedResourcesManagementService;
+    private final PaymentProcessingService paymentProcessingService;
     private final JwtTokenManager jwtTokenProvider;
 
 
     @Autowired
     public AuctionsController(
-        AuctionRepository auctionsRepository,
         AuctionFilteredSearchService auctionFilteredSearchService,
         AuctionManagementService auctionManagementService,
         BidsManagementService bidsManagementService,
+        PaymentProcessingService paymentProcessingService,
         UploadedResourcesManagementService uploadedResourcesManagementService,
         JwtTokenManager jwtTokenProvider
     ){
         this.auctionFilteredSearchService = auctionFilteredSearchService;
         this.auctionManagementService = auctionManagementService;
-        this.auctionsRepository = auctionsRepository;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.paymentProcessingService = paymentProcessingService;
         this.uploadedResourcesManagementService = uploadedResourcesManagementService;
         this.bidsManagementService = bidsManagementService;
     }
@@ -67,13 +63,13 @@ public class AuctionsController {
     @PostMapping(value = "/auctions/new", produces = "text/plain")
     public ResponseEntity<String> createNewAuction(
         @RequestHeader(name = "Authorization") String authorizationHeader,
-        @RequestBody NewAuctionRequest newAuctionRequest
+        @RequestBody NewAuctionCreationRequest newAuctionCreationRequestRequest
     )  
     {
         String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
         Integer creatorId = Integer.valueOf(jwtTokenProvider.getIdFromJWT(jwtToken));
-        uploadedResourcesManagementService.updateUrlsAndKeepResources(newAuctionRequest.getPicturesUrls());
-        auctionManagementService.createNewAuction(creatorId, newAuctionRequest);
+        uploadedResourcesManagementService.updateUrlsAndKeepResources(newAuctionCreationRequestRequest.getPicturesUrls());
+        auctionManagementService.createNewAuction(creatorId, newAuctionCreationRequestRequest);
         return ResponseEntity.ok().body("done");
     }
 
@@ -104,7 +100,7 @@ public class AuctionsController {
         throws 
             NoAuctionWithSuchIdException
     {
-        Auction auction = auctionsRepository.findById(id).orElseThrow(NoAuctionWithSuchIdException::new);
+        Auction auction = auctionManagementService.fetchAuctionById(id);
         SpecificAuctionInformations auctionSpecificInformations = new SpecificAuctionInformations(auction, null, null);
         return ResponseEntity.ok().body(auctionSpecificInformations);
     }
@@ -118,7 +114,7 @@ public class AuctionsController {
         throws 
             NoAuctionWithSuchIdException
     {
-        Auction auction = auctionsRepository.findById(id).orElseThrow(NoAuctionWithSuchIdException::new);
+        Auction auction = auctionManagementService.fetchAuctionById(id);
         Integer auctionId = auction.getId();
         String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
         Integer requesterId = Integer.valueOf(jwtTokenProvider.getIdFromJWT(jwtToken));
@@ -143,7 +139,9 @@ public class AuctionsController {
     {
         String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
         Integer creatorId = Integer.valueOf(jwtTokenProvider.getIdFromJWT(jwtToken));
+        Auction auction = auctionManagementService.findById(auctionFinalizationRequest.getAuctionId());
         auctionManagementService.closeAuction(creatorId, auctionFinalizationRequest);
+        paymentProcessingService.processAuctionClosingPayment(auction, auctionFinalizationRequest);
         return ResponseEntity.ok().body("done");
     }
 

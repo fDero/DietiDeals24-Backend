@@ -9,9 +9,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter @Setter
 public class GeographicalCountryDescriptor {
-    String name;
-    String alpha2code;
-    String alpha3code;
-    String nativeName;
-    String flag;
+    private String name;
+    private String alpha2code;
+    private String alpha3code;
+    private String nativeName;
+    private String flag;
 }

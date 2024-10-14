@@ -18,7 +18,7 @@ services:
       POSTGRES_PORT: 5433
       REDIS_HOST: "cache"
       REDIS_PORT: 6379
-    command: sh -c "mvn sonar:sonar -Dsonar.projectKey=DietiDeals24-Backend -Dsonar.projectName='DietiDeals24-Backend' -Dsonar.host.url=http://host.docker.internal:9000 -Dsonar.token=sqp_ccf72b32adc77f5a05f969fc611c12e72cf36125"
+    command: sh -c "mvn sonar:sonar -Dsonar.projectKey=DietiDeals24-Backend -Dsonar.projectName='DietiDeals24-Backend' -Dsonar.host.url=http://host.docker.internal:9000 -Dsonar.token=sqp_ccf72b32adc77f5a05f969fc611c12e72cf36125 -Dsonar.scm.disabled=true"
     ports:
       - "80:80"
       - "8443:8443"

@@ -40,8 +40,8 @@ public class DietiDeals24AuthController {
     private final AccountManagementService accountManagementService;
     private final EmailService emailService;
     private final PendingAccountRegistrationCacheService pendingAccountsCacheService;
-    private final JwtTokenManager jwtTokenProvider;
-    private final RandomStringGenerator randomStringGenerationService;
+    private final JwtTokenManager jwtTokenManager;
+    private final RandomStringGenerator randomStringGenerator;
     
     @Autowired
     public DietiDeals24AuthController(
@@ -56,8 +56,8 @@ public class DietiDeals24AuthController {
         this.accountManagementService = accountManagementService;
         this.accountValidationService = accountValidationService;
         this.pendingAccountsCacheService = pendingAccountsCacheService;
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.randomStringGenerationService = randomStringGenerationService;
+        this.jwtTokenManager = jwtTokenProvider;
+        this.randomStringGenerator = randomStringGenerationService;
     }
 
     @PostMapping(value = "/login", produces = "application/json")
@@ -71,7 +71,7 @@ public class DietiDeals24AuthController {
         accountValidationService.validatePassword(request.getPassword());
         Account account = accountManagementService.performAccountLogin(request.getEmail(), request.getPassword());
         AccountMinimalInformations accountView = new AccountMinimalInformations(account);
-        String jwtToken = jwtTokenProvider.generateToken(account.getId());
+        String jwtToken = jwtTokenManager.generateToken(account.getId());
         HttpHeaders headers = new JwtTokenAwareHttpHeaders(jwtToken);
         return ResponseEntity.ok().headers(headers).body(accountView);
     }
@@ -88,7 +88,7 @@ public class DietiDeals24AuthController {
             MessagingException 
     {
         accountValidationService.validateAccountRegistrationRequest(accountRegistrationRequest);
-        String confirmationCode = randomStringGenerationService.generateRandomNumericalString(5);
+        String confirmationCode = randomStringGenerator.generateRandomNumericalString(5);
         PendingAccountRegistration registrationData = new PendingAccountRegistration(accountRegistrationRequest, confirmationCode);
         pendingAccountsCacheService.store(registrationData,10);
         emailService.sendRegistrationConfirmEmail(accountRegistrationRequest.getEmail(), accountRegistrationRequest.getUsername(), confirmationCode);
@@ -100,36 +100,14 @@ public class DietiDeals24AuthController {
         throws 
             NoPendingAccountConfirmationException, 
             WrongConfirmationCodeException, 
-            TooManyConfirmationCodes 
-    {
+            TooManyConfirmationCodes {
         PendingAccountRegistration pendingAccount = pendingAccountsCacheService.retrieve(request.getEmail());
-        ensureValidConfirmationCode(pendingAccount, request.getCode());
+        pendingAccountsCacheService.ensureValidConfirmationCode(pendingAccount, request.getCode());
         Account account = accountManagementService.createAccount(pendingAccount);
         pendingAccountsCacheService.delete(request.getEmail());
         AccountMinimalInformations accountView = new AccountMinimalInformations(account);
-        String jwtToken = jwtTokenProvider.generateToken(account.getId());
+        String jwtToken = jwtTokenManager.generateToken(account.getId());
         HttpHeaders headers = new JwtTokenAwareHttpHeaders(jwtToken);
-        return ResponseEntity.ok().headers(headers).body(accountView);    
-    }
-
-    public void ensureValidConfirmationCode(PendingAccountRegistration pendingAccount, String confirmationCode)
-        throws 
-            NoPendingAccountConfirmationException, 
-            WrongConfirmationCodeException, 
-            TooManyConfirmationCodes 
-    {
-        if (pendingAccount == null) {
-            throw new NoPendingAccountConfirmationException();
-        }
-        else if (!pendingAccount.getConfirmationCode().equals(confirmationCode) && !pendingAccount.hasTooManyErrors()) {
-            pendingAccountsCacheService.delete(pendingAccount.getEmail());
-            pendingAccount.incrementErrorsCounter();
-            pendingAccountsCacheService.store(pendingAccount, 10);
-            throw new WrongConfirmationCodeException();
-        }
-        else if (pendingAccount.hasTooManyErrors()) {
-            pendingAccountsCacheService.delete(pendingAccount.getEmail());
-            throw new TooManyConfirmationCodes();
-        }
+        return ResponseEntity.ok().headers(headers).body(accountView);
     }
 }

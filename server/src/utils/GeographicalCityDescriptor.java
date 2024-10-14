@@ -9,6 +9,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter @Setter
 public class GeographicalCityDescriptor {
-    String name;
-    String stateOrRegion;
+    private String name;
+    private String stateOrRegion;
 }

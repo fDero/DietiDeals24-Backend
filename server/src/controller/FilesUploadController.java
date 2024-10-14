@@ -17,12 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Transactional
 @RestController
-public class UploadedFilesController {
+public class FilesUploadController {
 
     private final UploadedResourcesManagementService picturesUrlsManagementService;
 
     @Autowired
-    public UploadedFilesController(UploadedResourcesManagementService picturesUrlsManagementService) {
+    public FilesUploadController(UploadedResourcesManagementService picturesUrlsManagementService) {
         this.picturesUrlsManagementService = picturesUrlsManagementService;
     }
 

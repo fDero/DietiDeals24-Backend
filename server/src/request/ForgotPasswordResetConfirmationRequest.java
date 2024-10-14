@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Setter @AllArgsConstructor
 @Getter @NoArgsConstructor
-public class ForgotPasswordResetRequest {
+public class ForgotPasswordResetConfirmationRequest {
 
     private Integer userId;
     private String newPassword;

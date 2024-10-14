@@ -16,9 +16,6 @@ public interface AuctionRepository extends JpaRepository<Auction, Integer> {
 
     Optional<Auction> findById(Integer id);
 
-    List<Auction> findAllByCreatorIdAndStatus(Integer creatorId, String status);
-
-    List<Auction> findAllByEndTimeAfterOrderByEndTimeAsc(Timestamp currentTime, Pageable pageable);
 
     static final String AUCTION_SEARCH_QUERY_PREFIX =
         "SELECT a FROM Auction a WHERE a.status = 'active' AND a.endTime > CURRENT_TIMESTAMP " +
@@ -50,8 +47,6 @@ public interface AuctionRepository extends JpaRepository<Auction, Integer> {
     );
 
     long countByStatusAndCreatorId(String status, int creatorId);
-
-    long countByStatusAndCurrentBidderId(String status, int currentBidderId);
 
     default long countPastAuctionsByCreatorId(Integer id) {
         return countByStatusAndCreatorId("closed", id)

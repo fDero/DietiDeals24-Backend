@@ -9,7 +9,7 @@ import lombok.ToString;
 @Getter @AllArgsConstructor
 @Setter @NoArgsConstructor
 @ToString
-public class OAuthTokenWrapperRequest {
+public class OAuthLoginRequest {
     
     private String oauthToken;
 }

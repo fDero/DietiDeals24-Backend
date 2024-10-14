@@ -19,7 +19,7 @@ public class AuctionFilteredSearchService {
         this.auctionsRepository = auctionsRepository;
     }
 
-    public class AuctionFilter {
+    public class AuctionSearchFilter {
 
         private static final String TREANDING = "trending";
         private static final String EXPIRATION = "expiration";
@@ -31,23 +31,23 @@ public class AuctionFilteredSearchService {
         private String itemCategory = "";
         private String policy = TREANDING;
 
-        public AuctionFilter(Integer zeroIndexedPage, Integer size) {
+        public AuctionSearchFilter(Integer zeroIndexedPage, Integer size) {
             this.page = PageRequest.of(zeroIndexedPage, size);
         }
 
-        public AuctionFilter searchingForAnAuctionOfType(String type) {
+        public AuctionSearchFilter searchingForAnAuctionOfType(String type) {
             this.auctionType = type;
             return this;
         }
 
-        public AuctionFilter searchingForAnAuctionForItem(String macroCategory, String keywords, String category) {
+        public AuctionSearchFilter searchingForAnAuctionForItem(String macroCategory, String keywords, String category) {
             this.macroCategory = macroCategory;
             this.searchString = keywords;
             this.itemCategory = category;
             return this;
         }
 
-        public AuctionFilter withPolicy(String policy) {
+        public AuctionSearchFilter withPolicy(String policy) {
             if (!TREANDING.equals(policy) && !EXPIRATION.equals(policy)) {
                 throw new IllegalArgumentException("Invalid policy");
             }
@@ -55,7 +55,7 @@ public class AuctionFilteredSearchService {
             return this;
         }
 
-        public List<Auction> fetchResults(){
+        public List<Auction> fetchResults() {
             assert TREANDING.equals(policy) || EXPIRATION.equals(policy);
             return (TREANDING.equals(policy)) 
                 ? auctionsRepository.findActiveAuctionsFilteredAndSortedByTrending(
@@ -67,8 +67,8 @@ public class AuctionFilteredSearchService {
         }
     }
 
-    public AuctionFilter performPagedSearch(Integer page, Integer size) {
+    public AuctionSearchFilter performPagedSearch(Integer page, Integer size) {
         int zeroIndexedPage = page - 1;
-        return new AuctionFilter(zeroIndexedPage, size);
+        return new AuctionSearchFilter(zeroIndexedPage, size);
     }
 }

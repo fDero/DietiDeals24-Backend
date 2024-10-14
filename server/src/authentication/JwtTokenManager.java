@@ -15,11 +15,11 @@ import utils.RandomStringGenerator;
 @Component
 public class JwtTokenManager {
 
-    private final String secretHS512Key;
+    private final String secretKey;
 
     @Autowired
     JwtTokenManager(RandomStringGenerator randomStringGenerationService){
-        secretHS512Key = randomStringGenerationService.generateRandomString(10);
+        secretKey = randomStringGenerationService.generateRandomString(10);
     }
 
     public String generateToken(Integer id) {
@@ -30,33 +30,33 @@ public class JwtTokenManager {
         Date now = Date.from(Instant.now());
         Date expiryDate = new Date(now.getTime() + 864000000); //10 days
         return Jwts.builder().setSubject(id).setIssuedAt(now)
-            .setExpiration(expiryDate).signWith(SignatureAlgorithm.HS512, secretHS512Key).compact();
+            .setExpiration(expiryDate).signWith(SignatureAlgorithm.HS512, secretKey).compact();
     }
 
     public String getIdFromJWT(String token) {
         return Jwts.parser()
-            .setSigningKey(secretHS512Key)
+            .setSigningKey(secretKey)
             .parseClaimsJws(token)
             .getBody().getSubject();
     }
 
     public long getIssuedAt(String token) {
         return Jwts.parser()
-            .setSigningKey(secretHS512Key)
+            .setSigningKey(secretKey)
             .parseClaimsJws(token)
             .getBody().getIssuedAt().getTime();
     }
 
     public long getExpiration(String token) {
         return Jwts.parser()
-            .setSigningKey(secretHS512Key)
+            .setSigningKey(secretKey)
             .parseClaimsJws(token)
             .getBody().getExpiration().getTime();
     }
 
     public boolean validateToken(String authToken) {
         try {
-            Jwts.parser().setSigningKey(secretHS512Key).parseClaimsJws(authToken);
+            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(authToken);
             return true;
         } catch (Exception ex) {
             return false;

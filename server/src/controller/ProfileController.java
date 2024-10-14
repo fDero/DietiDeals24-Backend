@@ -1,15 +1,11 @@
 package controller;
 
 import entity.Activity;
-import exceptions.AccessDeniedBadCredentialsException;
-import exceptions.AccountValidationException;
 import exceptions.LinkNotFoundException;
 import exceptions.LinkNotYoursException;
 import exceptions.NoAccountWithSuchEmailException;
 import exceptions.NoAccountWithSuchIdException;
-import exceptions.NoPasswordForThisAccountException;
-import request.NewPersonalLinkRequest;
-import request.PasswordChangeRequest;
+import request.NewPersonalLinkCreationRequest;
 import request.ProfileUpdateRequest;
 import response.AccountMinimalInformations;
 import response.AccountPrivateProfileInformations;
@@ -17,6 +13,7 @@ import response.AccountPublicProfileInformations;
 import response.UserPrivateActivity;
 import response.UserPublicActivity;
 import service.AccountManagementService;
+import service.ProfileManagementService;
 import utils.AccountProfileInformations;
 import org.springframework.http.ResponseEntity;
 
@@ -39,14 +36,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProfileController {
 
     private final AccountManagementService accountManagementService;
+    private final ProfileManagementService profileManagementService;
     private final JwtTokenManager jwtTokenProvider;
 
     @Autowired
     public ProfileController(
         AccountManagementService accountManagementService,
+        ProfileManagementService profileManagementService,
         JwtTokenManager jwtTokenProvider
     ){
         this.accountManagementService = accountManagementService;
+        this.profileManagementService = profileManagementService;
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
@@ -91,7 +91,7 @@ public class ProfileController {
         @RequestParam(defaultValue = "true")   Boolean includeAuctions,
         @RequestParam(defaultValue = "true")   Boolean includeBids
     ) {
-        List<Activity> activities = accountManagementService.fetchAccountActivityByUserId(
+        List<Activity> activities = profileManagementService.fetchAccountActivityByUserId(
             id, 
             page,
             size, 
@@ -110,7 +110,7 @@ public class ProfileController {
         @RequestParam(defaultValue = "1")     Integer page,
         @RequestParam(defaultValue = "10")    Integer size
     ) {
-        List<Activity> activities = accountManagementService.fetchAccountActivityByUserId(
+        List<Activity> activities = profileManagementService.fetchAccountActivityByUserId(
             id, 
             page,
             size, 
@@ -136,7 +136,7 @@ public class ProfileController {
     ) {
         String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
         Integer id = Integer.valueOf(jwtTokenProvider.getIdFromJWT(jwtToken));
-        List<Activity> activities = accountManagementService.fetchAccountActivityByUserId(
+        List<Activity> activities = profileManagementService.fetchAccountActivityByUserId(
             id, 
             page,
             size, 
@@ -153,12 +153,12 @@ public class ProfileController {
     @PostMapping(value = "/profile/links/new", produces = "application/json")
     public ResponseEntity<String> createPersonalLink(
         @RequestHeader(name = "Authorization") String authorizationHeader,
-        @RequestBody NewPersonalLinkRequest link
+        @RequestBody NewPersonalLinkCreationRequest link
     ) {
         String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
         String accountIdString = jwtTokenProvider.getIdFromJWT(jwtToken);
         Integer accountId = Integer.valueOf(accountIdString);
-        accountManagementService.savePersonalLink(link, accountId);
+        profileManagementService.savePersonalLink(link, accountId);
         return ResponseEntity.ok().body("done");
     }
 
@@ -175,7 +175,7 @@ public class ProfileController {
         String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
         String accountIdString = jwtTokenProvider.getIdFromJWT(jwtToken);
         Integer accountId = Integer.valueOf(accountIdString);
-        accountManagementService.deletePersonalLink(linkId, accountId);
+        profileManagementService.deletePersonalLink(linkId, accountId);
         return ResponseEntity.ok().body("done");
     }
 
@@ -191,25 +191,7 @@ public class ProfileController {
         String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
         String accountIdString = jwtTokenProvider.getIdFromJWT(jwtToken);
         Integer accountId = Integer.valueOf(accountIdString);
-        accountManagementService.updateProfile(profileUpdateRequest, accountId);
-        return ResponseEntity.ok().body("done");
-    }
-
-    @RequireJWT
-    @PostMapping(value = "/profile/update/password", produces = "text/plain")
-    public ResponseEntity<String> updatePassword(
-        @RequestHeader(name = "Authorization") String authorizationHeader,
-        @RequestBody PasswordChangeRequest passwordChangeRequest
-    ) 
-        throws
-            NoPasswordForThisAccountException, 
-            AccountValidationException, 
-            AccessDeniedBadCredentialsException
-    {
-        String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
-        String accountIdString = jwtTokenProvider.getIdFromJWT(jwtToken);
-        Integer accountId = Integer.valueOf(accountIdString);
-        accountManagementService.updatePassword(passwordChangeRequest, accountId);
+        profileManagementService.updateProfile(profileUpdateRequest, accountId);
         return ResponseEntity.ok().body("done");
     }
 }

@@ -11,7 +11,7 @@ import lombok.ToString;
 @Getter @AllArgsConstructor
 @Setter @NoArgsConstructor
 @ToString
-public class NewAuctionRequest {
+public class NewAuctionCreationRequest {
     
     private BigDecimal maximumBid;
     private BigDecimal minimumBid;

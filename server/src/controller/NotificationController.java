@@ -25,15 +25,15 @@ import jakarta.transaction.Transactional;
 public class NotificationController {
     
     private final NotificationManagementService notificationmanagementService;
-    private final JwtTokenManager jwtTokenProvider;
+    private final JwtTokenManager jwtTokenManager;
 
     @Autowired
     public NotificationController(
         NotificationManagementService notificationmanagementService,
-        JwtTokenManager jwtTokenProvider
+        JwtTokenManager jwtTokenManager
     ) {
         this.notificationmanagementService = notificationmanagementService;
-        this.jwtTokenProvider = jwtTokenProvider;
+        this.jwtTokenManager = jwtTokenManager;
     }
 
     @RequireJWT
@@ -48,8 +48,8 @@ public class NotificationController {
     {
         int zeroIndexedPage = page - 1;
         PageRequest pageDescriptor = PageRequest.of(zeroIndexedPage, size);
-        String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
-        String id = jwtTokenProvider.getIdFromJWT(jwtToken);
+        String jwtToken = jwtTokenManager.getTokenFromRequestHeader(authorizationHeader);
+        String id = jwtTokenManager.getIdFromJWT(jwtToken);
         List<Notification> notifications = notificationmanagementService.findByUser(id, pageDescriptor);
         long readNotifications = notificationmanagementService.countReadNotifications(id);
         long unreadNotifications = notificationmanagementService.countUnreadNotifications(id);
@@ -63,8 +63,8 @@ public class NotificationController {
     public ResponseEntity<String> markAllNotificationsAsRead(
         @RequestHeader(name = "Authorization") String authorizationHeader
     ) {
-        String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
-        String id = jwtTokenProvider.getIdFromJWT(jwtToken);
+        String jwtToken = jwtTokenManager.getTokenFromRequestHeader(authorizationHeader);
+        String id = jwtTokenManager.getIdFromJWT(jwtToken);
         notificationmanagementService.markAllNotificationsAsRead(id);
         return ResponseEntity.ok().body("done");
     }
@@ -75,8 +75,8 @@ public class NotificationController {
     public ResponseEntity<String> markAllNotificationsAsEliminated(
         @RequestHeader(name = "Authorization") String authorizationHeader
     ) {
-        String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
-        String id = jwtTokenProvider.getIdFromJWT(jwtToken);
+        String jwtToken = jwtTokenManager.getTokenFromRequestHeader(authorizationHeader);
+        String id = jwtTokenManager.getIdFromJWT(jwtToken);
         notificationmanagementService.markAllNotificationsAsEliminated(id);
         return ResponseEntity.ok().body("done");
     }
@@ -120,8 +120,8 @@ public class NotificationController {
         throws 
             NotificationNotYoursException
     {
-        String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
-        String id = jwtTokenProvider.getIdFromJWT(jwtToken);
+        String jwtToken = jwtTokenManager.getTokenFromRequestHeader(authorizationHeader);
+        String id = jwtTokenManager.getIdFromJWT(jwtToken);
         if (!notification.getAccountId().toString().equals(id)){
             throw new NotificationNotYoursException();
         }

@@ -16,17 +16,17 @@ import lombok.Setter;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-@JsonSerialize(using = PaymentDescriptorsPack.class)
+@JsonSerialize(using = PaymentMethodsPack.class)
 @Setter @NoArgsConstructor
 @Getter @AllArgsConstructor
-public class PaymentDescriptorsPack extends JsonSerializer<PaymentDescriptorsPack> {
+public class PaymentMethodsPack extends JsonSerializer<PaymentMethodsPack> {
 
     private List<CreditCard> creditCards;
     private List<Iban> ibans;
 
     @Override
     public void serialize(
-        PaymentDescriptorsPack paymentDescriptorsPack,
+        PaymentMethodsPack paymentDescriptorsPack,
         JsonGenerator gen,
         SerializerProvider serializers
     )

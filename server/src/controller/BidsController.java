@@ -34,18 +34,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class BidsController {
 
-    private final JwtTokenManager jwtTokenProvider;
+    private final JwtTokenManager jwtTokenManager;
     private final BidsManagementService bidsManagementService;
     private final PaymentProcessingService paymentsService;
 
     @Autowired
     public BidsController(
-        JwtTokenManager jwtTokenProvider,
+        JwtTokenManager jwtTokenManager,
         AuctionManagementService auctionManagementService,
         BidsManagementService bidsManagementService,
         PaymentProcessingService paymentsService
     ){
-        this.jwtTokenProvider = jwtTokenProvider;
+        this.jwtTokenManager = jwtTokenManager;
         this.bidsManagementService = bidsManagementService;
         this.paymentsService = paymentsService;
     }
@@ -65,8 +65,8 @@ public class BidsController {
             PaymentMethodNotYoursException, 
             MissingPaymentMethodException
     {        
-        String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
-        String bidderIdStr = jwtTokenProvider.getIdFromJWT(jwtToken);
+        String jwtToken = jwtTokenManager.getTokenFromRequestHeader(authorizationHeader);
+        String bidderIdStr = jwtTokenManager.getIdFromJWT(jwtToken);
         Integer bidderId = Integer.valueOf(bidderIdStr);
         Bid bid = new Bid();
         bid.setBidderId(bidderId);
@@ -85,8 +85,8 @@ public class BidsController {
         @RequestHeader(name = "Authorization") String authorizationHeader,
         @RequestParam Integer auctionId
     ) {
-        String jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
-        String userIdString = jwtTokenProvider.getIdFromJWT(jwtToken);
+        String jwtToken = jwtTokenManager.getTokenFromRequestHeader(authorizationHeader);
+        String userIdString = jwtTokenManager.getIdFromJWT(jwtToken);
         Integer userId = Integer.valueOf(userIdString);
         List<Bid> bids = bidsManagementService.fetchBidsByAuctionAndUser(auctionId, userId);
         BidsPack bidsPack = new BidsPack(bids);

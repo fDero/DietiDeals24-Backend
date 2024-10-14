@@ -1,5 +1,6 @@
 package controller;
 
+import authentication.RequireJWT;
 import entity.Account;
 import exceptions.AccessDeniedBadCredentialsException;
 import exceptions.AccessDeniedWrongAccountProviderException;
@@ -8,8 +9,10 @@ import exceptions.NoAccountWithSuchEmailException;
 import exceptions.NoAccountWithSuchUsernameException;
 import exceptions.NoPasswordForThisAccountException;
 import jakarta.mail.MessagingException;
-import request.ForgotPasswordInitializationRequest;
-import request.ForgotPasswordResetRequest;
+import org.springframework.web.bind.annotation.RequestHeader;
+import request.ForgotPasswordResetInitializationRequest;
+import request.ForgotPasswordResetConfirmationRequest;
+import request.PasswordChangeRequest;
 import service.AccountManagementService;
 import service.EmailService;
 import service.ForgotPasswordConfirmationCache;
@@ -33,25 +36,27 @@ public class PasswordController {
     private final AccountManagementService accountManagementService;
     private final ForgotPasswordConfirmationCache forgotPasswordPendingConfirmationCache;
     private final EmailService emailService;
+    private final JwtTokenManager jwtTokenManager;
     private final RandomStringGenerator randomStringGenerationService;
 
     @Autowired
     public PasswordController(
         RandomStringGenerator randomStringGenerationService,
         AccountManagementService accountManagementService,
-        JwtTokenManager jwtTokenProvider, 
         ForgotPasswordConfirmationCache forgotPasswordPendingConfirmationCache,
-        EmailService emailService
-    ){
+        EmailService emailService,
+        JwtTokenManager jwtTokenManager
+        ){
         this.accountManagementService = accountManagementService;
         this.forgotPasswordPendingConfirmationCache = forgotPasswordPendingConfirmationCache;
         this.emailService = emailService;
         this.randomStringGenerationService = randomStringGenerationService;
+        this.jwtTokenManager = jwtTokenManager;
     }
 
     @PostMapping(value = "/password/forgot/reset/init", produces = "text/plain")
     public ResponseEntity<String> initializeForgotPassword(
-        @RequestBody ForgotPasswordInitializationRequest forgotPasswordInitializationRequest
+        @RequestBody ForgotPasswordResetInitializationRequest forgotPasswordInitializationRequest
     ) 
         throws 
             NoAccountWithSuchEmailException,
@@ -88,12 +93,11 @@ public class PasswordController {
 
     @PostMapping(value = "/password/forgot/reset/finalize", produces = "text/plain")
     public ResponseEntity<String> resetForgotPassword(
-        @RequestBody ForgotPasswordResetRequest forgotPasswordInitializationRequest
+        @RequestBody ForgotPasswordResetConfirmationRequest forgotPasswordInitializationRequest
     ) 
         throws 
             NoPasswordForThisAccountException, 
-            AccountValidationException, 
-            AccessDeniedBadCredentialsException 
+            AccountValidationException
     {
         final Integer accountId = forgotPasswordInitializationRequest.getUserId();
         final String authToken = forgotPasswordInitializationRequest.getAuthToken();
@@ -108,6 +112,24 @@ public class PasswordController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid auth token");
         }
         accountManagementService.updatePassword(forgotPasswordInitializationRequest, accountId);
+        return ResponseEntity.ok().body("done");
+    }
+
+    @RequireJWT
+    @PostMapping(value = "/profile/update/password", produces = "text/plain")
+    public ResponseEntity<String> updatePassword(
+        @RequestHeader(name = "Authorization") String authorizationHeader,
+        @RequestBody PasswordChangeRequest passwordChangeRequest
+    )
+        throws
+            NoPasswordForThisAccountException,
+            AccountValidationException,
+            AccessDeniedBadCredentialsException
+    {
+        String jwtToken = jwtTokenManager.getTokenFromRequestHeader(authorizationHeader);
+        String accountIdString = jwtTokenManager.getIdFromJWT(jwtToken);
+        Integer accountId = Integer.valueOf(accountIdString);
+        accountManagementService.updatePassword(passwordChangeRequest, accountId);
         return ResponseEntity.ok().body("done");
     }
 }

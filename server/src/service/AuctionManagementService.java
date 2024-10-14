@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
 
+import exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -14,15 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import entity.Auction;
 import entity.Bid;
 import request.AuctionClosingRequest;
-import exceptions.AuctionNotActiveException;
-import exceptions.AuctionNotPendingException;
-import exceptions.AuctionNotYoursException;
-import exceptions.MissingPaymentMethodException;
-import exceptions.NoSuchAuctionException;
-import exceptions.NoSuchPaymentMethodException;
-import exceptions.PaymentMethodNotYoursException;
 import repository.AuctionRepository;
-import request.NewAuctionRequest;
+import request.NewAuctionCreationRequest;
 import utils.TimestampFormatter;
 
 @Service
@@ -31,19 +25,16 @@ public class AuctionManagementService {
     private final AuctionRepository auctionRepository;
     private final GeographicalAwarenessService geographicalAwarenessService;
     private final MetadataManagementService metadataManagementService;
-    private final PaymentProcessingService paymentProcessingService;
 
     @Autowired
     public AuctionManagementService(
         AuctionRepository auctionRepository,
         GeographicalAwarenessService geographicalAwarenessService,
-        MetadataManagementService metadataManagementService,
-        PaymentProcessingService paymentProcessingService
+        MetadataManagementService metadataManagementService
     ) {
         this.auctionRepository = auctionRepository;
         this.geographicalAwarenessService = geographicalAwarenessService;
         this.metadataManagementService = metadataManagementService;
-        this.paymentProcessingService = paymentProcessingService;
     }
 
     @Async
@@ -90,31 +81,31 @@ public class AuctionManagementService {
         return auctionRepository.countPastAuctionsByCreatorId(creatorId);
     }
 
-    public void createNewAuction(Integer creatorId, NewAuctionRequest newAuctionRequest) {
+    public void createNewAuction(Integer creatorId, NewAuctionCreationRequest newAuctionCreationRequest) {
         Auction newAuction = new Auction();
-        Timestamp endTime = TimestampFormatter.parseFromClientRequest(newAuctionRequest.getEndTime());
-        validateNewAuction(newAuctionRequest);
-        newAuction.setMaximumBid(newAuctionRequest.getMaximumBid());
-        newAuction.setMinimumBid(newAuctionRequest.getMinimumBid());
+        Timestamp endTime = TimestampFormatter.parseFromClientRequest(newAuctionCreationRequest.getEndTime());
+        validateNewAuction(newAuctionCreationRequest);
+        newAuction.setMaximumBid(newAuctionCreationRequest.getMaximumBid());
+        newAuction.setMinimumBid(newAuctionCreationRequest.getMinimumBid());
         newAuction.setCreatorId(creatorId);
-        newAuction.setCountry(newAuctionRequest.getCountry());
-        newAuction.setCity(newAuctionRequest.getCity());
-        newAuction.setItemCondition(newAuctionRequest.getItemCondition());
-        newAuction.setItemCategory(newAuctionRequest.getItemCategory());
-        newAuction.setMacroCategory(newAuctionRequest.getMacroCategory());
+        newAuction.setCountry(newAuctionCreationRequest.getCountry());
+        newAuction.setCity(newAuctionCreationRequest.getCity());
+        newAuction.setItemCondition(newAuctionCreationRequest.getItemCondition());
+        newAuction.setItemCategory(newAuctionCreationRequest.getItemCategory());
+        newAuction.setMacroCategory(newAuctionCreationRequest.getMacroCategory());
         newAuction.setStartTime(Timestamp.from(Instant.now()));
         newAuction.setEndTime(endTime);
-        newAuction.setItemName(newAuctionRequest.getItemName());
-        newAuction.setDescription(newAuctionRequest.getDescription());
-        newAuction.setPicturesUrls(newAuctionRequest.getPicturesUrls());
-        newAuction.setAuctionType(newAuctionRequest.getAuctionType());
-        newAuction.setCurrency(newAuctionRequest.getCurrency());
+        newAuction.setItemName(newAuctionCreationRequest.getItemName());
+        newAuction.setDescription(newAuctionCreationRequest.getDescription());
+        newAuction.setPicturesUrls(newAuctionCreationRequest.getPicturesUrls());
+        newAuction.setAuctionType(newAuctionCreationRequest.getAuctionType());
+        newAuction.setCurrency(newAuctionCreationRequest.getCurrency());
         newAuction.setStatus("active");
         newAuction.setNumberOfBids(0);
         auctionRepository.save(newAuction);
     }
 
-    private void validateNewAuction(NewAuctionRequest newAuctionRequest) {
+    private void validateNewAuction(NewAuctionCreationRequest newAuctionRequest) {
         final BigDecimal minimumBid = newAuctionRequest.getMinimumBid();
         final BigDecimal maximumBid = newAuctionRequest.getMaximumBid();
         final Timestamp endTime = TimestampFormatter.parseFromClientRequest(newAuctionRequest.getEndTime());
@@ -192,14 +183,10 @@ public class AuctionManagementService {
         throws 
             NoSuchAuctionException, 
             AuctionNotYoursException, 
-            AuctionNotPendingException, 
-            NoSuchPaymentMethodException, 
-            PaymentMethodNotYoursException, 
-            MissingPaymentMethodException 
+            AuctionNotPendingException
     {
         Integer auctionId = auctionFinalizationRequest.getAuctionId();
         Auction auction = finalizeAuctionPreliminaryChecks(creatorId, auctionId, "pending", new AuctionNotPendingException());
-        paymentProcessingService.processAuctionClosingPayment(auction, auctionFinalizationRequest);
         auction.setStatus("closed");
         auctionRepository.save(auction);
     }
@@ -213,5 +200,9 @@ public class AuctionManagementService {
         Auction auction = finalizeAuctionPreliminaryChecks(creatorId, auctionId, "pending", new AuctionNotPendingException());
         auction.setStatus("rejected");
         auctionRepository.save(auction);
+    }
+
+    public Auction fetchAuctionById(Integer id) throws NoAuctionWithSuchIdException {
+        return auctionRepository.findById(id).orElseThrow(NoAuctionWithSuchIdException::new);
     }
 }

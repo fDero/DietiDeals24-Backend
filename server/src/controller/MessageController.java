@@ -30,19 +30,19 @@ public class MessageController {
     private final EmailService emailService;
     private final AuctionManagementService auctionManagementService;
     private final AccountManagementService accountManagementService;
-    private final JwtTokenManager jwtTokenProvider;
+    private final JwtTokenManager jwtTokenManager;
 
     @Autowired
     public MessageController(
         EmailService emailService,
         AccountManagementService accountManagementService,
         AuctionManagementService auctionManagementService,
-        JwtTokenManager jwtTokenProvider
+        JwtTokenManager jwtTokenManager
     ){
         this.emailService = emailService;
         this.accountManagementService = accountManagementService;
         this.auctionManagementService = auctionManagementService;
-        this.jwtTokenProvider = jwtTokenProvider;
+        this.jwtTokenManager = jwtTokenManager;
     }
 
     @RequireJWT
@@ -58,8 +58,8 @@ public class MessageController {
             MessagingException 
     {
         final Auction auction = auctionManagementService.findById(request.getAuctionId());
-        final String  jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
-        final String  requesterIdStr = jwtTokenProvider.getIdFromJWT(jwtToken);
+        final String  jwtToken = jwtTokenManager.getTokenFromRequestHeader(authorizationHeader);
+        final String  requesterIdStr = jwtTokenManager.getIdFromJWT(jwtToken);
         final Integer senderId = Integer.valueOf(requesterIdStr);
         final Integer currentBidderId = auction.getCurrentBidderId().intValue();
         final Integer receiverId = currentBidderId.equals(senderId) ? auction.getCreatorId() : currentBidderId;
@@ -88,8 +88,8 @@ public class MessageController {
             MessagingException 
     {
         final Auction auction = auctionManagementService.findById(request.getAuctionId());
-        final String  jwtToken = jwtTokenProvider.getTokenFromRequestHeader(authorizationHeader);
-        final String  requesterIdStr = jwtTokenProvider.getIdFromJWT(jwtToken);
+        final String  jwtToken = jwtTokenManager.getTokenFromRequestHeader(authorizationHeader);
+        final String  requesterIdStr = jwtTokenManager.getIdFromJWT(jwtToken);
         final Integer reporterId = Integer.valueOf(requesterIdStr);
         final Integer currentBidderId = auction.getCurrentBidderId().intValue();
         final Integer reporteeId = currentBidderId.equals(reporterId) ? auction.getCreatorId() : currentBidderId;

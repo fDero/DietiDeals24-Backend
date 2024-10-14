@@ -5,13 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 
-import entity.Activity;
 import entity.OAuthAccountBinding;
 import entity.Account;
 import entity.Password;
@@ -19,8 +16,6 @@ import entity.PersonalLink;
 import exceptions.AccessDeniedBadCredentialsException;
 import exceptions.AccessDeniedWrongAccountProviderException;
 import exceptions.AccountValidationException;
-import exceptions.LinkNotFoundException;
-import exceptions.LinkNotYoursException;
 import exceptions.NoAccountWithSuchEmailException;
 import exceptions.NoAccountWithSuchIdException;
 import exceptions.NoAccountWithSuchUsernameException;
@@ -30,11 +25,9 @@ import repository.ActivityRepository;
 import repository.OAuthAccountBindingRepository;
 import repository.PasswordRepository;
 import repository.PersonalLinkRepository;
-import request.ForgotPasswordResetRequest;
-import request.NewPersonalLinkRequest;
+import request.ForgotPasswordResetConfirmationRequest;
 import request.OAuthAccountRegistrationRequest;
 import request.PasswordChangeRequest;
-import request.ProfileUpdateRequest;
 import utils.AccountProfileInformations;
 import utils.PendingAccountRegistration;
 
@@ -47,9 +40,7 @@ public class AccountManagementService {
     private final EncryptionService encryptionService;
     private final PersonalLinkRepository personalLinkRepository;
     private final BidsManagementService bidsManagementService;
-    private final ActivityRepository activityRepository;
     private final AccountValidationService accountValidationService;
-    private final UploadedResourcesManagementService uploadedResourcesManagementService;
     private final OAuthAccountBindingRepository oAuthAccountBindingRepository;
 
     @Autowired
@@ -71,9 +62,7 @@ public class AccountManagementService {
         this.personalLinkRepository = personalLinkRepository;
         this.auctionManagementService = auctionManagementService;
         this.bidsManagementService = bidsManagementService;
-        this.activityRepository = activityRepository;
         this.accountValidationService = accountValidationService;
-        this.uploadedResourcesManagementService = uploadedResourcesManagementService;
         this.oAuthAccountBindingRepository = oAuthAccountBindingRepository;
     }
 
@@ -124,13 +113,6 @@ public class AccountManagementService {
         return account;
     }
 
-    public Account getAccountById(Integer accountId) 
-        throws
-            NoAccountWithSuchIdException
-    {
-        return accountRepository.findById(accountId).orElseThrow(NoAccountWithSuchIdException::new);
-    }
-
     public AccountProfileInformations fetchAccountProfileInformations(Integer id) 
         throws 
             NoAccountWithSuchEmailException
@@ -153,27 +135,6 @@ public class AccountManagementService {
         return accountPrivateInfos;
     }
 
-    public List<Activity> fetchAccountActivityByUserId(
-        Integer userId, 
-        long page,
-        long size,
-        boolean includePastDeals, 
-        boolean includeCurrentDeals, 
-        boolean includeAuctions,
-        boolean includeBids
-    ) {
-        long zeroIndexedPageNumber = page - 1;
-        Pageable pageable = PageRequest.of((int) zeroIndexedPageNumber, (int) size);
-        return activityRepository.findUserActivityByUserById(
-            userId, 
-            includePastDeals, 
-            includeCurrentDeals, 
-            includeAuctions, 
-            includeBids, 
-            pageable
-        );
-    } 
-
     public Account createAccount(PendingAccountRegistration pendingAccount) {
         Account account = new Account(pendingAccount);
         account = accountRepository.save(account);
@@ -182,56 +143,6 @@ public class AccountManagementService {
         Password password = new Password(passwordSalt, passwordHash, account.getId());
         passwordRepository.save(password);
         return account;
-    }
-
-    public void savePersonalLink(NewPersonalLinkRequest link, Integer accountId) {
-        PersonalLink personalLink = new PersonalLink();
-        personalLink.setLink(link.getLink());
-        personalLink.setDescription(link.getDescription());
-        personalLink.setAccountId(accountId);
-        personalLinkRepository.save(personalLink);
-    }
-
-    public void deletePersonalLink(Integer linkId, Integer accountId) 
-        throws 
-            LinkNotFoundException, 
-            LinkNotYoursException
-    {
-        PersonalLink link = personalLinkRepository.findById(linkId)
-            .orElseThrow(LinkNotFoundException::new);
-        if (!link.getAccountId().equals(accountId)) {
-            throw new LinkNotYoursException();
-        }
-        personalLinkRepository.deleteById(linkId);
-    }
-
-    public void updateProfile(ProfileUpdateRequest profileUpdateRequest, Integer accountId) 
-        throws 
-            NoAccountWithSuchIdException
-    {
-        Account account = accountRepository.findById(accountId)
-            .orElseThrow(NoAccountWithSuchIdException::new);
-        if (profileUpdateRequest.getNewBio() != null) {
-            account.setBio(profileUpdateRequest.getNewBio());
-        }
-        if (profileUpdateRequest.getNewCountry() != null) {
-            account.setCountry(profileUpdateRequest.getNewCountry());
-        }
-        if (profileUpdateRequest.getNewCity() != null) {
-            account.setCity(profileUpdateRequest.getNewCity());
-        }
-        if (profileUpdateRequest.getNewEmail() != null) {
-            account.setEmail(profileUpdateRequest.getNewEmail());
-        }
-        if (profileUpdateRequest.getNewUsername() != null) {
-            account.setUsername(profileUpdateRequest.getNewUsername());
-        }
-        if (profileUpdateRequest.getNewProfilePictureUrl() != null) {
-            String newProfilePictureUrl = uploadedResourcesManagementService
-                .updateUrlAndKeepResource(profileUpdateRequest.getNewProfilePictureUrl());
-            account.setProfilePictureUrl(newProfilePictureUrl);
-        }
-        accountRepository.save(account);
     }
 
     public void updatePassword(PasswordChangeRequest passwordChangeRequest, Integer accountId) 
@@ -260,11 +171,10 @@ public class AccountManagementService {
         passwordRepository.save(dbPassword);
     }
 
-    public void updatePassword(ForgotPasswordResetRequest passwordChangeRequest, Integer accountId) 
+    public void updatePassword(ForgotPasswordResetConfirmationRequest passwordChangeRequest, Integer accountId)
         throws 
             NoPasswordForThisAccountException, 
-            AccountValidationException, 
-            AccessDeniedBadCredentialsException 
+            AccountValidationException
     {
         Password dbPassword = passwordRepository.findPasswordByAccountId(accountId)
             .orElseThrow(NoPasswordForThisAccountException::new);
@@ -291,11 +201,6 @@ public class AccountManagementService {
                 .orElseThrow(AccessDeniedBadCredentialsException::new);
         return accountRepository.findById(retrievedOAuthAccountBinding.getInternalAccountId())
             .orElseThrow(AccessDeniedBadCredentialsException::new);
-    }
-
-    public void updateProfilePicture(Account account, String newProfilePictureUrl) {
-        account.setProfilePictureUrl(newProfilePictureUrl);
-        accountRepository.save(account);
     }
 
     public Account createAccountWithGoogle(

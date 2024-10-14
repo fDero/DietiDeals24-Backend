@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Getter @AllArgsConstructor
 @Setter @NoArgsConstructor
-public class ForgotPasswordInitializationRequest {
+public class ForgotPasswordResetInitializationRequest {
     
     private String email;
     private String username;

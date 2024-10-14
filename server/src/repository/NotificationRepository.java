@@ -18,12 +18,4 @@ public interface NotificationRepository extends JpaRepository<Notification, Inte
     Optional<Notification> findById(Integer id);
 
     long countByAccountIdAndVisualizedAndEliminated(Integer accountId, boolean visualized, boolean eliminated);
-
-    default long countUnreadNotifications(Integer accountId) {
-        return countByAccountIdAndVisualizedAndEliminated(accountId, false, false);
-    }
-
-    default long countReadNotifications(Integer accountId) {
-        return countByAccountIdAndVisualizedAndEliminated(accountId, true, false);
-    }
 }

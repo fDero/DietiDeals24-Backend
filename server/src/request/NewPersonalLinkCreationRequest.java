@@ -9,7 +9,7 @@ import lombok.ToString;
 @Getter @AllArgsConstructor
 @Setter @NoArgsConstructor
 @ToString
-public class NewPersonalLinkRequest {
+public class NewPersonalLinkCreationRequest {
     
     String link;
     String description;

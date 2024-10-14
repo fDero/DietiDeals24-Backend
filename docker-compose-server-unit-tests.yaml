@@ -1,0 +1,28 @@
+version: '3.3'
+
+services:
+  server:
+    image: maven:3.9-amazoncorretto-21-debian
+    environment:
+      DIETIDEALS24_GEO_API_KEY: ${DIETIDEALS24_GEO_API_KEY}
+      DIETIDEALS24_GOOGLE_SMTP_PASSWORD: ${DIETIDEALS24_GOOGLE_SMTP_PASSWORD}
+      DIETIDEALS24_GOOGLE_SMTP_USERNAME: "dietideals24@gmail.com"
+      DIETIDEALS24_KEYSTORE_PATH: /ssl/dd24-keystore.p12
+      DIETIDEALS24_KEYSTORE_PASSWORD: ${DIETIDEALS24_KEYSTORE_PASSWORD}
+      DIETIDEALS24_KEYSTORE_ALIAS: dietideals24
+      DIETIDEALS24_FRONTEND_URL: "https://localhost:4200"
+      DIETIDEALS24_LOGO_URL: "https://localhost:4200/assets/logo.svg"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "dietideals24passw"
+      POSTGRES_HOST: "database"
+      POSTGRES_PORT: 5433
+      REDIS_HOST: "cache"
+      REDIS_PORT: 6379
+    command: sh -c "mvn test"
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+    volumes:
+      - './server:/server'
+      - './ssl:/ssl'
+    working_dir: "/server"

@@ -9,5 +9,3 @@ demo
 *.key
 .idea
 ssl/*
-tests
-docker-compose-server-unit-tests.yaml

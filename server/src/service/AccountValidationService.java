@@ -43,7 +43,7 @@ public class AccountValidationService {
         String emailRegex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
         Pattern pattern = Pattern.compile(emailRegex);
         if (!pattern.matcher(email).matches()) {
-            throw new IllegalArgumentException("email not correctly formatted");
+            errors.add("email not correctly formatted");
         }
     }
 
@@ -92,26 +92,49 @@ public class AccountValidationService {
         throw new UnrecognizedCityException();
     }
 
-    public void validateAccountRegistrationRequest(@NotNull AccountRegistrationRequest account) 
+    public void validateGeographicalData(String country, String city, ArrayList<String> errors)
         throws 
-            AccountValidationException, 
-            AccountAlreadyExistsException,
-            UnrecognizedCityException,
-            UnrecognizedCountryException 
+            UnrecognizedCityException, 
+            UnrecognizedCountryException
     {
-        ArrayList<String> errors = new ArrayList<>();
-        this.validateBirthday(account.getBirthday(), errors);
-        this.validateEmail(account.getEmail(), errors);
-        this.validatePassword(account.getPassword(), errors);
-        this.validateGeographicalData(account.getCountry(), account.getCity());
-        if (!errors.isEmpty()) {
-            throw new AccountValidationException(String.join(", ", errors));
+        try {
+            List<GeographicalCityDescriptor> cities = geographicalAwarenessService.fetchCitiesFromCountry(country);
+            for (GeographicalCityDescriptor cityDescriptor : cities) {
+                if (cityDescriptor.getName().equals(city)) {
+                    return;
+                }
+            }
         }
-        if (accountRepository.existsAccountByEmail(account.getEmail())) {
-            throw new AccountAlreadyExistsException("an account already exists with this email address");
+        catch (UnrecognizedCountryException e) {
+            errors.add("invalid pair country");
         }
-        if (accountRepository.existsAccountByUsername(account.getUsername())) {
-            throw new AccountAlreadyExistsException("an account already exists with this username");
+        errors.add("invalid pair country-city");
+    }
+
+    private void validateName(String name, ArrayList<String> errors) {
+        if (name == null) {
+            errors.add("missing name field");
+        }
+        else if (name.length() < 2) {
+            errors.add("name must be at least 2 characters long");
+        }
+    }
+
+    private void validateSurname(String name, ArrayList<String> errors) {
+        if (name == null) {
+            errors.add("missing surname field");
+        }
+        else if (name.length() < 2) {
+            errors.add("surname must be at least 2 characters long");
+        }
+    }
+
+    private void validateUsername(String username, ArrayList<String> errors) {
+        if (username == null) {
+            errors.add("missing username field");
+        }
+        else if (username.length() < 4) {
+            errors.add("username must be at least 4 characters long");
         }
     }
 
@@ -138,11 +161,39 @@ public class AccountValidationService {
         if (accountRepository.existsAccountByEmail(email)) {
             throw new AccountAlreadyExistsException("an account already exists with this email address");
         }
-        this.validateGeographicalData(accountRegistrationRequest.getCountry(), accountRegistrationRequest.getCity());
+        String country = accountRegistrationRequest.getCountry();
+        String city = accountRegistrationRequest.getCity();
+        this.validateGeographicalData(country, city, errors);
         if (!errors.isEmpty()) {
             throw new AccountValidationException(String.join(", ", errors));
         }
         if (accountRepository.existsAccountByUsername(accountRegistrationRequest.getUsername())) {
+            throw new AccountAlreadyExistsException("an account already exists with this username");
+        }
+    }
+
+    public void validateAccountRegistrationRequest(@NotNull AccountRegistrationRequest account) 
+        throws 
+            AccountValidationException, 
+            AccountAlreadyExistsException,
+            UnrecognizedCityException,
+            UnrecognizedCountryException 
+    {
+        ArrayList<String> errors = new ArrayList<>();
+        this.validateName(account.getName(), errors);
+        this.validateSurname(account.getSurname(), errors);
+        this.validateUsername(account.getUsername(), errors);
+        this.validateBirthday(account.getBirthday(), errors);
+        this.validateEmail(account.getEmail(), errors);
+        this.validatePassword(account.getPassword(), errors);
+        this.validateGeographicalData(account.getCountry(), account.getCity(), errors);
+        if (!errors.isEmpty()) {
+            throw new AccountValidationException(String.join(", ", errors));
+        }
+        if (accountRepository.existsAccountByEmail(account.getEmail())) {
+            throw new AccountAlreadyExistsException("an account already exists with this email address");
+        }
+        if (accountRepository.existsAccountByUsername(account.getUsername())) {
             throw new AccountAlreadyExistsException("an account already exists with this username");
         }
     }

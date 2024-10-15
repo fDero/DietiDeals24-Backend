@@ -4,6 +4,7 @@ import entity.Bid;
 import exceptions.AuctionNotActiveException;
 import exceptions.BidOnYourOwnAuctionException;
 import exceptions.MissingPaymentMethodException;
+import exceptions.NoAccountWithSuchIdException;
 import exceptions.NoAuctionWithSuchIdException;
 import exceptions.NoSuchAuctionException;
 import exceptions.NoSuchPaymentMethodException;
@@ -63,7 +64,8 @@ public class BidsController {
             NoAuctionWithSuchIdException, 
             NoSuchPaymentMethodException, 
             PaymentMethodNotYoursException, 
-            MissingPaymentMethodException
+            MissingPaymentMethodException, 
+            NoAccountWithSuchIdException
     {        
         String jwtToken = jwtTokenManager.getTokenFromRequestHeader(authorizationHeader);
         String bidderIdStr = jwtTokenManager.getIdFromJWT(jwtToken);

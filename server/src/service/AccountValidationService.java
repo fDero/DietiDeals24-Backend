@@ -92,7 +92,7 @@ public class AccountValidationService {
         throw new UnrecognizedCityException();
     }
 
-    public void validateGeographicalData(String country, String city, ArrayList<String> errors)
+    public void validateGeographicalData(String country, String city, List<String> errors)
         throws 
             UnrecognizedCityException, 
             UnrecognizedCountryException
@@ -111,7 +111,7 @@ public class AccountValidationService {
         errors.add("invalid pair country-city");
     }
 
-    private void validateName(String name, ArrayList<String> errors) {
+    private void validateName(String name, List<String> errors) {
         if (name == null) {
             errors.add("missing name field");
         }
@@ -120,7 +120,7 @@ public class AccountValidationService {
         }
     }
 
-    private void validateSurname(String name, ArrayList<String> errors) {
+    private void validateSurname(String name, List<String> errors) {
         if (name == null) {
             errors.add("missing surname field");
         }
@@ -129,7 +129,7 @@ public class AccountValidationService {
         }
     }
 
-    private void validateUsername(String username, ArrayList<String> errors) {
+    private void validateUsername(String username, List<String> errors) {
         if (username == null) {
             errors.add("missing username field");
         }

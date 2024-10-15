@@ -76,12 +76,7 @@ class AccountValidationServiceTest {
     }
 
     @Test
-    void t2() 
-        throws 
-            AccountValidationException, 
-            AccountAlreadyExistsException, 
-            UnrecognizedCityException, 
-            UnrecognizedCountryException   
+    void t2() throws UnrecognizedCountryException
     {
         AccountRegistrationRequest accountRegistrationRequest = new AccountRegistrationRequest();
         accountRegistrationRequest.setName("R");
@@ -113,12 +108,7 @@ class AccountValidationServiceTest {
     }
 
     @Test
-    void t3() 
-        throws 
-            AccountValidationException, 
-            AccountAlreadyExistsException, 
-            UnrecognizedCityException, 
-            UnrecognizedCountryException   
+    void t3() throws UnrecognizedCountryException
     {
         AccountRegistrationRequest accountRegistrationRequest = new AccountRegistrationRequest();
         accountRegistrationRequest.setName(null);
@@ -150,12 +140,7 @@ class AccountValidationServiceTest {
     }
 
     @Test
-    void t4() 
-        throws 
-            AccountValidationException, 
-            AccountAlreadyExistsException, 
-            UnrecognizedCityException, 
-            UnrecognizedCountryException   
+    void t4() throws UnrecognizedCountryException
     {
         AccountRegistrationRequest accountRegistrationRequest = new AccountRegistrationRequest();
         accountRegistrationRequest.setName("Renato");
@@ -187,12 +172,7 @@ class AccountValidationServiceTest {
     }
 
     @Test
-    void t5() 
-        throws 
-            AccountValidationException, 
-            AccountAlreadyExistsException, 
-            UnrecognizedCityException, 
-            UnrecognizedCountryException   
+    void t5() throws UnrecognizedCountryException
     {
         AccountRegistrationRequest accountRegistrationRequest = new AccountRegistrationRequest();
         accountRegistrationRequest.setName("Renato");
@@ -224,12 +204,7 @@ class AccountValidationServiceTest {
     }
 
     @Test
-    void t6() 
-        throws 
-            AccountValidationException, 
-            AccountAlreadyExistsException, 
-            UnrecognizedCityException, 
-            UnrecognizedCountryException   
+    void t6() throws UnrecognizedCountryException
     {
         AccountRegistrationRequest accountRegistrationRequest = new AccountRegistrationRequest();
         accountRegistrationRequest.setName("Jimmy");
@@ -262,10 +237,7 @@ class AccountValidationServiceTest {
 
     @Test
     void t7() 
-        throws 
-            AccountValidationException, 
-            AccountAlreadyExistsException, 
-            UnrecognizedCityException, 
+        throws
             UnrecognizedCountryException   
     {
         AccountRegistrationRequest accountRegistrationRequest = new AccountRegistrationRequest();
@@ -298,13 +270,7 @@ class AccountValidationServiceTest {
     }
 
     @Test
-    void t8() 
-        throws 
-            AccountValidationException, 
-            AccountAlreadyExistsException, 
-            UnrecognizedCityException, 
-            UnrecognizedCountryException   
-    {
+    void t8() throws UnrecognizedCountryException {
         AccountRegistrationRequest accountRegistrationRequest = new AccountRegistrationRequest();
         accountRegistrationRequest.setName("Paul");
         accountRegistrationRequest.setSurname("Stanley");
@@ -335,12 +301,7 @@ class AccountValidationServiceTest {
     }
 
     @Test
-    void t9() 
-        throws 
-            AccountValidationException, 
-            AccountAlreadyExistsException, 
-            UnrecognizedCityException, 
-            UnrecognizedCountryException   
+    void t9() throws UnrecognizedCountryException
     {
         AccountRegistrationRequest accountRegistrationRequest = new AccountRegistrationRequest();
         accountRegistrationRequest.setName("Paul");
@@ -372,12 +333,7 @@ class AccountValidationServiceTest {
     }
 
     @Test
-    void t10() 
-        throws 
-            AccountValidationException, 
-            AccountAlreadyExistsException, 
-            UnrecognizedCityException, 
-            UnrecognizedCountryException   
+    void t10() throws UnrecognizedCountryException
     {
         AccountRegistrationRequest accountRegistrationRequest = new AccountRegistrationRequest();
         accountRegistrationRequest.setName("Paul");
@@ -409,12 +365,7 @@ class AccountValidationServiceTest {
     }
 
     @Test
-    void t11() 
-        throws 
-            AccountValidationException, 
-            AccountAlreadyExistsException, 
-            UnrecognizedCityException, 
-            UnrecognizedCountryException   
+    void t11() throws UnrecognizedCountryException
     {
         AccountRegistrationRequest accountRegistrationRequest = new AccountRegistrationRequest();
         accountRegistrationRequest.setName("Bruce");
@@ -446,12 +397,7 @@ class AccountValidationServiceTest {
     }
 
     @Test
-    void t12() 
-        throws 
-            AccountValidationException, 
-            AccountAlreadyExistsException, 
-            UnrecognizedCityException, 
-            UnrecognizedCountryException   
+    void t12() throws UnrecognizedCountryException
     {
         AccountRegistrationRequest accountRegistrationRequest = new AccountRegistrationRequest();
         accountRegistrationRequest.setName("Julius");
@@ -479,12 +425,7 @@ class AccountValidationServiceTest {
     }
 
     @Test
-    void t13() 
-        throws 
-            AccountValidationException, 
-            AccountAlreadyExistsException, 
-            UnrecognizedCityException, 
-            UnrecognizedCountryException   
+    void t13() throws UnrecognizedCountryException
     {
         AccountRegistrationRequest accountRegistrationRequest = new AccountRegistrationRequest();
         accountRegistrationRequest.setName("Keith");
@@ -516,12 +457,7 @@ class AccountValidationServiceTest {
     }
 
     @Test
-    void t14() 
-        throws 
-            AccountValidationException, 
-            AccountAlreadyExistsException, 
-            UnrecognizedCityException, 
-            UnrecognizedCountryException   
+    void t14() throws UnrecognizedCountryException
     {
         AccountRegistrationRequest accountRegistrationRequest = new AccountRegistrationRequest();
         accountRegistrationRequest.setName("Keith");
@@ -553,12 +489,7 @@ class AccountValidationServiceTest {
     }
 
     @Test
-    void t15() 
-        throws 
-            AccountValidationException, 
-            AccountAlreadyExistsException, 
-            UnrecognizedCityException, 
-            UnrecognizedCountryException   
+    void t15() throws UnrecognizedCountryException
     {
         AccountRegistrationRequest accountRegistrationRequest = new AccountRegistrationRequest();
         accountRegistrationRequest.setName("Keith");
@@ -590,12 +521,7 @@ class AccountValidationServiceTest {
     }
 
     @Test
-    void t16() 
-        throws 
-            AccountValidationException, 
-            AccountAlreadyExistsException, 
-            UnrecognizedCityException, 
-            UnrecognizedCountryException   
+    void t16() throws UnrecognizedCountryException
     {
         AccountRegistrationRequest accountRegistrationRequest = new AccountRegistrationRequest();
         accountRegistrationRequest.setName("Keith");
@@ -627,12 +553,7 @@ class AccountValidationServiceTest {
     }
 
     @Test
-    void t17() 
-        throws 
-            AccountValidationException, 
-            AccountAlreadyExistsException, 
-            UnrecognizedCityException, 
-            UnrecognizedCountryException   
+    void t17() throws UnrecognizedCountryException
     {
         AccountRegistrationRequest accountRegistrationRequest = new AccountRegistrationRequest();
         accountRegistrationRequest.setName("Keith");

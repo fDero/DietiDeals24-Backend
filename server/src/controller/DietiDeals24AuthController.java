@@ -63,10 +63,10 @@ public class DietiDeals24AuthController {
     @PostMapping(value = "/login", produces = "application/json")
     public ResponseEntity<AccountMinimalInformations> login(@RequestBody @NotNull LoginRequest request) 
         throws 
-            AccountValidationException,
             NoAccountWithSuchEmailException,
             AccessDeniedBadCredentialsException, 
-            AccessDeniedWrongAccountProviderException
+            AccessDeniedWrongAccountProviderException, 
+            AccountValidationException
     {
         accountValidationService.validatePassword(request.getPassword());
         Account account = accountManagementService.performAccountLogin(request.getEmail(), request.getPassword());

@@ -211,13 +211,7 @@ class BidsManagementServiceTest {
     }
 
     @Test
-    void t3() 
-        throws 
-            AuctionNotActiveException, 
-            BidOnYourOwnAuctionException, 
-            NoAccountWithSuchIdException, 
-            NoSuchAuctionException 
-    {
+    void t3() {
         BidsManagementService bidsManagementService = new BidsManagementService(
             mockAuctionManagementService,
             mockAccountRepository,
@@ -255,13 +249,7 @@ class BidsManagementServiceTest {
     }
 
     @Test
-    void t4() 
-        throws 
-            AuctionNotActiveException, 
-            BidOnYourOwnAuctionException, 
-            NoAccountWithSuchIdException, 
-            NoSuchAuctionException 
-    {
+    void t4() {
         BidsManagementService bidsManagementService = new BidsManagementService(
             mockAuctionManagementService,
             mockAccountRepository,
@@ -293,13 +281,7 @@ class BidsManagementServiceTest {
     }
 
     @Test
-    void t5() 
-        throws 
-            AuctionNotActiveException, 
-            BidOnYourOwnAuctionException, 
-            NoAccountWithSuchIdException, 
-            NoSuchAuctionException 
-    {
+    void t5() {
         BidsManagementService bidsManagementService = new BidsManagementService(
             mockAuctionManagementService,
             mockAccountRepository,
@@ -319,13 +301,7 @@ class BidsManagementServiceTest {
     }
 
     @Test
-    void t6() 
-        throws 
-            AuctionNotActiveException, 
-            BidOnYourOwnAuctionException, 
-            NoAccountWithSuchIdException, 
-            NoSuchAuctionException 
-    {
+    void t6() {
         BidsManagementService bidsManagementService = new BidsManagementService(
             mockAuctionManagementService,
             mockAccountRepository,
@@ -344,13 +320,7 @@ class BidsManagementServiceTest {
     }
 
     @Test
-    void t7() 
-        throws 
-            AuctionNotActiveException, 
-            BidOnYourOwnAuctionException, 
-            NoAccountWithSuchIdException, 
-            NoSuchAuctionException 
-    {
+    void t7() {
         BidsManagementService bidsManagementService = new BidsManagementService(
             mockAuctionManagementService,
             mockAccountRepository,
@@ -369,13 +339,7 @@ class BidsManagementServiceTest {
     }
 
     @Test
-    void t8() 
-        throws 
-            AuctionNotActiveException, 
-            BidOnYourOwnAuctionException, 
-            NoAccountWithSuchIdException, 
-            NoSuchAuctionException 
-    {
+    void t8() {
         BidsManagementService bidsManagementService = new BidsManagementService(
             mockAuctionManagementService,
             mockAccountRepository,

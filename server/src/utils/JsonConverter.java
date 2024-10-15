@@ -1,16 +1,14 @@
-package service;
+package utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import exceptions.JsonEncodingDecodingException;
-import lombok.NoArgsConstructor;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 
-@Service
-@NoArgsConstructor
-public class JsonConversionService {
+@Component
+public class JsonConverter {
 
     private final ObjectMapper mapper = new ObjectMapper();
 

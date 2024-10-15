@@ -4,10 +4,9 @@ package service;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.testng.Assert;
+import org.junit.jupiter.api.Assertions;
 
-import exceptions.AccountAlreadyExistsException;
 import exceptions.AccountValidationException;
-import exceptions.UnrecognizedCityException;
 import exceptions.UnrecognizedCountryException;
 
 import java.util.ArrayList;
@@ -33,13 +32,7 @@ class AccountValidationServiceTest {
     private GeographicalAwarenessService mockGeographicalAwarenessService;
 
     @Test
-    void t1() 
-        throws 
-            AccountValidationException, 
-            AccountAlreadyExistsException, 
-            UnrecognizedCityException, 
-            UnrecognizedCountryException   
-    {
+    void t1() throws UnrecognizedCountryException {
         AccountRegistrationRequest accountRegistrationRequest = new AccountRegistrationRequest();
         accountRegistrationRequest.setName("Donald");
         accountRegistrationRequest.setSurname("Fagen");
@@ -72,12 +65,13 @@ class AccountValidationServiceTest {
             }
         );
 
-        accountValidationService.validateAccountRegistrationRequest(accountRegistrationRequest);
+        Assertions.assertDoesNotThrow(() -> {
+            accountValidationService.validateAccountRegistrationRequest(accountRegistrationRequest);
+        });
     }
 
     @Test
-    void t2() throws UnrecognizedCountryException
-    {
+    void t2() throws UnrecognizedCountryException {
         AccountRegistrationRequest accountRegistrationRequest = new AccountRegistrationRequest();
         accountRegistrationRequest.setName("R");
         accountRegistrationRequest.setSurname("Carosone");
@@ -108,8 +102,7 @@ class AccountValidationServiceTest {
     }
 
     @Test
-    void t3() throws UnrecognizedCountryException
-    {
+    void t3() throws UnrecognizedCountryException {
         AccountRegistrationRequest accountRegistrationRequest = new AccountRegistrationRequest();
         accountRegistrationRequest.setName(null);
         accountRegistrationRequest.setSurname("Carosone");
@@ -140,8 +133,7 @@ class AccountValidationServiceTest {
     }
 
     @Test
-    void t4() throws UnrecognizedCountryException
-    {
+    void t4() throws UnrecognizedCountryException {
         AccountRegistrationRequest accountRegistrationRequest = new AccountRegistrationRequest();
         accountRegistrationRequest.setName("Renato");
         accountRegistrationRequest.setSurname("C");
@@ -172,8 +164,7 @@ class AccountValidationServiceTest {
     }
 
     @Test
-    void t5() throws UnrecognizedCountryException
-    {
+    void t5() throws UnrecognizedCountryException {
         AccountRegistrationRequest accountRegistrationRequest = new AccountRegistrationRequest();
         accountRegistrationRequest.setName("Renato");
         accountRegistrationRequest.setSurname(null);
@@ -204,8 +195,7 @@ class AccountValidationServiceTest {
     }
 
     @Test
-    void t6() throws UnrecognizedCountryException
-    {
+    void t6() throws UnrecognizedCountryException {
         AccountRegistrationRequest accountRegistrationRequest = new AccountRegistrationRequest();
         accountRegistrationRequest.setName("Jimmy");
         accountRegistrationRequest.setSurname("Page");
@@ -236,10 +226,7 @@ class AccountValidationServiceTest {
     }
 
     @Test
-    void t7() 
-        throws
-            UnrecognizedCountryException   
-    {
+    void t7() throws UnrecognizedCountryException {
         AccountRegistrationRequest accountRegistrationRequest = new AccountRegistrationRequest();
         accountRegistrationRequest.setName("Jimmy");
         accountRegistrationRequest.setSurname("Page");
@@ -301,8 +288,7 @@ class AccountValidationServiceTest {
     }
 
     @Test
-    void t9() throws UnrecognizedCountryException
-    {
+    void t9() throws UnrecognizedCountryException {
         AccountRegistrationRequest accountRegistrationRequest = new AccountRegistrationRequest();
         accountRegistrationRequest.setName("Paul");
         accountRegistrationRequest.setSurname("Stanley");
@@ -333,8 +319,7 @@ class AccountValidationServiceTest {
     }
 
     @Test
-    void t10() throws UnrecognizedCountryException
-    {
+    void t10() throws UnrecognizedCountryException {
         AccountRegistrationRequest accountRegistrationRequest = new AccountRegistrationRequest();
         accountRegistrationRequest.setName("Paul");
         accountRegistrationRequest.setSurname("Stanley");
@@ -365,8 +350,7 @@ class AccountValidationServiceTest {
     }
 
     @Test
-    void t11() throws UnrecognizedCountryException
-    {
+    void t11() throws UnrecognizedCountryException {
         AccountRegistrationRequest accountRegistrationRequest = new AccountRegistrationRequest();
         accountRegistrationRequest.setName("Bruce");
         accountRegistrationRequest.setSurname("Wayne");
@@ -397,8 +381,7 @@ class AccountValidationServiceTest {
     }
 
     @Test
-    void t12() throws UnrecognizedCountryException
-    {
+    void t12() throws UnrecognizedCountryException {
         AccountRegistrationRequest accountRegistrationRequest = new AccountRegistrationRequest();
         accountRegistrationRequest.setName("Julius");
         accountRegistrationRequest.setSurname("Caesar");
@@ -425,8 +408,7 @@ class AccountValidationServiceTest {
     }
 
     @Test
-    void t13() throws UnrecognizedCountryException
-    {
+    void t13() throws UnrecognizedCountryException {
         AccountRegistrationRequest accountRegistrationRequest = new AccountRegistrationRequest();
         accountRegistrationRequest.setName("Keith");
         accountRegistrationRequest.setSurname("Mansfield");
@@ -457,8 +439,7 @@ class AccountValidationServiceTest {
     }
 
     @Test
-    void t14() throws UnrecognizedCountryException
-    {
+    void t14() throws UnrecognizedCountryException {
         AccountRegistrationRequest accountRegistrationRequest = new AccountRegistrationRequest();
         accountRegistrationRequest.setName("Keith");
         accountRegistrationRequest.setSurname("Mansfield");
@@ -489,8 +470,7 @@ class AccountValidationServiceTest {
     }
 
     @Test
-    void t15() throws UnrecognizedCountryException
-    {
+    void t15() throws UnrecognizedCountryException {
         AccountRegistrationRequest accountRegistrationRequest = new AccountRegistrationRequest();
         accountRegistrationRequest.setName("Keith");
         accountRegistrationRequest.setSurname("Mansfield");
@@ -521,8 +501,7 @@ class AccountValidationServiceTest {
     }
 
     @Test
-    void t16() throws UnrecognizedCountryException
-    {
+    void t16() throws UnrecognizedCountryException {
         AccountRegistrationRequest accountRegistrationRequest = new AccountRegistrationRequest();
         accountRegistrationRequest.setName("Keith");
         accountRegistrationRequest.setSurname("Mansfield");
@@ -553,8 +532,7 @@ class AccountValidationServiceTest {
     }
 
     @Test
-    void t17() throws UnrecognizedCountryException
-    {
+    void t17() throws UnrecognizedCountryException {
         AccountRegistrationRequest accountRegistrationRequest = new AccountRegistrationRequest();
         accountRegistrationRequest.setName("Keith");
         accountRegistrationRequest.setSurname("Mansfield");

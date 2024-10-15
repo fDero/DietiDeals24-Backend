@@ -1,45 +1,44 @@
 
 package service;
 
-import java.util.concurrent.TimeUnit;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import utils.JsonConverter;
+import utils.KeyValueInMemoryCache;
 import utils.PendingForgotPasswordReset;
 
 @Service
 public class ForgotPasswordConfirmationCache {
 
-    private final RedisTemplate<String,String> redis;
-    private final JsonConversionService jsonConverter;
+    private final KeyValueInMemoryCache cache;
+    private final JsonConverter jsonConverter;
     private final String cacheKeyPrefix = "pending_forgot_password_confirmation::";
 
     @Autowired
     public ForgotPasswordConfirmationCache(
-        RedisTemplate<String, String> redis, 
-        JsonConversionService jsonConverter
+        KeyValueInMemoryCache cache, 
+        JsonConverter jsonConverter
     ) {
         this.jsonConverter = jsonConverter;
-        this.redis = redis;
+        this.cache = cache;
     }
 
     public void store(PendingForgotPasswordReset registrationData, int expirationInMinutes) {
         String key = cacheKeyPrefix + registrationData.getAccountId();
         String json = jsonConverter.encode(registrationData);
-        redis.opsForValue().set(key, json, expirationInMinutes, TimeUnit.MINUTES);
+        cache.store(key, json, expirationInMinutes);
     }
 
     public PendingForgotPasswordReset retrieve(Integer accountId) {
         String key = cacheKeyPrefix + accountId;
-        String retrieved = redis.opsForValue().get(key);
+        String retrieved = cache.retrieve(key);
         return (retrieved != null)
             ? jsonConverter.decode(retrieved, PendingForgotPasswordReset.class)
             : null;
     }
 
     public void delete(String key) {
-        redis.delete(cacheKeyPrefix + key);
+        cache.delete(key);
     }
 }

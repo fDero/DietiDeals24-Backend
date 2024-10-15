@@ -9,12 +9,11 @@ import java.util.Optional;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.testng.Assert;
+import org.junit.jupiter.api.Assertions;
 
 import entity.Account;
 import entity.Auction;
 import entity.Bid;
-import exceptions.AuctionNotActiveException;
-import exceptions.BidOnYourOwnAuctionException;
 import exceptions.NoAccountWithSuchIdException;
 import exceptions.NoSuchAuctionException;
 import repository.AccountRepository;
@@ -124,13 +123,7 @@ class BidsManagementServiceTest {
     }
 
     @Test
-    void t1() 
-        throws 
-            AuctionNotActiveException, 
-            BidOnYourOwnAuctionException, 
-            NoAccountWithSuchIdException, 
-            NoSuchAuctionException 
-    {
+    void t1() {
         BidsManagementService bidsManagementService = new BidsManagementService(
             mockAuctionManagementService,
             mockAccountRepository,
@@ -163,18 +156,15 @@ class BidsManagementServiceTest {
         );
         
         Bid bid = new ExampleMountainBikeBid(auction.getId(), bidder.getId(), 700);
-        bidsManagementService.validateBid(bid, auction);
+
+        Assertions.assertDoesNotThrow(() -> {
+            bidsManagementService.validateBid(bid, auction);
+        });
     }
 
     
     @Test
-    void t2() 
-        throws 
-            AuctionNotActiveException, 
-            BidOnYourOwnAuctionException, 
-            NoAccountWithSuchIdException, 
-            NoSuchAuctionException 
-    {
+    void t2() {
         BidsManagementService bidsManagementService = new BidsManagementService(
             mockAuctionManagementService,
             mockAccountRepository,
@@ -207,7 +197,10 @@ class BidsManagementServiceTest {
         );
         
         Bid bid = new ExampleMountainBikeBid(auction.getId(), bidder.getId(), 700);
-        bidsManagementService.validateBid(bid, auction);
+        
+        Assertions.assertDoesNotThrow(() -> {
+            bidsManagementService.validateBid(bid, auction);
+        });
     }
 
     @Test

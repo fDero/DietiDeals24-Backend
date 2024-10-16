@@ -59,6 +59,9 @@ public class BidsManagementService {
         if (auction.getMinimumBid() != null && bid.getBidAmount().compareTo(auction.getMinimumBid()) < 0) {
             throw new IllegalArgumentException("Bid amount must be higher then minimum amount allowed");
         }
+        if (!Objects.equals(auction.getId(), bid.getAuctionId())) {
+            throw new InternalError();
+        }
         if (!accountRepository.findById(bidderId).isPresent()) {
             throw new NoAccountWithSuchIdException();
         }

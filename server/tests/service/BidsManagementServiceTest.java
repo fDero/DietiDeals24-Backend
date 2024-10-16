@@ -51,7 +51,6 @@ class BidsManagementServiceTest {
     @EqualsAndHashCode(callSuper = false)
     static class ExampleMountainBikeAuction extends Auction {
 
-
         ExampleMountainBikeAuction(Integer auctionId, Integer creatorId, BigDecimal maximumBid, BigDecimal minimumBid, AuctionType type) {
             super.setMaximumBid(maximumBid);
             super.setMinimumBid(minimumBid);
@@ -134,7 +133,6 @@ class BidsManagementServiceTest {
         Account auctionCreator = new ExampleAccount("Roger", "Penske", 1);
         Account bidder = new ExampleAccount("Reinhold", "Joest", 2);        
         Auction auction = new ExampleMountainBikeAuction(1, auctionCreator.getId(), null, 500, AuctionType.SILENT);
-        
         Mockito.when(mockAccountRepository.findById(Mockito.any(Integer.class)))
             .thenAnswer(invocation -> {
                 Integer id = invocation.getArgument(0);
@@ -146,17 +144,9 @@ class BidsManagementServiceTest {
                 };
             }
         );
-
         Mockito.when(mockAuctionRepository.findById(Mockito.any(Integer.class)))
-            .thenAnswer(invocation -> {
-                Integer id = invocation.getArgument(0);
-                assert id.equals(auction.getId());
-                return Optional.of(auction);
-            }
-        );
-        
+            .thenReturn(Optional.of(auction));
         Bid bid = new ExampleMountainBikeBid(auction.getId(), bidder.getId(), 700);
-
         Assertions.assertDoesNotThrow(() -> {
             bidsManagementService.validateBid(bid, auction);
         });
@@ -175,7 +165,6 @@ class BidsManagementServiceTest {
         Account auctionCreator = new ExampleAccount("Roger", "Penske", 1);
         Account bidder = new ExampleAccount("Reinhold", "Joest", 2);        
         Auction auction = new ExampleMountainBikeAuction(1, auctionCreator.getId(), 1000, null, AuctionType.REVERSE);
-        
         Mockito.when(mockAccountRepository.findById(Mockito.any(Integer.class)))
             .thenAnswer(invocation -> {
                 Integer id = invocation.getArgument(0);
@@ -187,17 +176,8 @@ class BidsManagementServiceTest {
                 };
             }
         );
-
-        Mockito.when(mockAuctionRepository.findById(Mockito.any(Integer.class)))
-            .thenAnswer(invocation -> {
-                Integer id = invocation.getArgument(0);
-                assert id.equals(auction.getId());
-                return Optional.of(auction);
-            }
-        );
-        
+        Mockito.when(mockAuctionRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.of(auction));
         Bid bid = new ExampleMountainBikeBid(auction.getId(), bidder.getId(), 700);
-        
         Assertions.assertDoesNotThrow(() -> {
             bidsManagementService.validateBid(bid, auction);
         });
@@ -215,7 +195,6 @@ class BidsManagementServiceTest {
         Account auctionCreator = new ExampleAccount("Roger", "Penske", 1);
         Account bidder = new ExampleAccount("Reinhold", "Joest", 2);        
         Auction auction = new ExampleMountainBikeAuction(1, auctionCreator.getId(), 1000, null, AuctionType.REVERSE);
-        
         Mockito.when(mockAccountRepository.findById(Mockito.any(Integer.class)))
             .thenAnswer(invocation -> {
                 Integer id = invocation.getArgument(0);
@@ -227,15 +206,8 @@ class BidsManagementServiceTest {
                 };
             }
         );
-
-        Mockito.when(mockAuctionRepository.findById(Mockito.any(Integer.class)))
-            .thenAnswer(invocation -> {
-                return Optional.empty();
-            }
-        );
-
+        Mockito.when(mockAuctionRepository.findById(Mockito.any(Integer.class))).thenReturn(Optional.empty());
         Bid bid = new ExampleMountainBikeBid(-1, bidder.getId(), 700);
-        
         Assert.assertThrows(NoSuchAuctionException.class, () -> {
             bidsManagementService.validateBid(bid, auction);
         });
@@ -253,7 +225,6 @@ class BidsManagementServiceTest {
         Account auctionCreator = new ExampleAccount("Roger", "Penske", 1);
         Account bidder = new ExampleAccount("Reinhold", "Joest", 2);        
         Auction auction = new ExampleMountainBikeAuction(1, auctionCreator.getId(), 1000, null, AuctionType.REVERSE);
-        
         Mockito.when(mockAccountRepository.findById(Mockito.any(Integer.class)))
             .thenAnswer(invocation -> {
                 Integer id = invocation.getArgument(0);
@@ -265,9 +236,7 @@ class BidsManagementServiceTest {
                 };
             }
         );
-
         Bid bid = new ExampleMountainBikeBid(auction.getCreatorId(), -1, 700);
-        
         Assert.assertThrows(NoAccountWithSuchIdException.class, () -> {
             bidsManagementService.validateBid(bid, auction);
         });
@@ -285,8 +254,6 @@ class BidsManagementServiceTest {
         Account auctionCreator = new ExampleAccount("Roger", "Penske", 1);
         Account bidder = new ExampleAccount("Reinhold", "Joest", 2);        
         Auction auction = new ExampleMountainBikeAuction(1, auctionCreator.getId(), null, 500, AuctionType.SILENT);
-        
-        
         Bid bid = new ExampleMountainBikeBid(auction.getId(), bidder.getId(), -50);
         Assert.assertThrows(IllegalArgumentException.class, () -> {
             bidsManagementService.validateBid(bid, auction);
@@ -305,7 +272,6 @@ class BidsManagementServiceTest {
         Account auctionCreator = new ExampleAccount("Roger", "Penske", 1);
         Account bidder = new ExampleAccount("Reinhold", "Joest", 2);        
         Auction auction = new ExampleMountainBikeAuction(1, auctionCreator.getId(), null, 500, AuctionType.SILENT);
-        
         Bid bid = new ExampleMountainBikeBid(auction.getId(), bidder.getId(), null);
         Assert.assertThrows(IllegalArgumentException.class, () -> {
             bidsManagementService.validateBid(bid, auction);
@@ -324,7 +290,6 @@ class BidsManagementServiceTest {
         Account auctionCreator = new ExampleAccount("Roger", "Penske", 1);
         Account bidder = new ExampleAccount("Reinhold", "Joest", 2);        
         Auction auction = new ExampleMountainBikeAuction(1, auctionCreator.getId(), null, 500, AuctionType.SILENT);
-        
         Bid bid = new ExampleMountainBikeBid(auction.getId(), bidder.getId(), 300);
         Assert.assertThrows(IllegalArgumentException.class, () -> {
             bidsManagementService.validateBid(bid, auction);
@@ -343,7 +308,6 @@ class BidsManagementServiceTest {
         Account auctionCreator = new ExampleAccount("Roger", "Penske", 1);
         Account bidder = new ExampleAccount("Reinhold", "Joest", 2);        
         Auction auction = new ExampleMountainBikeAuction(1, auctionCreator.getId(), 1000, null, AuctionType.SILENT);
-        
         Bid bid = new ExampleMountainBikeBid(auction.getId(), bidder.getId(), 1500);
         Assert.assertThrows(IllegalArgumentException.class, () -> {
             bidsManagementService.validateBid(bid, auction);

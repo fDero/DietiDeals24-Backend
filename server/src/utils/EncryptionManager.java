@@ -1,4 +1,4 @@
-package service;
+package utils;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -7,16 +7,15 @@ import exceptions.EncryptionFailureException;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import utils.RandomStringGenerator;
 
 
 @Service 
-public class EncryptionService {
+public class EncryptionManager {
 
     private final RandomStringGenerator randomStringGenerationService;
 
     @Autowired
-    public EncryptionService(RandomStringGenerator randomStringGenerationService) {
+    public EncryptionManager(RandomStringGenerator randomStringGenerationService) {
         this.randomStringGenerationService = randomStringGenerationService;
     }
 

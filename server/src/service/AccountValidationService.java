@@ -48,15 +48,16 @@ public class AccountValidationService {
     }
 
     public void validatePassword(String password, List<String> errors){
-        if (password == null){
+        if (password == null) {
             errors.add("missing password field (it must contains at least 8 characters, one special char, one lowercase and one uppercase letter)");
             return;
         }
-        if (password.length() < 8) errors.add("password too short (must be at least 8 characters)");
+        if (password.length() < 8)                errors.add("password too short (must be at least 8 characters)");
         if (!password.matches(".*[A-Z].*")) errors.add("passwords must contain at least one uppercase letter");
         if (!password.matches(".*[a-z].*")) errors.add("passwords must contain at least one lowercase letter");
         if (!password.matches(".*\\W.*"))   errors.add("passwords must contain at least one special character");
-        if (password.contains(" ")) errors.add("passwords can't contain spaces");
+        if (!password.matches(".*\\d.*"))   errors.add("passwords must contain at least one digit");
+        if (password.contains(" "))               errors.add("passwords can't contain spaces");
     }
 
     public void validateBirthday(String birthdayString, List<String> errors){

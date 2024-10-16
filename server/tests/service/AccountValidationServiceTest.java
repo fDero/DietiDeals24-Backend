@@ -54,17 +54,8 @@ class AccountValidationServiceTest {
         Mockito.when(mockAccountRepository.existsAccountByUsername(Mockito.any(String.class)))
             .thenAnswer(invocation -> { return false; }
         );
-
         Mockito.when(mockGeographicalAwarenessService.fetchCitiesFromCountry(Mockito.any(String.class)))
-            .thenAnswer(invocation -> {
-                String country = invocation.getArgument(0);
-                assert Objects.equals(country, "USA");
-                List<GeographicalCityDescriptor> cities = new ArrayList<>();
-                cities.add(new GeographicalCityDescriptor("New York", "USA"));
-                return cities;
-            }
-        );
-
+            .thenReturn(List.of(new GeographicalCityDescriptor("New York", "USA")));
         Assertions.assertDoesNotThrow(() -> {
             accountValidationService.validateAccountRegistrationRequest(accountRegistrationRequest);
         });
@@ -85,17 +76,8 @@ class AccountValidationServiceTest {
             mockAccountRepository, 
             mockGeographicalAwarenessService
         );
-        
         Mockito.when(mockGeographicalAwarenessService.fetchCitiesFromCountry(Mockito.any(String.class)))
-            .thenAnswer(invocation -> {
-                String country = invocation.getArgument(0);
-                assert Objects.equals(country, "IT");
-                List<GeographicalCityDescriptor> cities = new ArrayList<>();
-                cities.add(new GeographicalCityDescriptor("Naples", "IT"));
-                return cities;
-            }
-        );
-
+            .thenReturn(List.of(new GeographicalCityDescriptor("Naples", "IT")));
         Assert.assertThrows(AccountValidationException.class, () -> {
             accountValidationService.validateAccountRegistrationRequest(accountRegistrationRequest);
         });
@@ -116,17 +98,8 @@ class AccountValidationServiceTest {
             mockAccountRepository, 
             mockGeographicalAwarenessService
         );
-        
         Mockito.when(mockGeographicalAwarenessService.fetchCitiesFromCountry(Mockito.any(String.class)))
-            .thenAnswer(invocation -> {
-                String country = invocation.getArgument(0);
-                assert Objects.equals(country, "IT");
-                List<GeographicalCityDescriptor> cities = new ArrayList<>();
-                cities.add(new GeographicalCityDescriptor("Naples", "IT"));
-                return cities;
-            }
-        );
-
+            .thenReturn(List.of(new GeographicalCityDescriptor("Naples", "IT")));
         Assert.assertThrows(AccountValidationException.class, () -> {
             accountValidationService.validateAccountRegistrationRequest(accountRegistrationRequest);
         });
@@ -147,17 +120,8 @@ class AccountValidationServiceTest {
             mockAccountRepository, 
             mockGeographicalAwarenessService
         );
-        
         Mockito.when(mockGeographicalAwarenessService.fetchCitiesFromCountry(Mockito.any(String.class)))
-            .thenAnswer(invocation -> {
-                String country = invocation.getArgument(0);
-                assert Objects.equals(country, "IT");
-                List<GeographicalCityDescriptor> cities = new ArrayList<>();
-                cities.add(new GeographicalCityDescriptor("Naples", "IT"));
-                return cities;
-            }
-        );
-
+            .thenReturn(List.of(new GeographicalCityDescriptor("Naples", "IT")));
         Assert.assertThrows(AccountValidationException.class, () -> {
             accountValidationService.validateAccountRegistrationRequest(accountRegistrationRequest);
         });
@@ -178,17 +142,8 @@ class AccountValidationServiceTest {
             mockAccountRepository, 
             mockGeographicalAwarenessService
         );
-        
         Mockito.when(mockGeographicalAwarenessService.fetchCitiesFromCountry(Mockito.any(String.class)))
-            .thenAnswer(invocation -> {
-                String country = invocation.getArgument(0);
-                assert Objects.equals(country, "IT");
-                List<GeographicalCityDescriptor> cities = new ArrayList<>();
-                cities.add(new GeographicalCityDescriptor("Naples", "IT"));
-                return cities;
-            }
-        );
-
+            .thenReturn(List.of(new GeographicalCityDescriptor("Naples", "IT")));
         Assert.assertThrows(AccountValidationException.class, () -> {
             accountValidationService.validateAccountRegistrationRequest(accountRegistrationRequest);
         });
@@ -209,17 +164,8 @@ class AccountValidationServiceTest {
             mockAccountRepository, 
             mockGeographicalAwarenessService
         );
-        
         Mockito.when(mockGeographicalAwarenessService.fetchCitiesFromCountry(Mockito.any(String.class)))
-            .thenAnswer(invocation -> {
-                String country = invocation.getArgument(0);
-                assert Objects.equals(country, "EN");
-                List<GeographicalCityDescriptor> cities = new ArrayList<>();
-                cities.add(new GeographicalCityDescriptor("London", "EN"));
-                return cities;
-            }
-        );
-
+            .thenReturn(List.of(new GeographicalCityDescriptor("London", "EN")));
         Assert.assertThrows(AccountValidationException.class, () -> {
             accountValidationService.validateAccountRegistrationRequest(accountRegistrationRequest);
         });
@@ -240,17 +186,8 @@ class AccountValidationServiceTest {
             mockAccountRepository, 
             mockGeographicalAwarenessService
         );
-        
         Mockito.when(mockGeographicalAwarenessService.fetchCitiesFromCountry(Mockito.any(String.class)))
-            .thenAnswer(invocation -> {
-                String country = invocation.getArgument(0);
-                assert Objects.equals(country, "EN");
-                List<GeographicalCityDescriptor> cities = new ArrayList<>();
-                cities.add(new GeographicalCityDescriptor("London", "EN"));
-                return cities;
-            }
-        );
-
+            .thenReturn(List.of(new GeographicalCityDescriptor("New York", "USA")));
         Assert.assertThrows(AccountValidationException.class, () -> {
             accountValidationService.validateAccountRegistrationRequest(accountRegistrationRequest);
         });
@@ -271,17 +208,8 @@ class AccountValidationServiceTest {
             mockAccountRepository, 
             mockGeographicalAwarenessService
         );
-        
         Mockito.when(mockGeographicalAwarenessService.fetchCitiesFromCountry(Mockito.any(String.class)))
-            .thenAnswer(invocation -> {
-                String country = invocation.getArgument(0);
-                assert Objects.equals(country, "USA");
-                List<GeographicalCityDescriptor> cities = new ArrayList<>();
-                cities.add(new GeographicalCityDescriptor("New York", "USA"));
-                return cities;
-            }
-        );
-
+            .thenReturn(List.of(new GeographicalCityDescriptor("New York", "USA")));
         Assert.assertThrows(AccountValidationException.class, () -> {
             accountValidationService.validateAccountRegistrationRequest(accountRegistrationRequest);
         });
@@ -302,17 +230,8 @@ class AccountValidationServiceTest {
             mockAccountRepository, 
             mockGeographicalAwarenessService
         );
-        
         Mockito.when(mockGeographicalAwarenessService.fetchCitiesFromCountry(Mockito.any(String.class)))
-            .thenAnswer(invocation -> {
-                String country = invocation.getArgument(0);
-                assert Objects.equals(country, "USA");
-                List<GeographicalCityDescriptor> cities = new ArrayList<>();
-                cities.add(new GeographicalCityDescriptor("New York", "USA"));
-                return cities;
-            }
-        );
-
+            .thenReturn(List.of(new GeographicalCityDescriptor("New York", "USA")));
         Assert.assertThrows(AccountValidationException.class, () -> {
             accountValidationService.validateAccountRegistrationRequest(accountRegistrationRequest);
         });
@@ -333,17 +252,8 @@ class AccountValidationServiceTest {
             mockAccountRepository, 
             mockGeographicalAwarenessService
         );
-        
         Mockito.when(mockGeographicalAwarenessService.fetchCitiesFromCountry(Mockito.any(String.class)))
-            .thenAnswer(invocation -> {
-                String country = invocation.getArgument(0);
-                assert Objects.equals(country, "USA");
-                List<GeographicalCityDescriptor> cities = new ArrayList<>();
-                cities.add(new GeographicalCityDescriptor("New York", "USA"));
-                return cities;
-            }
-        );
-
+            .thenReturn(List.of(new GeographicalCityDescriptor("New York", "USA")));
         Assert.assertThrows(AccountValidationException.class, () -> {
             accountValidationService.validateAccountRegistrationRequest(accountRegistrationRequest);
         });
@@ -364,17 +274,8 @@ class AccountValidationServiceTest {
             mockAccountRepository, 
             mockGeographicalAwarenessService
         );
-        
         Mockito.when(mockGeographicalAwarenessService.fetchCitiesFromCountry(Mockito.any(String.class)))
-            .thenAnswer(invocation -> {
-                String country = invocation.getArgument(0);
-                assert Objects.equals(country, "USA");
-                List<GeographicalCityDescriptor> cities = new ArrayList<>();
-                cities.add(new GeographicalCityDescriptor("New York", "USA"));
-                return cities;
-            }
-        );
-
+            .thenReturn(List.of(new GeographicalCityDescriptor("New York", "USA")));
         Assert.assertThrows(AccountValidationException.class, () -> {
             accountValidationService.validateAccountRegistrationRequest(accountRegistrationRequest);
         });
@@ -395,13 +296,8 @@ class AccountValidationServiceTest {
             mockAccountRepository, 
             mockGeographicalAwarenessService
         );
-        
         Mockito.when(mockGeographicalAwarenessService.fetchCitiesFromCountry(Mockito.any(String.class)))
-            .thenAnswer(invocation -> {
-                throw new UnrecognizedCountryException();
-            }
-        );
-
+            .thenThrow(new UnrecognizedCountryException());
         Assert.assertThrows(AccountValidationException.class, () -> {
             accountValidationService.validateAccountRegistrationRequest(accountRegistrationRequest);
         });
@@ -422,17 +318,8 @@ class AccountValidationServiceTest {
             mockAccountRepository, 
             mockGeographicalAwarenessService
         );
-        
         Mockito.when(mockGeographicalAwarenessService.fetchCitiesFromCountry(Mockito.any(String.class)))
-            .thenAnswer(invocation -> {
-                String country = invocation.getArgument(0);
-                assert Objects.equals(country, "EN");
-                List<GeographicalCityDescriptor> cities = new ArrayList<>();
-                cities.add(new GeographicalCityDescriptor("Slough", "EN"));
-                return cities;
-            }
-        );
-
+            .thenReturn(List.of(new GeographicalCityDescriptor("Slough", "EN")));
         Assert.assertThrows(AccountValidationException.class, () -> {
             accountValidationService.validateAccountRegistrationRequest(accountRegistrationRequest);
         });
@@ -453,17 +340,8 @@ class AccountValidationServiceTest {
             mockAccountRepository, 
             mockGeographicalAwarenessService
         );
-        
         Mockito.when(mockGeographicalAwarenessService.fetchCitiesFromCountry(Mockito.any(String.class)))
-            .thenAnswer(invocation -> {
-                String country = invocation.getArgument(0);
-                assert Objects.equals(country, "EN");
-                List<GeographicalCityDescriptor> cities = new ArrayList<>();
-                cities.add(new GeographicalCityDescriptor("Slough", "EN"));
-                return cities;
-            }
-        );
-
+            .thenReturn(List.of(new GeographicalCityDescriptor("Slough", "EN")));
         Assert.assertThrows(AccountValidationException.class, () -> {
             accountValidationService.validateAccountRegistrationRequest(accountRegistrationRequest);
         });
@@ -484,17 +362,8 @@ class AccountValidationServiceTest {
             mockAccountRepository, 
             mockGeographicalAwarenessService
         );
-        
         Mockito.when(mockGeographicalAwarenessService.fetchCitiesFromCountry(Mockito.any(String.class)))
-            .thenAnswer(invocation -> {
-                String country = invocation.getArgument(0);
-                assert Objects.equals(country, "EN");
-                List<GeographicalCityDescriptor> cities = new ArrayList<>();
-                cities.add(new GeographicalCityDescriptor("Slough", "EN"));
-                return cities;
-            }
-        );
-
+            .thenReturn(List.of(new GeographicalCityDescriptor("Slough", "EN")));
         Assert.assertThrows(AccountValidationException.class, () -> {
             accountValidationService.validateAccountRegistrationRequest(accountRegistrationRequest);
         });
@@ -515,17 +384,8 @@ class AccountValidationServiceTest {
             mockAccountRepository, 
             mockGeographicalAwarenessService
         );
-        
         Mockito.when(mockGeographicalAwarenessService.fetchCitiesFromCountry(Mockito.any(String.class)))
-            .thenAnswer(invocation -> {
-                String country = invocation.getArgument(0);
-                assert Objects.equals(country, "EN");
-                List<GeographicalCityDescriptor> cities = new ArrayList<>();
-                cities.add(new GeographicalCityDescriptor("Slough", "EN"));
-                return cities;
-            }
-        );
-
+            .thenReturn(List.of(new GeographicalCityDescriptor("Slough", "EN")));
         Assert.assertThrows(AccountValidationException.class, () -> {
             accountValidationService.validateAccountRegistrationRequest(accountRegistrationRequest);
         });

@@ -29,6 +29,7 @@ import request.ForgotPasswordResetConfirmationRequest;
 import request.OAuthAccountRegistrationRequest;
 import request.PasswordChangeRequest;
 import utils.AccountProfileInformations;
+import utils.EncryptionManager;
 import utils.PendingAccountRegistration;
 
 @Service
@@ -37,7 +38,7 @@ public class AccountManagementService {
     private final AuctionManagementService auctionManagementService;
     private final AccountRepository accountRepository;
     private final PasswordRepository passwordRepository;
-    private final EncryptionService encryptionService;
+    private final EncryptionManager encryptionManager;
     private final PersonalLinkRepository personalLinkRepository;
     private final BidsManagementService bidsManagementService;
     private final AccountValidationService accountValidationService;
@@ -47,7 +48,7 @@ public class AccountManagementService {
     public AccountManagementService(
         AccountRepository accountRepository,
         PasswordRepository passwordRepository,
-        EncryptionService encryptionService,
+        EncryptionManager encryptionManager,
         PersonalLinkRepository personalLinkRepository,
         AuctionManagementService auctionManagementService,
         BidsManagementService bidsManagementService,
@@ -58,7 +59,7 @@ public class AccountManagementService {
     ) {
         this.accountRepository = accountRepository;
         this.passwordRepository = passwordRepository;
-        this.encryptionService = encryptionService;
+        this.encryptionManager = encryptionManager;
         this.personalLinkRepository = personalLinkRepository;
         this.auctionManagementService = auctionManagementService;
         this.bidsManagementService = bidsManagementService;
@@ -104,7 +105,7 @@ public class AccountManagementService {
         Password password = passwordRepository.findPasswordByAccountId(account.getId()).get();
         String realPasswordSalt = password.getPasswordSalt();
         String realPasswordHash = password.getPasswordHash();
-        String candidatePasswordHash = encryptionService.encryptPassword(candidatePlainTextPassword, realPasswordSalt);
+        String candidatePasswordHash = encryptionManager.encryptPassword(candidatePlainTextPassword, realPasswordSalt);
         if (!candidatePasswordHash.equals(realPasswordHash)){
             throw new AccessDeniedBadCredentialsException();
         }
@@ -138,8 +139,8 @@ public class AccountManagementService {
     public Account createAccount(PendingAccountRegistration pendingAccount) {
         Account account = new Account(pendingAccount);
         account = accountRepository.save(account);
-        String passwordSalt = encryptionService.generateRandomSalt();
-        String passwordHash = encryptionService.encryptPassword(pendingAccount.getPassword(), passwordSalt);
+        String passwordSalt = encryptionManager.generateRandomSalt();
+        String passwordHash = encryptionManager.encryptPassword(pendingAccount.getPassword(), passwordSalt);
         Password password = new Password(passwordSalt, passwordHash, account.getId());
         passwordRepository.save(password);
         return account;
@@ -160,12 +161,12 @@ public class AccountManagementService {
         }
         String userProvidedOldPassword = passwordChangeRequest.getOldPassword();
         String oldPasswordSalt = dbPassword.getPasswordSalt();
-        String userProvidedoldPasswordHash = encryptionService.encryptPassword(userProvidedOldPassword, oldPasswordSalt); 
+        String userProvidedoldPasswordHash = encryptionManager.encryptPassword(userProvidedOldPassword, oldPasswordSalt); 
         if (!userProvidedoldPasswordHash.equals(dbPassword.getPasswordHash())) {
             throw new AccessDeniedBadCredentialsException();
         }
-        String newSalt = encryptionService.generateRandomSalt();
-        String newHash = encryptionService.encryptPassword(passwordChangeRequest.getNewPassword(), newSalt);
+        String newSalt = encryptionManager.generateRandomSalt();
+        String newHash = encryptionManager.encryptPassword(passwordChangeRequest.getNewPassword(), newSalt);
         dbPassword.setPasswordHash(newHash);
         dbPassword.setPasswordSalt(newSalt);
         passwordRepository.save(dbPassword);
@@ -183,8 +184,8 @@ public class AccountManagementService {
         if (!errors.isEmpty()) {
             throw new AccountValidationException(String.join(", ", errors));
         }
-        String newSalt = encryptionService.generateRandomSalt();
-        String newHash = encryptionService.encryptPassword(passwordChangeRequest.getNewPassword(), newSalt);
+        String newSalt = encryptionManager.generateRandomSalt();
+        String newHash = encryptionManager.encryptPassword(passwordChangeRequest.getNewPassword(), newSalt);
         dbPassword.setPasswordHash(newHash);
         dbPassword.setPasswordSalt(newSalt);
         passwordRepository.save(dbPassword);

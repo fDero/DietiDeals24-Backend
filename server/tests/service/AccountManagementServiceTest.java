@@ -7,12 +7,16 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import exceptions.AccessDeniedBadCredentialsException;
+import exceptions.AccessDeniedWrongAccountProviderException;
 import exceptions.AccountValidationException;
+import exceptions.NoAccountWithSuchIdException;
+import lombok.EqualsAndHashCode;
 
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.junit.jupiter.api.Assertions;
 
+import entity.Account;
 import entity.Password;
 
 import repository.AccountRepository;
@@ -61,6 +65,26 @@ class AccountManagementServiceTest {
     @Mock
     private OAuthAccountBindingRepository mockOAuthAccountBindingRepository;
 
+    @EqualsAndHashCode(callSuper = false)
+    static class ExampleAccount extends Account {
+
+        static final AtomicInteger idGenerator = new AtomicInteger(0);
+
+        ExampleAccount(String name, String surname) {
+            super.setId(idGenerator.incrementAndGet());
+            super.setName(name);
+            super.setSurname(surname);
+            super.setUsername(name + surname);
+            super.setEmail(name + "." + surname + "@example.com");
+            super.setCountry("ENG");
+            super.setCity("London");
+            super.setBirthday(Timestamp.from(java.time.Instant.now()));
+            super.setLastLogin(Timestamp.from(java.time.Instant.now()));
+            super.setAccountCreation(Timestamp.from(java.time.Instant.now()));
+            super.setAccountProvider("DIETIDEALS24");
+        }
+    }
+
     private AccountManagementService createAccountManagementService() {
         AccountValidationService accountValidationService = new AccountValidationService(
             mockAccountRepository,
@@ -104,96 +128,125 @@ class AccountManagementServiceTest {
     void t1() {
         AccountManagementService accountManagementService = createAccountManagementService();
         PasswordChangeRequest passwordChangeRequest = new PasswordChangeRequest(OLDPASSWORD, NEWPASSWORD);
-        int accountId = 1;
-        Password password = new ExamplePassword(accountId, OLDPASSWORD);
-        Mockito.when(mockPasswordRepository.findPasswordByAccountId(accountId)).thenReturn(Optional.of(password));
-        Assertions.assertDoesNotThrow(() -> accountManagementService.updatePassword(passwordChangeRequest, accountId));
+        Account account = new ExampleAccount("John", "Doe");
+        Password password = new ExamplePassword(account.getId(), OLDPASSWORD);
+        Mockito.when(mockAccountRepository.findById(account.getId())).thenReturn(Optional.of(account));
+        Mockito.when(mockPasswordRepository.findPasswordByAccountId(account.getId())).thenReturn(Optional.of(password));
+        Assertions.assertDoesNotThrow(() -> accountManagementService.updatePassword(passwordChangeRequest, account.getId()));
     }
 
     @Test
     void t2() {
         AccountManagementService accountManagementService = createAccountManagementService();
-        PasswordChangeRequest passwordChangeRequest = new PasswordChangeRequest(OLDPASSWORD, "Short0?");
-        int accountId = 1;
-        Password password = new ExamplePassword(accountId, OLDPASSWORD);
-        Mockito.when(mockPasswordRepository.findPasswordByAccountId(accountId)).thenReturn(Optional.of(password));
-        Assertions.assertThrows(AccountValidationException.class, () -> accountManagementService.updatePassword(passwordChangeRequest, accountId));
+        PasswordChangeRequest passwordChangeRequest = new PasswordChangeRequest(null, NEWPASSWORD);
+        Account account = new ExampleAccount("John", "Doe");
+        Password password = new ExamplePassword(account.getId(), OLDPASSWORD);
+        Mockito.when(mockAccountRepository.findById(account.getId())).thenReturn(Optional.of(account));
+        Mockito.when(mockPasswordRepository.findPasswordByAccountId(account.getId())).thenReturn(Optional.of(password));
+        Assertions.assertThrows(AccessDeniedBadCredentialsException.class, () -> accountManagementService.updatePassword(passwordChangeRequest, account.getId()));
     }
 
     @Test
     void t3() {
         AccountManagementService accountManagementService = createAccountManagementService();
-        PasswordChangeRequest passwordChangeRequest = new PasswordChangeRequest(OLDPASSWORD, "NoNumbers??");
-        int accountId = 1;
-        Password password = new ExamplePassword(accountId, OLDPASSWORD);
-        Mockito.when(mockPasswordRepository.findPasswordByAccountId(accountId)).thenReturn(Optional.of(password));
-        Assertions.assertThrows(AccountValidationException.class, () -> accountManagementService.updatePassword(passwordChangeRequest, accountId));
+        PasswordChangeRequest passwordChangeRequest = new PasswordChangeRequest(OLDPASSWORD, null);
+        Account account = new ExampleAccount("John", "Doe");
+        Password password = new ExamplePassword(account.getId(), OLDPASSWORD);
+        Mockito.when(mockAccountRepository.findById(account.getId())).thenReturn(Optional.of(account));
+        Mockito.when(mockPasswordRepository.findPasswordByAccountId(account.getId())).thenReturn(Optional.of(password));
+        Assertions.assertThrows(AccountValidationException.class, () -> accountManagementService.updatePassword(passwordChangeRequest, account.getId()));
     }
 
     @Test
     void t4() {
         AccountManagementService accountManagementService = createAccountManagementService();
-        PasswordChangeRequest passwordChangeRequest = new PasswordChangeRequest(OLDPASSWORD, "NoSymbols22");
-        int accountId = 1;
-        Password password = new ExamplePassword(accountId, OLDPASSWORD);
-        Mockito.when(mockPasswordRepository.findPasswordByAccountId(accountId)).thenReturn(Optional.of(password));
-        Assertions.assertThrows(AccountValidationException.class, () -> accountManagementService.updatePassword(passwordChangeRequest, accountId));
+        PasswordChangeRequest passwordChangeRequest = new PasswordChangeRequest(OLDPASSWORD, "Short0?");
+        Account account = new ExampleAccount("John", "Doe");
+        Password password = new ExamplePassword(account.getId(), OLDPASSWORD);
+        Mockito.when(mockAccountRepository.findById(account.getId())).thenReturn(Optional.of(account));
+        Mockito.when(mockPasswordRepository.findPasswordByAccountId(account.getId())).thenReturn(Optional.of(password));
+        Assertions.assertThrows(AccountValidationException.class, () -> accountManagementService.updatePassword(passwordChangeRequest, account.getId()));
     }
 
     @Test
     void t5() {
         AccountManagementService accountManagementService = createAccountManagementService();
-        PasswordChangeRequest passwordChangeRequest = new PasswordChangeRequest(OLDPASSWORD, "nouppercase11?");
-        int accountId = 1;
-        Password password = new ExamplePassword(accountId, OLDPASSWORD);
-        Mockito.when(mockPasswordRepository.findPasswordByAccountId(accountId)).thenReturn(Optional.of(password));
-        Assertions.assertThrows(AccountValidationException.class, () -> accountManagementService.updatePassword(passwordChangeRequest, accountId));
+        PasswordChangeRequest passwordChangeRequest = new PasswordChangeRequest(OLDPASSWORD, "NoNumbers??");
+        Account account = new ExampleAccount("John", "Doe");
+        Password password = new ExamplePassword(account.getId(), OLDPASSWORD);
+        Mockito.when(mockAccountRepository.findById(account.getId())).thenReturn(Optional.of(account));
+        Mockito.when(mockPasswordRepository.findPasswordByAccountId(account.getId())).thenReturn(Optional.of(password));
+        Assertions.assertThrows(AccountValidationException.class, () -> accountManagementService.updatePassword(passwordChangeRequest, account.getId()));
     }
 
     @Test
     void t6() {
         AccountManagementService accountManagementService = createAccountManagementService();
-        PasswordChangeRequest passwordChangeRequest = new PasswordChangeRequest(OLDPASSWORD, "UPPERONLY11?");
-        int accountId = 1;
-        Password password = new ExamplePassword(accountId, OLDPASSWORD);
-        Mockito.when(mockPasswordRepository.findPasswordByAccountId(accountId)).thenReturn(Optional.of(password));
-        Assertions.assertThrows(AccountValidationException.class, () -> accountManagementService.updatePassword(passwordChangeRequest, accountId));
+        PasswordChangeRequest passwordChangeRequest = new PasswordChangeRequest(OLDPASSWORD, "NoSymbols22");
+        Account account = new ExampleAccount("John", "Doe");
+        Password password = new ExamplePassword(account.getId(), OLDPASSWORD);
+        Mockito.when(mockAccountRepository.findById(account.getId())).thenReturn(Optional.of(account));
+        Mockito.when(mockPasswordRepository.findPasswordByAccountId(account.getId())).thenReturn(Optional.of(password));
+        Assertions.assertThrows(AccountValidationException.class, () -> accountManagementService.updatePassword(passwordChangeRequest, account.getId()));
     }
 
     @Test
     void t7() {
         AccountManagementService accountManagementService = createAccountManagementService();
-        PasswordChangeRequest passwordChangeRequest = new PasswordChangeRequest(null, NEWPASSWORD);
-        int accountId = 1;
-        Password password = new ExamplePassword(accountId, OLDPASSWORD);
-        Mockito.when(mockPasswordRepository.findPasswordByAccountId(accountId)).thenReturn(Optional.of(password));
-        Assertions.assertThrows(AccessDeniedBadCredentialsException.class, () -> accountManagementService.updatePassword(passwordChangeRequest, accountId));
+        PasswordChangeRequest passwordChangeRequest = new PasswordChangeRequest(OLDPASSWORD, "nouppercase11?");
+        Account account = new ExampleAccount("John", "Doe");
+        Password password = new ExamplePassword(account.getId(), OLDPASSWORD);
+        Mockito.when(mockAccountRepository.findById(account.getId())).thenReturn(Optional.of(account));
+        Mockito.when(mockPasswordRepository.findPasswordByAccountId(account.getId())).thenReturn(Optional.of(password));
+        Assertions.assertThrows(AccountValidationException.class, () -> accountManagementService.updatePassword(passwordChangeRequest, account.getId()));
     }
 
     @Test
     void t8() {
         AccountManagementService accountManagementService = createAccountManagementService();
-        PasswordChangeRequest passwordChangeRequest = new PasswordChangeRequest(OLDPASSWORD, null);
-        int accountId = 1;
-        Password password = new ExamplePassword(accountId, OLDPASSWORD);
-        Mockito.when(mockPasswordRepository.findPasswordByAccountId(accountId)).thenReturn(Optional.of(password));
-        Assertions.assertThrows(AccountValidationException.class, () -> accountManagementService.updatePassword(passwordChangeRequest, accountId));
+        PasswordChangeRequest passwordChangeRequest = new PasswordChangeRequest(OLDPASSWORD, "UPPERONLY11?");
+        Account account = new ExampleAccount("John", "Doe");
+        Password password = new ExamplePassword(account.getId(), OLDPASSWORD);
+        Mockito.when(mockAccountRepository.findById(account.getId())).thenReturn(Optional.of(account));
+        Mockito.when(mockPasswordRepository.findPasswordByAccountId(account.getId())).thenReturn(Optional.of(password));
+        Assertions.assertThrows(AccountValidationException.class, () -> accountManagementService.updatePassword(passwordChangeRequest, account.getId()));
     }
 
     @Test
     void t9() {
         AccountManagementService accountManagementService = createAccountManagementService();
         PasswordChangeRequest passwordChangeRequest = new PasswordChangeRequest(OLDPASSWORD, NEWPASSWORD);
-        Assertions.assertThrows(NullPointerException.class, () -> accountManagementService.updatePassword(passwordChangeRequest, null));
+        Mockito.when(mockAccountRepository.findById(null)).thenReturn(Optional.empty());
+        Assertions.assertThrows(NoAccountWithSuchIdException.class, () -> accountManagementService.updatePassword(passwordChangeRequest, null));
     }
 
     @Test
     void t10() {
         AccountManagementService accountManagementService = createAccountManagementService();
         PasswordChangeRequest passwordChangeRequest = new PasswordChangeRequest(DIFFERENT_PASSWORD, NEWPASSWORD);
-        int accountId = 1;
-        Password password = new ExamplePassword(accountId, OLDPASSWORD);
-        Mockito.when(mockPasswordRepository.findPasswordByAccountId(accountId)).thenReturn(Optional.of(password));
-        Assertions.assertThrows(AccessDeniedBadCredentialsException.class, () -> accountManagementService.updatePassword(passwordChangeRequest, accountId));
+        Account account = new ExampleAccount("John", "Doe");
+        Password password = new ExamplePassword(account.getId(), OLDPASSWORD);
+        Mockito.when(mockAccountRepository.findById(account.getId())).thenReturn(Optional.of(account));
+        Mockito.when(mockPasswordRepository.findPasswordByAccountId(account.getId())).thenReturn(Optional.of(password));
+        Assertions.assertThrows(AccessDeniedBadCredentialsException.class, () -> accountManagementService.updatePassword(passwordChangeRequest, account.getId()));
+    }
+
+    @Test
+    void t11() {
+        AccountManagementService accountManagementService = createAccountManagementService();
+        PasswordChangeRequest passwordChangeRequest = new PasswordChangeRequest(DIFFERENT_PASSWORD, NEWPASSWORD);
+        Account account = new ExampleAccount("John", "Doe");
+        account.setAccountProvider("THIRD-PARTY");
+        Mockito.when(mockAccountRepository.findById(account.getId())).thenReturn(Optional.of(account));
+        Assertions.assertThrows(AccessDeniedWrongAccountProviderException.class, () -> accountManagementService.updatePassword(passwordChangeRequest, account.getId()));
+    }
+
+    @Test
+    void t12() {
+        AccountManagementService accountManagementService = createAccountManagementService();
+        PasswordChangeRequest passwordChangeRequest = new PasswordChangeRequest(DIFFERENT_PASSWORD, NEWPASSWORD);
+        int accountId = 19;
+        Mockito.when(mockAccountRepository.findById(accountId)).thenReturn(Optional.empty());
+        Assertions.assertThrows(NoAccountWithSuchIdException.class, () -> accountManagementService.updatePassword(passwordChangeRequest, accountId));
     }
 }

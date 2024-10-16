@@ -150,8 +150,14 @@ public class AccountManagementService {
         throws 
             NoPasswordForThisAccountException, 
             AccountValidationException, 
-            AccessDeniedBadCredentialsException
+            AccessDeniedBadCredentialsException, 
+            NoAccountWithSuchIdException, 
+            AccessDeniedWrongAccountProviderException
     {
+        Account account = accountRepository.findById(accountId).orElseThrow(NoAccountWithSuchIdException::new);
+        if (!account.getAccountProvider().equals("DIETIDEALS24")) {
+            throw new AccessDeniedWrongAccountProviderException();
+        }
         Password dbPassword = passwordRepository.findPasswordByAccountId(accountId)
             .orElseThrow(NoPasswordForThisAccountException::new);
         List<String> errors = new ArrayList<>();

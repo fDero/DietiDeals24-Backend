@@ -6,6 +6,7 @@ import exceptions.AccessDeniedBadCredentialsException;
 import exceptions.AccessDeniedWrongAccountProviderException;
 import exceptions.AccountValidationException;
 import exceptions.NoAccountWithSuchEmailException;
+import exceptions.NoAccountWithSuchIdException;
 import exceptions.NoAccountWithSuchUsernameException;
 import exceptions.NoPasswordForThisAccountException;
 import jakarta.mail.MessagingException;
@@ -124,7 +125,9 @@ public class PasswordController {
         throws
             NoPasswordForThisAccountException,
             AccountValidationException,
-            AccessDeniedBadCredentialsException
+            AccessDeniedBadCredentialsException, 
+            NoAccountWithSuchIdException, 
+            AccessDeniedWrongAccountProviderException
     {
         String jwtToken = jwtTokenManager.getTokenFromRequestHeader(authorizationHeader);
         String accountIdString = jwtTokenManager.getIdFromJWT(jwtToken);

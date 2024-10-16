@@ -6,12 +6,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.testng.Assert;
 import org.junit.jupiter.api.Assertions;
 
+import exceptions.AccountAlreadyExistsException;
 import exceptions.AccountValidationException;
 import exceptions.UnrecognizedCountryException;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -46,11 +45,9 @@ class AccountValidationServiceTest {
             mockAccountRepository, 
             mockGeographicalAwarenessService
         );
-
         Mockito.when(mockAccountRepository.existsAccountByEmail(Mockito.any(String.class)))
             .thenAnswer(invocation -> { return false; }
         );
-
         Mockito.when(mockAccountRepository.existsAccountByUsername(Mockito.any(String.class)))
             .thenAnswer(invocation -> { return false; }
         );
@@ -262,14 +259,14 @@ class AccountValidationServiceTest {
     @Test
     void t11() throws UnrecognizedCountryException {
         AccountRegistrationRequest accountRegistrationRequest = new AccountRegistrationRequest();
-        accountRegistrationRequest.setName("Bruce");
-        accountRegistrationRequest.setSurname("Wayne");
-        accountRegistrationRequest.setUsername("TheBatman");
-        accountRegistrationRequest.setBirthday("1952-01-20T00:00:00Z");
-        accountRegistrationRequest.setCity("Gotham");
+        accountRegistrationRequest.setName("Donald");
+        accountRegistrationRequest.setSurname("Fagen");
+        accountRegistrationRequest.setUsername("SteelyVoice");
+        accountRegistrationRequest.setBirthday("1971-01-10T00:00:00Z");
+        accountRegistrationRequest.setCity("New York");
         accountRegistrationRequest.setCountry("USA");
-        accountRegistrationRequest.setEmail("bruce.wayne@example.us");
-        accountRegistrationRequest.setPassword("GothamKnight77!");
+        accountRegistrationRequest.setEmail("donald.fagen@steely.dan");
+        accountRegistrationRequest.setPassword(null);
         AccountValidationService accountValidationService = new AccountValidationService(
             mockAccountRepository, 
             mockGeographicalAwarenessService
@@ -284,20 +281,20 @@ class AccountValidationServiceTest {
     @Test
     void t12() throws UnrecognizedCountryException {
         AccountRegistrationRequest accountRegistrationRequest = new AccountRegistrationRequest();
-        accountRegistrationRequest.setName("Julius");
-        accountRegistrationRequest.setSurname("Caesar");
-        accountRegistrationRequest.setUsername("TheEmperor");
-        accountRegistrationRequest.setBirthday("1952-01-20T00:00:00Z");
-        accountRegistrationRequest.setCity("Rome");
-        accountRegistrationRequest.setCountry("Roman Empire");
-        accountRegistrationRequest.setEmail("julius.ceaser@roman.empire");
-        accountRegistrationRequest.setPassword("RomanEmpire77!");
+        accountRegistrationRequest.setName("Donald");
+        accountRegistrationRequest.setSurname("Fagen");
+        accountRegistrationRequest.setUsername("SteelyVoice");
+        accountRegistrationRequest.setBirthday("1971-01-10T00:00:00Z");
+        accountRegistrationRequest.setCity("New York");
+        accountRegistrationRequest.setCountry("USA");
+        accountRegistrationRequest.setEmail("donald.fagen@steely.dan");
+        accountRegistrationRequest.setPassword("Short?0");
         AccountValidationService accountValidationService = new AccountValidationService(
             mockAccountRepository, 
             mockGeographicalAwarenessService
         );
         Mockito.when(mockGeographicalAwarenessService.fetchCitiesFromCountry(Mockito.any(String.class)))
-            .thenThrow(new UnrecognizedCountryException());
+            .thenReturn(List.of(new GeographicalCityDescriptor("New York", "USA")));
         Assert.assertThrows(AccountValidationException.class, () -> {
             accountValidationService.validateAccountRegistrationRequest(accountRegistrationRequest);
         });
@@ -306,20 +303,20 @@ class AccountValidationServiceTest {
     @Test
     void t13() throws UnrecognizedCountryException {
         AccountRegistrationRequest accountRegistrationRequest = new AccountRegistrationRequest();
-        accountRegistrationRequest.setName("Keith");
-        accountRegistrationRequest.setSurname("Mansfield");
-        accountRegistrationRequest.setUsername("funky");
-        accountRegistrationRequest.setBirthday("1940-01-01T00:00:00Z");
-        accountRegistrationRequest.setCity("Slough");
-        accountRegistrationRequest.setCountry("EN");
-        accountRegistrationRequest.setEmail("keith.mansfield");
-        accountRegistrationRequest.setPassword("FunkyFanfare88?");
+        accountRegistrationRequest.setName("Donald");
+        accountRegistrationRequest.setSurname("Fagen");
+        accountRegistrationRequest.setUsername("SteelyVoice");
+        accountRegistrationRequest.setBirthday("1971-01-10T00:00:00Z");
+        accountRegistrationRequest.setCity("New York");
+        accountRegistrationRequest.setCountry("USA");
+        accountRegistrationRequest.setEmail("donald.fagen@steely.dan");
+        accountRegistrationRequest.setPassword("NoNumbers??");
         AccountValidationService accountValidationService = new AccountValidationService(
             mockAccountRepository, 
             mockGeographicalAwarenessService
         );
         Mockito.when(mockGeographicalAwarenessService.fetchCitiesFromCountry(Mockito.any(String.class)))
-            .thenReturn(List.of(new GeographicalCityDescriptor("Slough", "EN")));
+            .thenReturn(List.of(new GeographicalCityDescriptor("New York", "USA")));
         Assert.assertThrows(AccountValidationException.class, () -> {
             accountValidationService.validateAccountRegistrationRequest(accountRegistrationRequest);
         });
@@ -328,20 +325,20 @@ class AccountValidationServiceTest {
     @Test
     void t14() throws UnrecognizedCountryException {
         AccountRegistrationRequest accountRegistrationRequest = new AccountRegistrationRequest();
-        accountRegistrationRequest.setName("Keith");
-        accountRegistrationRequest.setSurname("Mansfield");
-        accountRegistrationRequest.setUsername("funky");
-        accountRegistrationRequest.setBirthday("1940-01-01T00:00:00Z");
-        accountRegistrationRequest.setCity("Slough");
-        accountRegistrationRequest.setCountry("EN");
-        accountRegistrationRequest.setEmail("keith.mansfield");
-        accountRegistrationRequest.setPassword("funkyfanfare88?");
+        accountRegistrationRequest.setName("Donald");
+        accountRegistrationRequest.setSurname("Fagen");
+        accountRegistrationRequest.setUsername("SteelyVoice");
+        accountRegistrationRequest.setBirthday("1971-01-10T00:00:00Z");
+        accountRegistrationRequest.setCity("New York");
+        accountRegistrationRequest.setCountry("USA");
+        accountRegistrationRequest.setEmail("donald.fagen@steely.dan");
+        accountRegistrationRequest.setPassword("NoSpecials00");
         AccountValidationService accountValidationService = new AccountValidationService(
             mockAccountRepository, 
             mockGeographicalAwarenessService
         );
         Mockito.when(mockGeographicalAwarenessService.fetchCitiesFromCountry(Mockito.any(String.class)))
-            .thenReturn(List.of(new GeographicalCityDescriptor("Slough", "EN")));
+            .thenReturn(List.of(new GeographicalCityDescriptor("New York", "USA")));
         Assert.assertThrows(AccountValidationException.class, () -> {
             accountValidationService.validateAccountRegistrationRequest(accountRegistrationRequest);
         });
@@ -350,20 +347,20 @@ class AccountValidationServiceTest {
     @Test
     void t15() throws UnrecognizedCountryException {
         AccountRegistrationRequest accountRegistrationRequest = new AccountRegistrationRequest();
-        accountRegistrationRequest.setName("Keith");
-        accountRegistrationRequest.setSurname("Mansfield");
-        accountRegistrationRequest.setUsername("funky");
-        accountRegistrationRequest.setBirthday("1940-01-01T00:00:00Z");
-        accountRegistrationRequest.setCity("Slough");
-        accountRegistrationRequest.setCountry("EN");
-        accountRegistrationRequest.setEmail("keith.mansfield");
-        accountRegistrationRequest.setPassword("FUNKYFANFARE88?");
+        accountRegistrationRequest.setName("Donald");
+        accountRegistrationRequest.setSurname("Fagen");
+        accountRegistrationRequest.setUsername("SteelyVoice");
+        accountRegistrationRequest.setBirthday("1971-01-10T00:00:00Z");
+        accountRegistrationRequest.setCity("New York");
+        accountRegistrationRequest.setCountry("USA");
+        accountRegistrationRequest.setEmail("donald.fagen@steely.dan");
+        accountRegistrationRequest.setPassword("noupper0??");
         AccountValidationService accountValidationService = new AccountValidationService(
             mockAccountRepository, 
             mockGeographicalAwarenessService
         );
         Mockito.when(mockGeographicalAwarenessService.fetchCitiesFromCountry(Mockito.any(String.class)))
-            .thenReturn(List.of(new GeographicalCityDescriptor("Slough", "EN")));
+            .thenReturn(List.of(new GeographicalCityDescriptor("New York", "USA")));
         Assert.assertThrows(AccountValidationException.class, () -> {
             accountValidationService.validateAccountRegistrationRequest(accountRegistrationRequest);
         });
@@ -372,20 +369,20 @@ class AccountValidationServiceTest {
     @Test
     void t16() throws UnrecognizedCountryException {
         AccountRegistrationRequest accountRegistrationRequest = new AccountRegistrationRequest();
-        accountRegistrationRequest.setName("Keith");
-        accountRegistrationRequest.setSurname("Mansfield");
-        accountRegistrationRequest.setUsername("funky");
-        accountRegistrationRequest.setBirthday("1940-01-01T00:00:00Z");
-        accountRegistrationRequest.setCity("Slough");
-        accountRegistrationRequest.setCountry("EN");
-        accountRegistrationRequest.setEmail("keith.mansfield");
-        accountRegistrationRequest.setPassword("FunkyFunfare?");
+        accountRegistrationRequest.setName("Donald");
+        accountRegistrationRequest.setSurname("Fagen");
+        accountRegistrationRequest.setUsername("SteelyVoice");
+        accountRegistrationRequest.setBirthday("1971-01-10T00:00:00Z");
+        accountRegistrationRequest.setCity("New York");
+        accountRegistrationRequest.setCountry("USA");
+        accountRegistrationRequest.setEmail("donald.fagen@steely.dan");
+        accountRegistrationRequest.setPassword("UPPPERONLY12!!");
         AccountValidationService accountValidationService = new AccountValidationService(
             mockAccountRepository, 
             mockGeographicalAwarenessService
         );
         Mockito.when(mockGeographicalAwarenessService.fetchCitiesFromCountry(Mockito.any(String.class)))
-            .thenReturn(List.of(new GeographicalCityDescriptor("Slough", "EN")));
+            .thenReturn(List.of(new GeographicalCityDescriptor("New York", "USA")));
         Assert.assertThrows(AccountValidationException.class, () -> {
             accountValidationService.validateAccountRegistrationRequest(accountRegistrationRequest);
         });
@@ -394,30 +391,162 @@ class AccountValidationServiceTest {
     @Test
     void t17() throws UnrecognizedCountryException {
         AccountRegistrationRequest accountRegistrationRequest = new AccountRegistrationRequest();
-        accountRegistrationRequest.setName("Keith");
-        accountRegistrationRequest.setSurname("Mansfield");
-        accountRegistrationRequest.setUsername("funky");
-        accountRegistrationRequest.setBirthday("1940-01-01T00:00:00Z");
-        accountRegistrationRequest.setCity("Slough");
-        accountRegistrationRequest.setCountry("EN");
-        accountRegistrationRequest.setEmail("keith.mansfield");
-        accountRegistrationRequest.setPassword("FunkyFunfare88");
+        accountRegistrationRequest.setName("Renato");
+        accountRegistrationRequest.setSurname("Carosone");
+        accountRegistrationRequest.setUsername("MamboKing");
+        accountRegistrationRequest.setBirthday("1920-01-03T00:00:00Z");
+        accountRegistrationRequest.setCity("Naples");
+        accountRegistrationRequest.setCountry("IT");
+        accountRegistrationRequest.setEmail(null);
+        accountRegistrationRequest.setPassword("LunaRossa22?");
         AccountValidationService accountValidationService = new AccountValidationService(
             mockAccountRepository, 
             mockGeographicalAwarenessService
         );
-        
         Mockito.when(mockGeographicalAwarenessService.fetchCitiesFromCountry(Mockito.any(String.class)))
-            .thenAnswer(invocation -> {
-                String country = invocation.getArgument(0);
-                assert Objects.equals(country, "EN");
-                List<GeographicalCityDescriptor> cities = new ArrayList<>();
-                cities.add(new GeographicalCityDescriptor("Slough", "EN"));
-                return cities;
-            }
-        );
-
+            .thenReturn(List.of(new GeographicalCityDescriptor("Naples", "IT")));
         Assert.assertThrows(AccountValidationException.class, () -> {
+            accountValidationService.validateAccountRegistrationRequest(accountRegistrationRequest);
+        });
+    }
+
+    @Test
+    void t18() throws UnrecognizedCountryException {
+        AccountRegistrationRequest accountRegistrationRequest = new AccountRegistrationRequest();
+        accountRegistrationRequest.setName("Renato");
+        accountRegistrationRequest.setSurname("Carosone");
+        accountRegistrationRequest.setUsername("MamboKing");
+        accountRegistrationRequest.setBirthday("1920-01-03T00:00:00Z");
+        accountRegistrationRequest.setCity("Naples");
+        accountRegistrationRequest.setCountry("IT");
+        accountRegistrationRequest.setEmail("renato_carosone");
+        accountRegistrationRequest.setPassword("LunaRossa22?");
+        AccountValidationService accountValidationService = new AccountValidationService(
+            mockAccountRepository, 
+            mockGeographicalAwarenessService
+        );
+        Mockito.when(mockGeographicalAwarenessService.fetchCitiesFromCountry(Mockito.any(String.class)))
+            .thenReturn(List.of(new GeographicalCityDescriptor("Naples", "IT")));
+        Assert.assertThrows(AccountValidationException.class, () -> {
+            accountValidationService.validateAccountRegistrationRequest(accountRegistrationRequest);
+        });
+    }
+
+    @Test
+    void t19() throws UnrecognizedCountryException {
+        AccountRegistrationRequest accountRegistrationRequest = new AccountRegistrationRequest();
+        accountRegistrationRequest.setName("John");
+        accountRegistrationRequest.setSurname("Doe");
+        accountRegistrationRequest.setUsername("jDoe");
+        accountRegistrationRequest.setBirthday("1971-01-10T00:00:00Z");
+        accountRegistrationRequest.setCity("Magione");
+        accountRegistrationRequest.setCountry("IT");
+        accountRegistrationRequest.setEmail("johnDoe@example.com");
+        accountRegistrationRequest.setPassword("examplePassword22?");
+        AccountValidationService accountValidationService = new AccountValidationService(
+            mockAccountRepository, 
+            mockGeographicalAwarenessService
+        );
+        Mockito.when(mockGeographicalAwarenessService.fetchCitiesFromCountry(Mockito.any(String.class)))
+            .thenReturn(List.of(new GeographicalCityDescriptor("Milan", "IT")));
+        Assert.assertThrows(AccountValidationException.class, () -> {
+            accountValidationService.validateAccountRegistrationRequest(accountRegistrationRequest);
+        });
+    }
+
+    @Test
+    void t20() throws UnrecognizedCountryException {
+        AccountRegistrationRequest accountRegistrationRequest = new AccountRegistrationRequest();
+        accountRegistrationRequest.setName("Arthur");
+        accountRegistrationRequest.setSurname("Fleck");
+        accountRegistrationRequest.setUsername("theJoker");
+        accountRegistrationRequest.setBirthday("1971-01-10T00:00:00Z");
+        accountRegistrationRequest.setCity("Gotham");
+        accountRegistrationRequest.setCountry("USA");
+        accountRegistrationRequest.setEmail("theJoker@example.com");
+        accountRegistrationRequest.setPassword("examplePassword22?");
+        AccountValidationService accountValidationService = new AccountValidationService(
+            mockAccountRepository, 
+            mockGeographicalAwarenessService
+        );
+        Mockito.when(mockGeographicalAwarenessService.fetchCitiesFromCountry(Mockito.any(String.class)))
+            .thenReturn(List.of(new GeographicalCityDescriptor("New York", "USA")));
+        Assert.assertThrows(AccountValidationException.class, () -> {
+            accountValidationService.validateAccountRegistrationRequest(accountRegistrationRequest);
+        });
+    }
+
+    @Test
+    void t21() throws UnrecognizedCountryException {
+        AccountRegistrationRequest accountRegistrationRequest = new AccountRegistrationRequest();
+        accountRegistrationRequest.setName("John");
+        accountRegistrationRequest.setSurname("Doe");
+        accountRegistrationRequest.setUsername("jDoe");
+        accountRegistrationRequest.setBirthday("1971-01-10T00:00:00Z");
+        accountRegistrationRequest.setCity("New York");
+        accountRegistrationRequest.setCountry("IT");
+        accountRegistrationRequest.setEmail("johnDoe@example.com");
+        accountRegistrationRequest.setPassword("examplePassword22?");
+        AccountValidationService accountValidationService = new AccountValidationService(
+            mockAccountRepository, 
+            mockGeographicalAwarenessService
+        );
+        Mockito.when(mockGeographicalAwarenessService.fetchCitiesFromCountry(Mockito.any(String.class)))
+            .thenReturn(List.of(new GeographicalCityDescriptor("Milan", "IT")));
+        Assert.assertThrows(AccountValidationException.class, () -> {
+            accountValidationService.validateAccountRegistrationRequest(accountRegistrationRequest);
+        });
+    }
+
+    @Test
+    void t22() throws UnrecognizedCountryException {
+        AccountRegistrationRequest accountRegistrationRequest = new AccountRegistrationRequest();
+        accountRegistrationRequest.setName("Donald");
+        accountRegistrationRequest.setSurname("Fagen");
+        accountRegistrationRequest.setUsername("SteelyVoice");
+        accountRegistrationRequest.setBirthday("1971-01-10T00:00:00Z");
+        accountRegistrationRequest.setCity("New York");
+        accountRegistrationRequest.setCountry("USA");
+        accountRegistrationRequest.setEmail("donald.fagen@steely.dan");
+        accountRegistrationRequest.setPassword("ThirdWorldMan19!");
+        AccountValidationService accountValidationService = new AccountValidationService(
+            mockAccountRepository, 
+            mockGeographicalAwarenessService
+        );
+        Mockito.when(mockAccountRepository.existsAccountByEmail(Mockito.any(String.class)))
+            .thenAnswer(invocation -> { return true; }
+        );
+        Mockito.when(mockGeographicalAwarenessService.fetchCitiesFromCountry(Mockito.any(String.class)))
+            .thenReturn(List.of(new GeographicalCityDescriptor("New York", "USA")));
+        Assert.assertThrows(AccountAlreadyExistsException.class, () -> {
+            accountValidationService.validateAccountRegistrationRequest(accountRegistrationRequest);
+        });
+    }
+
+    @Test
+    void t23() throws UnrecognizedCountryException {
+        AccountRegistrationRequest accountRegistrationRequest = new AccountRegistrationRequest();
+        accountRegistrationRequest.setName("Donald");
+        accountRegistrationRequest.setSurname("Fagen");
+        accountRegistrationRequest.setUsername("SteelyVoice");
+        accountRegistrationRequest.setBirthday("1971-01-10T00:00:00Z");
+        accountRegistrationRequest.setCity("New York");
+        accountRegistrationRequest.setCountry("USA");
+        accountRegistrationRequest.setEmail("donald.fagen@steely.dan");
+        accountRegistrationRequest.setPassword("ThirdWorldMan19!");
+        AccountValidationService accountValidationService = new AccountValidationService(
+            mockAccountRepository, 
+            mockGeographicalAwarenessService
+        );
+        Mockito.when(mockAccountRepository.existsAccountByEmail(Mockito.any(String.class)))
+            .thenAnswer(invocation -> { return false; }
+        );
+        Mockito.when(mockAccountRepository.existsAccountByUsername(Mockito.any(String.class)))
+            .thenAnswer(invocation -> { return true; }
+        );
+        Mockito.when(mockGeographicalAwarenessService.fetchCitiesFromCountry(Mockito.any(String.class)))
+            .thenReturn(List.of(new GeographicalCityDescriptor("New York", "USA")));
+        Assert.assertThrows(AccountAlreadyExistsException.class, () -> {
             accountValidationService.validateAccountRegistrationRequest(accountRegistrationRequest);
         });
     }

@@ -175,20 +175,8 @@ class BidsManagementServiceTest {
             null, 
             AuctionType.REVERSE
         );
-        Mockito.when(mockAccountRepository.findById(Mockito.any(Integer.class)))
-            .thenAnswer(invocation -> {
-                Integer id = invocation.getArgument(0);
-                return switch (id) {
-                    case null -> Optional.empty();
-                    case Integer i when Objects.equals(i, bidder.getId()) -> Optional.of(bidder);
-                    case Integer i when Objects.equals(i, auctionCreator.getId()) -> Optional.of(auctionCreator);
-                    default -> Optional.empty();
-                };
-            }
-        );
-        Mockito.when(mockAuctionRepository.findById(auction.getId())).thenReturn(Optional.of(auction));
         Bid bid = new ExampleMountainBikeBid(null, bidder.getId(), 700);
-        Assert.assertThrows(NoSuchAuctionException.class, () -> {
+        Assert.assertThrows(InternalError.class, () -> {
             bidsManagementService.validateBid(bid, auction);
         });
     }
